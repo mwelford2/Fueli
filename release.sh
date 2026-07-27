@@ -41,7 +41,20 @@ IPA_NAME="$(basename "$IPA_PATH")"
 IPA_SIZE=$(wc -c < "$IPA_PATH" | tr -d ' ')
 DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${TAG}/${IPA_NAME}"
 
-echo "==> IPA: $IPA_PATH ($IPA_SIZE bytes)"
+# Read the actual version string baked into the IPA so apps.json always matches
+UNZIP_DIR=$(mktemp -d)
+unzip -q "$IPA_PATH" -d "$UNZIP_DIR"
+APP_PATH=$(find "$UNZIP_DIR/Payload" -maxdepth 1 -name "*.app" | head -1)
+BUNDLE_VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP_PATH/Info.plist")
+rm -rf "$UNZIP_DIR"
+
+if [[ "$BUNDLE_VERSION" != "$VERSION" ]]; then
+  echo "warning: IPA CFBundleShortVersionString is '$BUNDLE_VERSION', not '$VERSION'."
+  echo "         Using '$BUNDLE_VERSION' in apps.json to match the binary."
+  VERSION="$BUNDLE_VERSION"
+fi
+
+echo "==> IPA: $IPA_PATH ($IPA_SIZE bytes, version $VERSION)"
 
 # ── GitHub release ────────────────────────────────────────────────────────────
 echo "==> Creating GitHub release $TAG..."
