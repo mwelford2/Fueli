@@ -26,6 +26,25 @@ final class PedometerService {
         }
     }
 
+    /// Queries CMPedometer for total steps across the past `days` complete calendar
+    /// days and returns the per-day average. Returns nil when the pedometer is
+    /// unavailable or the query fails.
+    func queryAverageSteps(overPastDays days: Int) async -> Double? {
+        guard CMPedometer.isStepCountingAvailable() else { return nil }
+        let calendar = Calendar.current
+        let end = calendar.startOfDay(for: Date())
+        guard let start = calendar.date(byAdding: .day, value: -days, to: end) else { return nil }
+        return await withCheckedContinuation { continuation in
+            pedometer.queryPedometerData(from: start, to: end) { data, error in
+                guard let data, error == nil else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: Double(data.numberOfSteps.intValue) / Double(days))
+            }
+        }
+    }
+
     func startWorkoutSession() {
         guard CMPedometer.isStepCountingAvailable(), !isTrackingWorkout else { return }
         // Switch pedometer from day-tracking to workout-session mode.

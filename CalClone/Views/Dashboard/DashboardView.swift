@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct DashboardView: View {
-    @Bindable var profile: UserProfile
     @Binding var showLogSheet: Bool
 
     @Environment(\.modelContext) private var modelContext
@@ -10,10 +9,13 @@ struct DashboardView: View {
     @State private var pedometer = PedometerService.shared
     @State private var confettiTrigger = 0
 
+    @Query private var profiles: [UserProfile]
     @Query private var allLogs: [FoodLog]
     @Query private var allWeights: [WeightEntry]
     @Query private var allWater: [WaterEntry]
     @Query private var allWorkouts: [WorkoutLog]
+
+    private var profile: UserProfile? { profiles.first }
 
     private var logsForDay: [FoodLog] {
         allLogs.filter { Calendar.current.isDate($0.loggedAt, inSameDayAs: selectedDate) }
@@ -39,7 +41,7 @@ struct DashboardView: View {
     }
 
     private var currentWeight: Double {
-        allWeights.sorted { $0.recordedAt > $1.recordedAt }.first?.weightKg ?? profile.startingWeightKg
+        allWeights.sorted { $0.recordedAt > $1.recordedAt }.first?.weightKg ?? profile?.startingWeightKg ?? 75
     }
 
     /// Always today's totals (independent of `selectedDate`), so goal celebrations
@@ -69,6 +71,7 @@ struct DashboardView: View {
     }
 
     private var yesterdayOvershoot: Int {
+        guard let profile else { return 0 }
         let calendar = Calendar.current
         guard let yesterday = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: Date())) else { return 0 }
         let consumed = allLogs.filter { calendar.isDate($0.loggedAt, inSameDayAs: yesterday) }
@@ -77,99 +80,105 @@ struct DashboardView: View {
     }
 
     private var rolloverAdjustment: Int {
-        guard profile.rolloverExcessCalories, Calendar.current.isDateInToday(selectedDate) else { return 0 }
+        guard let profile, profile.rolloverExcessCalories, Calendar.current.isDateInToday(selectedDate) else { return 0 }
         let base = profile.calorieTarget(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday)
         return min(yesterdayOvershoot, Int(Double(base) * UserProfile.rolloverCapFraction))
     }
 
     private var calorieTarget: Int {
-        profile.calorieTarget(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday) - rolloverAdjustment
+        guard let profile else { return 0 }
+        return profile.calorieTarget(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday) - rolloverAdjustment
     }
 
     private var macroTargets: (protein: Int, carbs: Int, fat: Int) {
-        profile.macroTargets(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday)
+        guard let profile else { return (0, 0, 0) }
+        return profile.macroTargets(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday)
     }
 
     private var fiberTarget: Int {
-        profile.fiberTarget(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday)
+        guard let profile else { return 0 }
+        return profile.fiberTarget(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday)
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    DateNavigator(date: $selectedDate)
+        if let profile = profile {
+            NavigationStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        DateNavigator(date: $selectedDate)
 
-                    CalorieRingCard(
-                        consumed: caloriesConsumed,
-                        target: calorieTarget,
-                        workoutCalories: workoutCaloriesForDay,
-                        steps: liveStepsToday ?? 0,
-                        showSteps: liveStepsToday != nil,
-                        rolloverAdjustment: rolloverAdjustment
-                    )
-
-                    if !workoutsForDay.isEmpty || liveStepsToday != nil {
-                        ActivityCard(
+                        CalorieRingCard(
+                            consumed: caloriesConsumed,
+                            target: calorieTarget,
+                            workoutCalories: workoutCaloriesForDay,
                             steps: liveStepsToday ?? 0,
                             showSteps: liveStepsToday != nil,
-                            workouts: workoutsForDay
+                            rolloverAdjustment: rolloverAdjustment
                         )
-                    }
 
-                    MacroRingsCard(
-                        protein: (proteinConsumed, macroTargets.protein),
-                        carbs: (carbsConsumed, macroTargets.carbs),
-                        fat: (fatConsumed, macroTargets.fat),
-                        fiber: (fiberConsumed, fiberTarget)
-                    )
+                        if !workoutsForDay.isEmpty || liveStepsToday != nil {
+                            ActivityCard(
+                                steps: liveStepsToday ?? 0,
+                                showSteps: liveStepsToday != nil,
+                                workouts: workoutsForDay
+                            )
+                        }
 
-                    WaterCard(
-                        currentOz: waterForDay,
-                        targetOz: profile.dailyWaterTargetOz,
-                        metric: profile.unitSystem == .metric,
-                        onAdd: { amount in
-                            // Use current time for today so entries can be sorted by recency;
-                            // fall back to selectedDate for past-day logging.
-                            let timestamp = Calendar.current.isDateInToday(selectedDate) ? Date() : selectedDate
-                            modelContext.insert(WaterEntry(amountOz: amount, recordedAt: timestamp))
-                            try? modelContext.save()
-                        },
-                        onRemoveLast: waterEntriesForDay.isEmpty ? nil : {
-                            modelContext.delete(waterEntriesForDay[0])
+                        MacroRingsCard(
+                            protein: (proteinConsumed, macroTargets.protein),
+                            carbs: (carbsConsumed, macroTargets.carbs),
+                            fat: (fatConsumed, macroTargets.fat),
+                            fiber: (fiberConsumed, fiberTarget)
+                        )
+
+                        WaterCard(
+                            currentOz: waterForDay,
+                            targetOz: profile.dailyWaterTargetOz,
+                            metric: profile.unitSystem == .metric,
+                            onAdd: { amount in
+                                // Use current time for today so entries can be sorted by recency;
+                                // fall back to selectedDate for past-day logging.
+                                let timestamp = Calendar.current.isDateInToday(selectedDate) ? Date() : selectedDate
+                                modelContext.insert(WaterEntry(amountOz: amount, recordedAt: timestamp))
+                                try? modelContext.save()
+                            },
+                            onRemoveLast: waterEntriesForDay.isEmpty ? nil : {
+                                modelContext.delete(waterEntriesForDay[0])
+                                try? modelContext.save()
+                            }
+                        )
+
+                        LoggedMealsSection(logs: logsForDay) { log in
+                            modelContext.delete(log)
                             try? modelContext.save()
                         }
-                    )
-
-                    LoggedMealsSection(logs: logsForDay) { log in
-                        modelContext.delete(log)
-                        try? modelContext.save()
+                    }
+                    .padding()
+                }
+                .themedScreenBackground()
+                .navigationTitle("Today")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { showLogSheet = true } label: {
+                            Image(systemName: "plus.circle.fill").font(.title2)
+                        }
                     }
                 }
-                .padding()
-            }
-            .themedScreenBackground()
-            .navigationTitle("Today")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { showLogSheet = true } label: {
-                        Image(systemName: "plus.circle.fill").font(.title2)
-                    }
+                .task {
+                    pedometer.startDayTracking()
+                    await updateStepsTierIfNeeded(profile: profile)
                 }
             }
-            .task {
-                pedometer.startDayTracking()
+            .confettiCelebration(trigger: confettiTrigger)
+            .onChange(of: todayWater) { old, new in
+                celebrateIfCrossed(old: Double(old), new: Double(new), target: Double(profile.dailyWaterTargetOz))
             }
-        }
-        .confettiCelebration(trigger: confettiTrigger)
-        .onChange(of: todayWater) { old, new in
-            celebrateIfCrossed(old: Double(old), new: Double(new), target: Double(profile.dailyWaterTargetOz))
-        }
-        .onChange(of: todayProtein) { old, new in
-            celebrateIfCrossed(old: old, new: new, target: Double(macroTargets.protein))
-        }
-        .onChange(of: todayFiber) { old, new in
-            celebrateIfCrossed(old: old, new: new, target: Double(fiberTarget))
+            .onChange(of: todayProtein) { old, new in
+                celebrateIfCrossed(old: old, new: new, target: Double(macroTargets.protein))
+            }
+            .onChange(of: todayFiber) { old, new in
+                celebrateIfCrossed(old: old, new: new, target: Double(fiberTarget))
+            }
         }
     }
 
@@ -177,6 +186,15 @@ struct DashboardView: View {
         if target > 0 && old < target && new >= target {
             confettiTrigger += 1
         }
+    }
+
+    /// Queries the 14-day rolling average step count from CMPedometer and updates
+    /// the profile's stepsTier if it no longer matches the observed activity level.
+    private func updateStepsTierIfNeeded(profile: UserProfile) async {
+        guard let averageSteps = await pedometer.queryAverageSteps(overPastDays: 14) else { return }
+        let newTier = StepsTier.matching(steps: averageSteps)
+        guard newTier != profile.stepsTier else { return }
+        profile.stepsTier = newTier
     }
 }
 

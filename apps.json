@@ -8,14 +8,14 @@
       "bundleIdentifier": "com.matteowelford.calclone",
       "developerName": "Matteo Welford",
       "subtitle": "AI-powered calorie tracking",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "versionDate": "2026-07-27",
-      "versionDescription": "Version 1.0.1.",
-      "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.1/Fueli.ipa",
+      "versionDescription": "Version 1.0.2.",
+      "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.2/Fueli.ipa",
       "localizedDescription": "Fueli uses AI to identify food from photos and estimate nutrition, making calorie tracking effortless.",
       "iconURL": "https://raw.githubusercontent.com/mwelford2/Fueli/main/CalClone/Resources/Assets.xcassets/AppIcon.appiconset/Gemini_Generated_Image_a4y40ga4y40ga4y4(1).png",
       "tintColor": "F97316",
-      "size": 1861144,
+      "size": 1864076,
       "permissions": [
         {
           "type": "camera",
@@ -27,6 +27,13 @@
         }
       ],
       "versions": [
+        {
+          "version": "1.0.2",
+          "date": "2026-07-27",
+          "localizedDescription": "Version 1.0.2.",
+          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.2/Fueli.ipa",
+          "size": 1864076
+        },
         {
           "version": "1.0.1",
           "date": "2026-07-27",

@@ -12,7 +12,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selection) {
             Tab("Today", systemImage: "house.fill", value: AppTab.today) {
-                DashboardView(profile: profile, showLogSheet: $showLogSheet)
+                DashboardView(showLogSheet: $showLogSheet)
             }
             Tab("History", systemImage: "calendar", value: AppTab.history) {
                 HistoryView(profile: profile)
