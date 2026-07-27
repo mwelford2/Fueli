@@ -1,0 +1,54 @@
+name: CalClone
+options:
+  bundleIdPrefix: com.matteowelford.calclone
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_PREVIEWS: YES
+
+targets:
+  CalClone:
+    type: application
+    platform: iOS
+    sources:
+      - path: CalClone
+        excludes:
+          - "**/.DS_Store"
+    resources:
+      - path: CalClone/Resources/Assets.xcassets
+    info:
+      path: CalClone/Resources/Info.plist
+      properties:
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSCameraUsageDescription: "CalClone uses your camera to identify food and estimate its nutrition."
+        NSPhotoLibraryUsageDescription: "CalClone lets you pick photos of meals to log their nutrition."
+        ITSAppUsesNonExemptEncryption: false
+    entitlements:
+      path: CalClone/Resources/CalClone.entitlements
+      properties: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.matteowelford.calclone
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_EMIT_LOC_STRINGS: YES
+schemes:
+  CalClone:
+    build:
+      targets:
+        CalClone: all
+    run:
+      config: Debug
+    archive:
+      config: Release
