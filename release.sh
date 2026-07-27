@@ -6,16 +6,14 @@ APPS_JSON="$(dirname "$0")/apps.json"
 
 # ── Args ──────────────────────────────────────────────────────────────────────
 usage() {
-  echo "Usage: $(basename "$0") <version> [\"release notes\"]"
-  echo "  version      e.g. 1.2.0"
+  echo "Usage: $(basename "$0") [\"release notes\"]"
   echo "  release notes  optional; defaults to 'Version <version>.'"
+  echo "  version is read automatically from the built IPA's Info.plist"
   exit 1
 }
 
-[[ -z "$1" ]] && usage
-VERSION="$1"
-TAG="v${VERSION}"
-NOTES="${2:-Version ${VERSION}.}"
+[[ "$1" == "-h" || "$1" == "--help" ]] && usage
+NOTES_ARG="$1"
 TODAY=$(date +%Y-%m-%d)
 
 # ── Validate ──────────────────────────────────────────────────────────────────
@@ -25,13 +23,10 @@ fi
 if ! command -v jq &>/dev/null; then
   echo "error: jq not found. Install with: brew install jq" && exit 1
 fi
-if gh release view "$TAG" --repo "$REPO" &>/dev/null 2>&1; then
-  echo "error: release $TAG already exists on GitHub." && exit 1
-fi
 
 # ── Build IPA ─────────────────────────────────────────────────────────────────
 echo "==> Packaging IPA from most recent Xcode archive..."
-make-ipa.sh
+~/bin/make-ipa.sh
 
 IPA_PATH="$(ls -t "$(dirname "$0")"/*.ipa 2>/dev/null | head -1)"
 if [[ -z "$IPA_PATH" ]]; then
@@ -39,22 +34,30 @@ if [[ -z "$IPA_PATH" ]]; then
 fi
 IPA_NAME="$(basename "$IPA_PATH")"
 IPA_SIZE=$(wc -c < "$IPA_PATH" | tr -d ' ')
-DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${TAG}/${IPA_NAME}"
 
 # Read the actual version string baked into the IPA so apps.json always matches
 UNZIP_DIR=$(mktemp -d)
 unzip -q "$IPA_PATH" -d "$UNZIP_DIR"
 APP_PATH=$(find "$UNZIP_DIR/Payload" -maxdepth 1 -name "*.app" | head -1)
-BUNDLE_VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP_PATH/Info.plist")
+VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP_PATH/Info.plist")
 rm -rf "$UNZIP_DIR"
 
-if [[ "$BUNDLE_VERSION" != "$VERSION" ]]; then
-  echo "warning: IPA CFBundleShortVersionString is '$BUNDLE_VERSION', not '$VERSION'."
-  echo "         Using '$BUNDLE_VERSION' in apps.json to match the binary."
-  VERSION="$BUNDLE_VERSION"
+if [[ -z "$VERSION" ]]; then
+  echo "error: could not read CFBundleShortVersionString from $IPA_PATH" && exit 1
 fi
+TAG="v${VERSION}"
+NOTES="${NOTES_ARG:-Version ${VERSION}.}"
+DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${TAG}/${IPA_NAME}"
 
 echo "==> IPA: $IPA_PATH ($IPA_SIZE bytes, version $VERSION)"
+
+if gh release view "$TAG" --repo "$REPO" &>/dev/null 2>&1; then
+  read -r -p "Release $TAG already exists. Replace it? [y/N] " confirm
+  [[ "$confirm" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 1; }
+  gh release delete "$TAG" --repo "$REPO" --yes
+  git -C "$(dirname "$0")" push --delete origin "$TAG" 2>/dev/null || true
+  git tag -d "$TAG" 2>/dev/null || true
+fi
 
 # ── GitHub release ────────────────────────────────────────────────────────────
 echo "==> Creating GitHub release $TAG..."
@@ -87,7 +90,7 @@ jq \
   .apps[0].versionDescription = $notes |
   .apps[0].downloadURL = $url |
   .apps[0].size = $size |
-  .apps[0].versions = [$newEntry] + .apps[0].versions
+  .apps[0].versions = [$newEntry] + (.apps[0].versions | map(select(.version != $version)))
   ' "$APPS_JSON" > "${APPS_JSON}.tmp" && mv "${APPS_JSON}.tmp" "$APPS_JSON"
 
 echo "==> apps.json updated."
