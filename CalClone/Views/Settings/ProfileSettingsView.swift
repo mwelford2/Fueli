@@ -4,13 +4,18 @@ import SwiftData
 struct ProfileSettingsView: View {
     @Bindable var profile: UserProfile
     @Query(sort: \WeightEntry.recordedAt, order: .reverse) private var weightEntries: [WeightEntry]
+    @Environment(\.modelContext) private var modelContext
 
     @State private var heightFeetText: String = ""
     @State private var heightInchesText: String = ""
     @State private var heightCmText: String = ""
+    @State private var currentWeightText: String = ""
     @State private var goalWeightText: String = ""
     @State private var bodyFatText: String = ""
     @State private var trackBodyFat = false
+    @FocusState private var weightFieldFocused: Bool
+    @State private var hasChanges = false
+    @State private var showSavedToast = false
 
     private var currentWeight: Double { weightEntries.first?.weightKg ?? profile.startingWeightKg }
 
@@ -30,7 +35,9 @@ struct ProfileSettingsView: View {
                             .multilineTextAlignment(.trailing)
                             .frame(width: 60)
                             .onChange(of: heightCmText) { _, newValue in
-                                if let cm = Double(newValue) { profile.heightCm = cm }
+                                if let cm = Double(newValue), abs(cm - profile.heightCm) > 0.01 {
+                                    profile.heightCm = cm
+                                }
                             }
                         Text("cm").foregroundStyle(.secondary)
                     }
@@ -51,6 +58,25 @@ struct ProfileSettingsView: View {
                             .onChange(of: heightInchesText) { _, _ in saveHeight() }
                         Text("in").foregroundStyle(.secondary)
                     }
+                }
+                HStack {
+                    Text("Current Weight")
+                    Spacer()
+                    TextField(profile.unitSystem.weightUnit, text: $currentWeightText)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 80)
+                        .focused($weightFieldFocused)
+                        .toolbar {
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("Done") {
+                                    logCurrentWeight()
+                                    weightFieldFocused = false
+                                }
+                            }
+                        }
+                    Text(profile.unitSystem.weightUnit).foregroundStyle(.secondary)
                 }
                 Toggle("I know my body fat %", isOn: $trackBodyFat.animation())
                     .onChange(of: trackBodyFat) { _, isOn in
@@ -89,7 +115,12 @@ struct ProfileSettingsView: View {
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
                             .onChange(of: goalWeightText) { _, newValue in
-                                if let value = Double(newValue) { profile.goalWeightKg = profile.weightKg(fromDisplay: value) }
+                                if let value = Double(newValue) {
+                                    let newKg = profile.weightKg(fromDisplay: value)
+                                    if abs(newKg - profile.goalWeightKg) > 0.01 {
+                                        profile.goalWeightKg = newKg
+                                    }
+                                }
                             }
                         Text(profile.unitSystem.weightUnit).foregroundStyle(.secondary)
                     }
@@ -174,10 +205,45 @@ struct ProfileSettingsView: View {
         .themedScreenBackground()
         .navigationTitle("Goals & Profile")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if hasChanges {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Save") { saveChanges() }
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Color.themeOlive)
+                        .transition(.opacity)
+                }
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if showSavedToast {
+                SavedToastView()
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .padding(.bottom, 24)
+            }
+        }
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: hasChanges)
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: showSavedToast)
+        .onChange(of: profile.sex) { _, _ in hasChanges = true }
+        .onChange(of: profile.birthDate) { _, _ in hasChanges = true }
+        .onChange(of: profile.heightCm) { _, _ in hasChanges = true }
+        .onChange(of: profile.trainingGoal) { _, _ in hasChanges = true }
+        .onChange(of: profile.recompFocus) { _, _ in hasChanges = true }
+        .onChange(of: profile.stepsTier) { _, _ in hasChanges = true }
+        .onChange(of: profile.workoutHoursTier) { _, _ in hasChanges = true }
+        .onChange(of: profile.dietPreference) { _, _ in hasChanges = true }
+        .onChange(of: profile.goalWeightKg) { _, _ in hasChanges = true }
+        .onChange(of: profile.bodyFatPercent) { _, _ in hasChanges = true }
+        .onChange(of: profile.manualCalorieTarget) { _, _ in hasChanges = true }
+        .onChange(of: profile.manualProteinTarget) { _, _ in hasChanges = true }
+        .onChange(of: profile.manualCarbTarget) { _, _ in hasChanges = true }
+        .onChange(of: profile.manualFatTarget) { _, _ in hasChanges = true }
+        .onChange(of: profile.manualFiberTarget) { _, _ in hasChanges = true }
         .onAppear {
             heightFeetText = String(profile.heightFeet)
             heightInchesText = String(profile.heightRemainderInches)
             heightCmText = String(format: "%.0f", profile.heightCm)
+            currentWeightText = String(format: "%.1f", profile.displayWeight(currentWeight))
             goalWeightText = String(format: "%.0f", profile.displayWeight(profile.goalWeightKg))
             if let bf = profile.bodyFatPercent {
                 trackBodyFat = true
@@ -186,9 +252,47 @@ struct ProfileSettingsView: View {
         }
     }
 
+    private func saveChanges() {
+        try? modelContext.save()
+        hasChanges = false
+        withAnimation {
+            showSavedToast = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            withAnimation {
+                showSavedToast = false
+            }
+        }
+    }
+
+    private func logCurrentWeight() {
+        guard let value = Double(currentWeightText) else { return }
+        let kg = profile.weightKg(fromDisplay: value)
+        modelContext.insert(WeightEntry(weightKg: kg))
+    }
+
     private func saveHeight() {
         guard let feet = Double(heightFeetText), let inches = Double(heightInchesText) else { return }
-        profile.heightCm = UnitConversion.inchesToCm(feet * 12 + inches)
+        let newCm = UnitConversion.inchesToCm(feet * 12 + inches)
+        guard abs(newCm - profile.heightCm) > 0.01 else { return }
+        profile.heightCm = newCm
+    }
+}
+
+private struct SavedToastView: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(Color.themeSage)
+            Text("Changes saved")
+                .font(.subheadline)
+                .fontWeight(.medium)
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 11)
+        .background(Color.themeInk, in: Capsule())
+        .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
     }
 }
 
