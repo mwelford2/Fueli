@@ -18,6 +18,7 @@ struct NutritionConfirmView: View {
     @State var fatText: String
     @State var fiberText: String
     @State var servingDescription: String
+    @State private var servings: Double = 1.0
     @State private var mealType: MealType = .suggested()
     @State private var saveAsFavorite = false
 
@@ -51,7 +52,15 @@ struct NutritionConfirmView: View {
 
                 Section("Food") {
                     TextField("Name", text: $name)
-                    TextField("Serving", text: $servingDescription)
+                    TextField("Serving size", text: $servingDescription)
+                    Stepper(value: $servings, in: 0.5...20, step: 0.5) {
+                        HStack {
+                            Text("Servings")
+                            Spacer()
+                            Text(servingsLabel)
+                                .foregroundStyle(.primary)
+                        }
+                    }
                     Picker("Meal", selection: $mealType) {
                         ForEach(MealType.allCases) { type in
                             Label(type.label, systemImage: type.icon).tag(type)
@@ -59,7 +68,7 @@ struct NutritionConfirmView: View {
                     }
                 }
 
-                Section("Nutrition") {
+                Section("Nutrition (per serving)") {
                     NumericRow(label: "Calories", text: $caloriesText, unit: "kcal")
                     NumericRow(label: "Protein", text: $proteinText, unit: "g")
                     NumericRow(label: "Carbs", text: $carbsText, unit: "g")
@@ -86,22 +95,27 @@ struct NutritionConfirmView: View {
         }
     }
 
+    private var servingsLabel: String {
+        servings == servings.rounded() ? "\(Int(servings))" : String(format: "%.1f", servings)
+    }
+
     private func save() {
-        let calories = Int(caloriesText) ?? 0
-        let protein = Double(proteinText) ?? 0
-        let carbs = Double(carbsText) ?? 0
-        let fat = Double(fatText) ?? 0
-        let fiber = Double(fiberText) ?? 0
+        let caloriesPerServing = Int(caloriesText) ?? 0
+        let proteinPerServing = Double(proteinText) ?? 0
+        let carbsPerServing = Double(carbsText) ?? 0
+        let fatPerServing = Double(fatText) ?? 0
+        let fiberPerServing = Double(fiberText) ?? 0
         let photoData = image?.jpegData(compressionQuality: 0.6)
 
         let log = FoodLog(
             name: name,
-            calories: calories,
-            proteinG: protein,
-            carbsG: carbs,
-            fatG: fat,
-            fiberG: fiber,
+            calories: Int((Double(caloriesPerServing) * servings).rounded()),
+            proteinG: proteinPerServing * servings,
+            carbsG: carbsPerServing * servings,
+            fatG: fatPerServing * servings,
+            fiberG: fiberPerServing * servings,
             servingDescription: servingDescription,
+            servings: servings,
             mealType: mealType,
             source: source,
             photoData: photoData
@@ -109,13 +123,14 @@ struct NutritionConfirmView: View {
         modelContext.insert(log)
 
         if saveAsFavorite {
+            // Favorites store per-serving values so the user can choose servings when re-logging.
             let favorite = SavedMeal(
                 name: name,
-                calories: calories,
-                proteinG: protein,
-                carbsG: carbs,
-                fatG: fat,
-                fiberG: fiber,
+                calories: caloriesPerServing,
+                proteinG: proteinPerServing,
+                carbsG: carbsPerServing,
+                fatG: fatPerServing,
+                fiberG: fiberPerServing,
                 servingDescription: servingDescription,
                 photoData: photoData
             )

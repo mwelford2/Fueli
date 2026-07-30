@@ -1,10 +1,16 @@
 import SwiftUI
 import SwiftData
 
+enum WhereFocus {
+    case heightFeet, heightIn, heightCm, weight
+}
+
 struct OnboardingFlowView: View {
     @Bindable var profile: UserProfile
     @Environment(\.modelContext) private var modelContext
-
+    
+    @FocusState private var focus: WhereFocus?
+    @State private var selection: TextSelection?
     @State private var step = 0
     @State private var heightFeetText: String = ""
     @State private var heightInchesText: String = ""
@@ -70,6 +76,7 @@ struct OnboardingFlowView: View {
             }
         }
         .onAppear {
+            guard profile.hasCompletedOnboarding else { return }
             heightFeetText = String(profile.heightFeet)
             heightInchesText = String(profile.heightRemainderInches)
             heightCmText = String(format: "%.0f", profile.heightCm)
@@ -214,11 +221,13 @@ struct OnboardingFlowView: View {
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 36)
+                    .contentShape(Rectangle())
                 Text("ft").foregroundStyle(.secondary)
                 TextField("9", text: $heightInchesText)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 36)
+                    .contentShape(Rectangle())
                 Text("in").foregroundStyle(.secondary)
             }
         }
@@ -228,7 +237,13 @@ struct OnboardingFlowView: View {
         HStack {
             Text("Weight")
             Spacer()
-            TextField("0", text: $weightText)
+            TextField("0", text: $weightText, selection: $selection)
+                .focused($focus, equals: .weight)
+                .onChange(of: focus) {
+                    if focus == .weight {
+                        selection = .init(range: weightText.startIndex..<weightText.endIndex)
+                    }
+                }
                 .keyboardType(.decimalPad)
                 .multilineTextAlignment(.trailing)
                 .frame(width: 70)
@@ -330,6 +345,8 @@ struct OnboardingFlowView: View {
                     profile.stepsTier = tier
                 }
             }
+            var daysAvgOver = 28
+            Text("Average steps over the past \(daysAvgOver) days: ")
         }
     }
 

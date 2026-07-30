@@ -166,7 +166,6 @@ struct DashboardView: View {
                 }
                 .task {
                     pedometer.startDayTracking()
-                    await updateStepsTierIfNeeded(profile: profile)
                 }
             }
             .confettiCelebration(trigger: confettiTrigger)
@@ -188,14 +187,6 @@ struct DashboardView: View {
         }
     }
 
-    /// Queries the 14-day rolling average step count from CMPedometer and updates
-    /// the profile's stepsTier if it no longer matches the observed activity level.
-    private func updateStepsTierIfNeeded(profile: UserProfile) async {
-        guard let averageSteps = await pedometer.queryAverageSteps(overPastDays: 14) else { return }
-        let newTier = StepsTier.matching(steps: averageSteps)
-        guard newTier != profile.stepsTier else { return }
-        profile.stepsTier = newTier
-    }
 }
 
 private struct DateNavigator: View {

@@ -41,6 +41,7 @@ final class FoodLog {
     var fatG: Double
     var fiberG: Double = 0
     var servingDescription: String
+    var servings: Double = 1.0
     var mealType: MealType
     var loggedAt: Date
     var source: LogSource
@@ -57,6 +58,7 @@ final class FoodLog {
         fatG: Double,
         fiberG: Double = 0,
         servingDescription: String = "1 serving",
+        servings: Double = 1.0,
         mealType: MealType = .suggested(),
         loggedAt: Date = Date(),
         source: LogSource,
@@ -71,6 +73,7 @@ final class FoodLog {
         self.fatG = fatG
         self.fiberG = fiberG
         self.servingDescription = servingDescription
+        self.servings = servings
         self.mealType = mealType
         self.loggedAt = loggedAt
         self.source = source

@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import CoreMotion
 
 enum BiologicalSex: String, Codable, CaseIterable, Identifiable {
     case male, female
@@ -35,6 +36,63 @@ enum StepsTier: String, Codable, CaseIterable, Identifiable {
         case .tier11to13k: return 12000
         case .tier13kPlus: return 14000
         }
+    }
+
+    /// Returns the tier whose range contains the given average daily step count.
+    static func matching(steps: Double) -> StepsTier {
+        switch steps {
+        case ..<5_000:          return .tier3to5k
+        case 5_000..<7_000:     return .tier5to7k
+        case 7_000..<9_000:     return .tier7to9k
+        case 9_000..<11_000:    return .tier9to11k
+        case 11_000..<13_000:   return .tier11to13k
+        default:                return .tier13kPlus
+        }
+    }
+}
+
+func avgStepsOver(days: Int){
+    let pedometer = CMPedometer()
+    let cal = Calendar.current
+    let today = Date()
+    
+    let group = DispatchGroup()
+    var totalSteps = 0
+    var daysWithData = 0
+    let lock = NSLock()
+    
+    for offset in 0..<days {
+        // guard is if date calculation works fine, keep going, if it fails continue (skip this iteration)
+        guard let start = cal.date(byAdding: .day, value: -offset - 1, to: today),
+              let end = cal.date(byAdding: .day, value: -offset, to: today)
+                else { continue }
+        
+        // group is because pedometer queries are asynchronous, groups just track them and notify when all are finished.
+        group.enter()
+        pedometer.queryPedometerData(from: start, to: end) { data, error in
+            // defer just defer the instructions inside until the current scope is left
+            defer { group.leave() }
+            guard let data = data else { return }
+            
+            // Since the queries can run on multiple threads at a time, lock ensures multiple different things can't modify the same piece of data. It does this by making everything wait before the stuff inside the lock is done running.
+            lock.lock()
+            defer { lock.unlock() } // Guards against some error not letting code reach the unlock stage
+            totalSteps += data.numberOfSteps.intValue
+            daysWithData += 1
+            lock.unlock()
+            
+            
+        }
+        
+    }
+    
+    group.notify(queue: .main) { [weak self] in
+        guard daysWithData > 0 else {
+            self?.averageSteps = 0
+            return
+        }
+        self?.averageSteps = Double(totalSteps)/Double(daysWithData)
+        
     }
 }
 
@@ -150,7 +208,7 @@ enum UnitConversion {
 @Model
 final class UserProfile {
     var id: UUID
-    var hasCompletedOnboarding: Bool
+    var hasCompletedOnboarding: Bool = false
     var sex: BiologicalSex
     var birthDate: Date
     /// Stored in cm internally; displayed as ft/in in the UI.

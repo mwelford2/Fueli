@@ -9,6 +9,8 @@ DerivedData/
 *.mode1v3
 *.mode2v3
 *.perspectivev3
+*.xcconfig
+CalClone/Secrets.xcconfig
 build/
 
 # IPA files

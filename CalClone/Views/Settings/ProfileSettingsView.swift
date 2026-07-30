@@ -224,21 +224,7 @@ struct ProfileSettingsView: View {
         }
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: hasChanges)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: showSavedToast)
-        .onChange(of: profile.sex) { _, _ in hasChanges = true }
-        .onChange(of: profile.birthDate) { _, _ in hasChanges = true }
-        .onChange(of: profile.heightCm) { _, _ in hasChanges = true }
-        .onChange(of: profile.trainingGoal) { _, _ in hasChanges = true }
-        .onChange(of: profile.recompFocus) { _, _ in hasChanges = true }
-        .onChange(of: profile.stepsTier) { _, _ in hasChanges = true }
-        .onChange(of: profile.workoutHoursTier) { _, _ in hasChanges = true }
-        .onChange(of: profile.dietPreference) { _, _ in hasChanges = true }
-        .onChange(of: profile.goalWeightKg) { _, _ in hasChanges = true }
-        .onChange(of: profile.bodyFatPercent) { _, _ in hasChanges = true }
-        .onChange(of: profile.manualCalorieTarget) { _, _ in hasChanges = true }
-        .onChange(of: profile.manualProteinTarget) { _, _ in hasChanges = true }
-        .onChange(of: profile.manualCarbTarget) { _, _ in hasChanges = true }
-        .onChange(of: profile.manualFatTarget) { _, _ in hasChanges = true }
-        .onChange(of: profile.manualFiberTarget) { _, _ in hasChanges = true }
+        .modifier(ProfileChangeObserver(profile: profile, hasChanges: $hasChanges))
         .onAppear {
             heightFeetText = String(profile.heightFeet)
             heightInchesText = String(profile.heightRemainderInches)
@@ -276,6 +262,30 @@ struct ProfileSettingsView: View {
         let newCm = UnitConversion.inchesToCm(feet * 12 + inches)
         guard abs(newCm - profile.heightCm) > 0.01 else { return }
         profile.heightCm = newCm
+    }
+}
+
+private struct ProfileChangeObserver: ViewModifier {
+    var profile: UserProfile
+    @Binding var hasChanges: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: profile.sex) { _, _ in hasChanges = true }
+            .onChange(of: profile.birthDate) { _, _ in hasChanges = true }
+            .onChange(of: profile.heightCm) { _, _ in hasChanges = true }
+            .onChange(of: profile.trainingGoal) { _, _ in hasChanges = true }
+            .onChange(of: profile.recompFocus) { _, _ in hasChanges = true }
+            .onChange(of: profile.stepsTier) { _, _ in hasChanges = true }
+            .onChange(of: profile.workoutHoursTier) { _, _ in hasChanges = true }
+            .onChange(of: profile.dietPreference) { _, _ in hasChanges = true }
+            .onChange(of: profile.goalWeightKg) { _, _ in hasChanges = true }
+            .onChange(of: profile.bodyFatPercent) { _, _ in hasChanges = true }
+            .onChange(of: profile.manualCalorieTarget) { _, _ in hasChanges = true }
+            .onChange(of: profile.manualProteinTarget) { _, _ in hasChanges = true }
+            .onChange(of: profile.manualCarbTarget) { _, _ in hasChanges = true }
+            .onChange(of: profile.manualFatTarget) { _, _ in hasChanges = true }
+            .onChange(of: profile.manualFiberTarget) { _, _ in hasChanges = true }
     }
 }
 
