@@ -1,7 +1,65 @@
 import Foundation
 
-/// Structured nutrition estimate returned by an AI provider, or entered manually.
+enum MatchStrategy: String, Codable, Equatable {
+    case composite, ingredients
+}
+
+enum MeasureBasis: String, Codable, Equatable {
+    case raw, cooked, as_packaged
+}
+
+struct Quantity: Codable, Equatable {
+    var amount: Double
+    var unit: String
+}
+
+struct Component: Codable, Equatable {
+    var label: String
+    var fdcQuery: String
+    var fallbackQueries: [String]
+    var preferredDataTypes: [String]
+    var brand: String?
+    var quantity: Quantity
+    var estimatedGrams: Double
+    var preparation: String?
+    var measureBasis: MeasureBasis
+    var negligible: Bool
+    var confidence: Double
+
+    enum CodingKeys: String, CodingKey {
+        case label, brand, quantity, negligible, confidence, preparation
+        case fdcQuery = "fdc_query"
+        case fallbackQueries = "fallback_queries"
+        case preferredDataTypes = "preferred_data_types"
+        case estimatedGrams = "estimated_grams"
+        case measureBasis = "measure_basis"
+    }
+}
+
 struct NutritionAnalysisResult: Codable, Equatable {
+    var dishName: String
+    var matchStrategy: MatchStrategy
+    var composite: Component?
+    var components: [Component]
+    var totalEstimatedGrams: Double
+    var confidence: Double
+    var needsConfirmation: Bool
+    var clarifyingQuestion: String?
+    var assumptions: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case composite, components, confidence, assumptions
+        case dishName = "dish_name"
+        case matchStrategy = "match_strategy"
+        case totalEstimatedGrams = "total_estimated_grams"
+        case needsConfirmation = "needs_confirmation"
+        case clarifyingQuestion = "clarifying_question"
+    }
+}
+
+/// Simple nutrition-facts container used by the barcode, manual entry, and confirm flows.
+struct NutritionFacts: Identifiable, Equatable {
+    var id: String { name + servingDescription }
     var name: String
     var calories: Int
     var proteinG: Double
@@ -9,15 +67,6 @@ struct NutritionAnalysisResult: Codable, Equatable {
     var fatG: Double
     var fiberG: Double
     var servingDescription: String
-
-    enum CodingKeys: String, CodingKey {
-        case name, calories
-        case proteinG = "protein_g"
-        case carbsG = "carbs_g"
-        case fatG = "fat_g"
-        case fiberG = "fiber_g"
-        case servingDescription = "serving_description"
-    }
 
     init(name: String, calories: Int, proteinG: Double, carbsG: Double, fatG: Double, fiberG: Double = 0, servingDescription: String) {
         self.name = name
@@ -27,18 +76,6 @@ struct NutritionAnalysisResult: Codable, Equatable {
         self.fatG = fatG
         self.fiberG = fiberG
         self.servingDescription = servingDescription
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decode(String.self, forKey: .name)
-        calories = try container.decode(Int.self, forKey: .calories)
-        proteinG = try container.decode(Double.self, forKey: .proteinG)
-        carbsG = try container.decode(Double.self, forKey: .carbsG)
-        fatG = try container.decode(Double.self, forKey: .fatG)
-        // Providers occasionally omit fiber; treat it as 0 rather than failing the parse.
-        fiberG = try container.decodeIfPresent(Double.self, forKey: .fiberG) ?? 0
-        servingDescription = try container.decode(String.self, forKey: .servingDescription)
     }
 }
 
