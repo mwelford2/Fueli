@@ -214,7 +214,7 @@ class USDAapiCaller {
         MATCHING CRITERIA (in priority order):
         1. Core food identity — is it the same base food? (e.g. "chicken breast" vs "chicken thigh" vs "chicken nuggets" are different foods)
         2. Preparation method — grilled, fried, baked, raw, steamed, etc.
-        3. Form/cut — whole, sliced, diced, shredded, ground
+        3. Form/cut — whole, sliced, diced, shredded, ground. For produce specifically, treat raw/whole, juice, canned, and dried as different forms with materially different nutrition (especially fiber) — do not treat "tangerine, raw" and "tangerine juice" as an equally good match just because they share a base food name.
         4. Additional qualifiers — fat content (whole/skim/2%), skin on/off, bone in/out, seasoning, brand vs generic
 
         Match on the most specific overlapping terms, not just the first shared word.

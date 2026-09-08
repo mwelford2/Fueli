@@ -82,6 +82,8 @@ FDC search matches against USDA description strings, and relevance degrades fast
 - Encode preparation when it changes nutrition: roasted, boiled, fried, raw, dry. Skip it when it doesn't.
 - Never include quantities, sizes, brand names (except in `brand`), or subjective words: no "homemade", "fresh", "large", "delicious", "healthy".
 - Use USDA's vocabulary where you know it: "oil, olive", "cheese, cheddar", "rice, white, cooked", "beef, ground, 85% lean, cooked".
+- Translate brand/colloquial names to the generic food USDA actually catalogs before writing the query — do not query the brand or slang term itself. Examples: "Cuties"/"Halos" → tangerines/mandarin oranges ("tangerines, (mandarin oranges), raw"); "Cheerios" → oat cereal; a colloquial fruit/vegetable name should resolve to its standard USDA name, form, and raw/cooked state.
+- When a food is normally eaten whole (fruit, vegetables, whole grains), the query and `preferred_data_types` must target the whole/raw form, not juice, canned, dried, or peeled variants — those have substantially different macros (especially fiber, which can differ 5–10x between whole and juiced/canned forms of the same fruit) and will silently produce a wrong-but-plausible-looking result if matched. Only depart from "raw"/whole when the user's description says otherwise (e.g. "orange juice", "canned peaches").
 - `fallback_queries`: 1–3 alternates, each strictly more generic than the last. If `chicken, breast, roasted` returns nothing, `chicken breast` should. End with a bare base-food term.
 
 ## Choosing `preferred_data_types`
@@ -122,7 +124,7 @@ Include components that are not visible but materially affect calories, each wit
 - Butter or oil on bread, vegetables, and rice.
 - Breading and batter as separate flour/oil components when the coating is thick.
 
-Mark salt, black pepper, dry spices, herbs, vinegar, and non-caloric sweeteners with `negligible: true` so the client can skip the lookup. Still list them.
+Mark salt, black pepper, dry spices, herbs, vinegar, and non-caloric sweeteners with `negligible: true` so the client can skip the lookup. Still list them. Never mark a whole food item negligible just because it's small relative to the rest of the meal (a side piece of fruit, a small side salad) — `negligible` is for seasonings with no meaningful macro content, not for small portions of real food. A small fruit is a disproportionate fiber source relative to its calories, so dropping it under-reports fiber far more than it under-reports calories.
 
 ## Ambiguity and clarifying questions
 
