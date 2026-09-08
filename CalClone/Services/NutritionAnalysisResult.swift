@@ -9,6 +9,17 @@ class USDAapiCaller {
     private var description: String?
     private var imageBase64: String?
 
+    /// Dedicated session for USDA calls. Some VPN/proxy stacks (e.g. a local dev VPN)
+    /// mangle or drop HTTP/3 (QUIC) responses to `api.nal.usda.gov`, which surfaces as
+    /// `NSURLErrorBadServerResponse` (-1011). We opt each request out of HTTP/3 (see
+    /// `assumesHTTP3Capable` below) and give it a slightly longer timeout.
+    private let session: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 30
+        config.waitsForConnectivity = true
+        return URLSession(configuration: config)
+    }()
+
     init() {
         self.APIKey = Bundle.main.object(forInfoDictionaryKey: "USDA_API_KEY") as? String ?? ""
     }
@@ -130,21 +141,35 @@ class USDAapiCaller {
         }
         components.queryItems = queryItems
 
-        guard let URL = components.url else { throw URLError(.badURL) }
+        guard let requestURL = components.url else { throw URLError(.badURL) }
+
+        var request = URLRequest(url: requestURL)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        // Opt out of HTTP/3 — some proxy/VPN stacks corrupt QUIC responses to this host.
+        request.assumesHTTP3Capable = false
 
         var lastStatusCode = -1
+        var lastNetworkError: Swift.Error?
         for attempt in 1...Self.maxSearchAttempts {
-            let (data, response) = try await URLSession.shared.data(from: URL)
+            do {
+                let (data, response) = try await session.data(for: request)
 
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw URLError(.badServerResponse)
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    throw URLError(.badServerResponse)
+                }
+
+                if httpResponse.statusCode == 200 {
+                    return try JSONDecoder().decode(FDCSearchResponse.self, from: data)
+                }
+
+                lastStatusCode = httpResponse.statusCode
+            } catch let error as URLError {
+                // Connection-level failures (proxy/VPN interference, timeouts, DNS,
+                // offline). Retrying rarely helps if a VPN is mangling the response,
+                // but a transient blip might clear.
+                lastNetworkError = error
             }
 
-            if httpResponse.statusCode == 200 {
-                return try JSONDecoder().decode(FDCSearchResponse.self, from: data)
-            }
-
-            lastStatusCode = httpResponse.statusCode
             // 400/429/5xx from FDC are usually transient; back off and retry.
             if attempt < Self.maxSearchAttempts {
                 let delayNanos = UInt64(0.4 * pow(2.0, Double(attempt - 1)) * 1_000_000_000)
@@ -152,8 +177,12 @@ class USDAapiCaller {
             }
         }
 
+        if let lastNetworkError {
+            print("USDA search unreachable after \(Self.maxSearchAttempts) attempts for query '\(query)': \(lastNetworkError)")
+            throw AIServiceError.usdaUnreachable
+        }
         print("USDA search failed after \(Self.maxSearchAttempts) attempts (last status \(lastStatusCode)) for query: \(query)")
-        throw URLError(.badServerResponse)
+        throw AIServiceError.usdaUnreachable
     }
 
     /// Searches the primary query, then each fallback in order, stopping at the first
@@ -379,6 +408,7 @@ enum AIServiceError: LocalizedError {
     case httpError(Int, String)
     case emptyResponse
     case unparsableResponse(String)
+    case usdaUnreachable
 
     var errorDescription: String? {
         switch self {
@@ -394,6 +424,8 @@ enum AIServiceError: LocalizedError {
             return "The AI provider returned an empty response."
         case .unparsableResponse(let raw):
             return "Couldn't parse a nutrition estimate from the response: \(raw.prefix(200))"
+        case .usdaUnreachable:
+            return "Couldn't reach the USDA nutrition database. Check your internet connection — if you're on a VPN or proxy, try turning it off and retrying."
         }
     }
 }
