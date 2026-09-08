@@ -22,6 +22,8 @@
 		726615D068D1A35BEDE25B97 /* FoodLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E41A8A3786B08ED166050BD /* FoodLog.swift */; };
 		7A16E03E11BB93F9F21EADCA /* LogEntryHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366AD4A53F4C2EEF474DC8B4 /* LogEntryHubView.swift */; };
 		7C5A398C025A42740BFB45A4 /* DescribeMealFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC3718973051613808BA54C /* DescribeMealFlowView.swift */; };
+		939174EB99AA1E2A07BF7833 /* MealAnalysisFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEADF03981AA58270300172C /* MealAnalysisFlow.swift */; };
+		58B09BCF6B64B8EC62C1F8C5 /* EditMealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0F88A784429709944D836 /* EditMealView.swift */; };
 		800C804C19F850D13B5DAA17 /* BarcodeScanFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */; };
 		8565975DD9052CE2CD3CC4AA /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406A0704776FFD2516ABFC2E /* CameraPicker.swift */; };
 		87AE6596F52D397E7E21A273 /* WaterEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */; };
@@ -80,6 +82,8 @@
 		5A31FB6E155EE90307643C7C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterEntry.swift; sourceTree = "<group>"; };
 		6FC3718973051613808BA54C /* DescribeMealFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribeMealFlowView.swift; sourceTree = "<group>"; };
+		EEADF03981AA58270300172C /* MealAnalysisFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAnalysisFlow.swift; sourceTree = "<group>"; };
+		32F0F88A784429709944D836 /* EditMealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMealView.swift; sourceTree = "<group>"; };
 		70F631071EE8D8F329402B57 /* CalClone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalClone.entitlements; sourceTree = "<group>"; };
 		24C7AB2338D8E1B4675D8767 /* CalClone-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CalClone-Free.entitlements"; sourceTree = "<group>"; };
 		87F08AC7F1F27DD95287A71B /* StreaksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksView.swift; sourceTree = "<group>"; };
@@ -144,7 +148,9 @@
 			children = (
 				26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */,
 				6FC3718973051613808BA54C /* DescribeMealFlowView.swift */,
+				32F0F88A784429709944D836 /* EditMealView.swift */,
 				366AD4A53F4C2EEF474DC8B4 /* LogEntryHubView.swift */,
+				EEADF03981AA58270300172C /* MealAnalysisFlow.swift */,
 				F8D53B8ABBE92D9722C4B260 /* ManualEntryView.swift */,
 				B8988A9E56CE2024300051C8 /* NutritionConfirmView.swift */,
 				F3F2F9B4C9B1F43B27F75065 /* PhotoCaptureFlowView.swift */,
@@ -400,6 +406,8 @@
 				CD33B0362A92FA59E75028C5 /* ConfettiView.swift in Sources */,
 				4FD3061E64C2888158C4A470 /* DashboardView.swift in Sources */,
 				7C5A398C025A42740BFB45A4 /* DescribeMealFlowView.swift in Sources */,
+				939174EB99AA1E2A07BF7833 /* MealAnalysisFlow.swift in Sources */,
+				58B09BCF6B64B8EC62C1F8C5 /* EditMealView.swift in Sources */,
 				726615D068D1A35BEDE25B97 /* FoodLog.swift in Sources */,
 				36379C3D27A4ACDC95D6321E /* HistoryView.swift in Sources */,
 				27F784FE9F965A5456CC3728 /* HealthKitService.swift in Sources */,
@@ -651,7 +659,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.9;
+				MARKETING_VERSION = 1.0.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -683,7 +691,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.9;
+				MARKETING_VERSION = 1.0.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -769,7 +777,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.9;
+				MARKETING_VERSION = 1.0.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;

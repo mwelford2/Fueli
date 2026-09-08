@@ -4,13 +4,19 @@ struct DescribeMealFlowView: View {
     let onFinished: () -> Void
 
     @State private var description = ""
-    @State private var isAnalyzing = false
-    @State private var errorMessage: String?
+    @State private var coordinator = MealAnalysisCoordinator()
     @State private var nutritionFacts: NutritionFacts?
     @State private var needsSetup = false
     @State private var showProviderSettings = false
     @FocusState private var isFocused: Bool
-    
+
+    private var isAnalyzing: Bool {
+        switch coordinator.phase {
+        case .idle, .done, .failed: return false
+        default: return true
+        }
+    }
+
     func getDescription() -> String {  description.trimmingCharacters(in: .whitespacesAndNewlines)  }
 
     var body: some View {
@@ -38,11 +44,8 @@ struct DescribeMealFlowView: View {
                         }
                     }
 
-                if isAnalyzing {
-                    RotatingStatusView(messages: RotatingStatusView.mealAnalysis)
-                }
-                if let errorMessage {
-                    Text(errorMessage).font(.footnote).foregroundStyle(.red).padding(.horizontal)
+                if coordinator.phase != .idle {
+                    MealAnalysisProgressView(coordinator: coordinator)
                 }
                 if needsSetup {
                     AISetupPromptCard { showProviderSettings = true }
@@ -50,15 +53,17 @@ struct DescribeMealFlowView: View {
 
                 Spacer()
 
-                Button {
-                    isFocused = false
-                    analyze()
-                } label: {
-                    Label("Analyze", systemImage: "sparkles").frame(maxWidth: .infinity)
+                if !isAnalyzing {
+                    Button {
+                        isFocused = false
+                        analyze()
+                    } label: {
+                        Label("Analyze", systemImage: "sparkles").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(description.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .padding()
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(description.trimmingCharacters(in: .whitespaces).isEmpty || isAnalyzing)
-                .padding()
             }
             .padding(.top)
             .themedScreenBackground()
@@ -71,6 +76,11 @@ struct DescribeMealFlowView: View {
             }
             .fullScreenCover(item: $nutritionFacts) { facts in
                 NutritionConfirmView(result: facts, source: .textDescription, onFinished: onFinished)
+            }
+            .onChange(of: coordinator.phase) { _, phase in
+                if case .done(let facts) = phase {
+                    nutritionFacts = facts
+                }
             }
             .sheet(isPresented: $showProviderSettings) {
                 NavigationStack {
@@ -95,23 +105,7 @@ struct DescribeMealFlowView: View {
             withAnimation { needsSetup = true }
             return
         }
-        isAnalyzing = true
-        errorMessage = nil
-        Task {
-            do {
-                let result = try await AINutritionService.shared.analyzeDescription(description)
-                print(result)
-                await MainActor.run {
-                    isAnalyzing = false
-                    nutritionFacts = result
-                }
-            } catch {
-                await MainActor.run {
-                    isAnalyzing = false
-                    errorMessage = error.localizedDescription
-                }
-            }
-        }
+        coordinator.start(.init(userText: getDescription(), imageBase64: nil, kind: .description))
     }
 }
 

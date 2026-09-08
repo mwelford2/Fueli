@@ -11,6 +11,7 @@ struct HistoryView: View {
 
     @State private var showAddWeight = false
     @State private var newWeightText = ""
+    @State private var editingLog: FoodLog?
 
     private var recentWeights: [WeightEntry] {
         Array(weightEntries.suffix(30))
@@ -81,7 +82,10 @@ struct HistoryView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("All Logs").font(.headline)
                         ForEach(allLogs.prefix(50)) { log in
-                            FoodLogRow(log: log)
+                            Button { editingLog = log } label: {
+                                FoodLogRow(log: log)
+                            }
+                            .buttonStyle(.plain)
                             Divider()
                         }
                     }
@@ -93,6 +97,9 @@ struct HistoryView: View {
             }
             .themedScreenBackground()
             .navigationTitle("History")
+            .sheet(item: $editingLog) { log in
+                EditMealView(log: log)
+            }
             .alert("Log Weight", isPresented: $showAddWeight) {
                 TextField("Weight (\(weightUnit))", text: $newWeightText).keyboardType(.decimalPad)
                 Button("Save") {

@@ -6,29 +6,31 @@ class USDAapiCaller {
     static let shared = USDAapiCaller()
     
     let APIKey: String
-    private var description: String?
     private var imageBase64: String?
-
-    /// Dedicated session for USDA calls. Some VPN/proxy stacks (e.g. a local dev VPN)
-    /// mangle or drop HTTP/3 (QUIC) responses to `api.nal.usda.gov`, which surfaces as
-    /// `NSURLErrorBadServerResponse` (-1011). We opt each request out of HTTP/3 (see
-    /// `assumesHTTP3Capable` below) and give it a slightly longer timeout.
-    private let session: URLSession = {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
-        config.waitsForConnectivity = true
-        return URLSession(configuration: config)
-    }()
 
     init() {
         self.APIKey = Bundle.main.object(forInfoDictionaryKey: "USDA_API_KEY") as? String ?? ""
     }
     
-    func analyzeFood(description: String?, imageBase64: String?, AIResponse: String) async throws -> NutritionFacts {
-        self.description = description
+    /// Parses a raw model reply into the structured decomposition. Throws
+    /// `unparsableResponse` if the JSON can't be recovered.
+    static func parseNutritionResult(from raw: String) throws -> NutritionAnalysisResult {
+        let clean = NutritionAnalysisResult.stripMarkdownFences(raw)
+        guard let data = clean.data(using: .utf8) else { throw AIServiceError.unparsableResponse(raw) }
+        do {
+            return try JSONDecoder().decode(NutritionAnalysisResult.self, from: data)
+        } catch {
+            print("parseNutritionResult decode failed:", error)
+            throw AIServiceError.unparsableResponse(raw)
+        }
+    }
+
+    /// Resolves a finalized decomposition into concrete nutrition numbers via the USDA API.
+    func analyzeFood(result: NutritionAnalysisResult, imageBase64: String?) async throws -> NutritionFacts {
         self.imageBase64 = imageBase64
 
-        let components = try parseAIResponse(response: AIResponse)
+        let components = result.components.filter { !$0.negligible }
+        guard !components.isEmpty else { throw AIServiceError.emptyResponse }
 
         var indexedFacts: [(Int, NutritionFacts)] = []
         try await withThrowingTaskGroup(of: (Int, NutritionFacts).self) { group in
@@ -38,7 +40,11 @@ class USDAapiCaller {
                         primaryQuery: component.fdcQuery,
                         fallbackQueries: component.fallbackQueries
                     )
-                    let facts = try await self.getNutritionFacts(decodedResponse: searchResults, query: component.fdcQuery)
+                    let facts = try await self.getNutritionFacts(
+                        decodedResponse: searchResults,
+                        query: component.fdcQuery,
+                        component: component
+                    )
                     return (index, facts)
                 }
             }
@@ -49,7 +55,25 @@ class USDAapiCaller {
 
         let sorted = indexedFacts.sorted { $0.0 < $1.0 }.map(\.1)
         guard let first = sorted.first else { throw AIServiceError.emptyResponse }
-        return sorted.dropFirst().reduce(first, +)
+        let combined = sorted.dropFirst().reduce(first, +)
+        // Prefer the model's natural dish name over the concatenated component names,
+        // and surface the whole-meal portion in the serving line.
+        let name = result.dishName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let totalGrams = components.reduce(0) { $0 + max($1.estimatedGrams, 0) }
+        let servingLine = totalGrams > 0
+            ? "\(Int(totalGrams.rounded())) g total"
+            : combined.servingDescription
+        var facts = name.isEmpty ? combined : combined.renamed(to: name)
+        facts = NutritionFacts(
+            name: facts.name,
+            calories: facts.calories,
+            proteinG: facts.proteinG,
+            carbsG: facts.carbsG,
+            fatG: facts.fatG,
+            fiberG: facts.fiberG,
+            servingDescription: servingLine
+        )
+        return facts
     }
     
     struct FDCSearchResponse: Codable {
@@ -82,29 +106,6 @@ class USDAapiCaller {
         let derivationDescription: String?
         let rank: Int?
         let percentDailyValue: Int?
-    }
-    
-    /// Parses the AI's structured meal breakdown and returns the non-negligible components,
-    /// each carrying its primary FDC search query plus fallback queries to try if the
-    /// primary comes up short.
-    func parseAIResponse(response: String) throws -> [Component] {
-        let clean = NutritionAnalysisResult.stripMarkdownFences(response)
-
-        let responseJSON: NutritionAnalysisResult
-        do {
-            guard let data = clean.data(using: .utf8) else { throw AIServiceError.unparsableResponse(response) }
-            responseJSON = try JSONDecoder().decode(NutritionAnalysisResult.self, from: data)
-        } catch {
-            print("parseAIResponse decode failed:", error)
-            throw error
-        }
-        let components = responseJSON.components.filter { !$0.negligible }
-
-        guard !components.isEmpty else {
-            throw AIServiceError.emptyResponse
-        }
-
-        return components
     }
     
     /// Data types accepted, in USDA's own preference order for whole/generic ingredients:
@@ -141,18 +142,13 @@ class USDAapiCaller {
         }
         components.queryItems = queryItems
 
-        guard let requestURL = components.url else { throw URLError(.badURL) }
-
-        var request = URLRequest(url: requestURL)
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        // Opt out of HTTP/3 — some proxy/VPN stacks corrupt QUIC responses to this host.
-        request.assumesHTTP3Capable = false
+        guard let URL = components.url else { throw URLError(.badURL) }
 
         var lastStatusCode = -1
         var lastNetworkError: Swift.Error?
         for attempt in 1...Self.maxSearchAttempts {
             do {
-                let (data, response) = try await session.data(for: request)
+                let (data, response) = try await URLSession.shared.data(from: URL)
 
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw URLError(.badServerResponse)
@@ -165,8 +161,7 @@ class USDAapiCaller {
                 lastStatusCode = httpResponse.statusCode
             } catch let error as URLError {
                 // Connection-level failures (proxy/VPN interference, timeouts, DNS,
-                // offline). Retrying rarely helps if a VPN is mangling the response,
-                // but a transient blip might clear.
+                // offline). A transient blip might clear on retry.
                 lastNetworkError = error
             }
 
@@ -179,9 +174,9 @@ class USDAapiCaller {
 
         if let lastNetworkError {
             print("USDA search unreachable after \(Self.maxSearchAttempts) attempts for query '\(query)': \(lastNetworkError)")
-            throw AIServiceError.usdaUnreachable
+        } else {
+            print("USDA search failed after \(Self.maxSearchAttempts) attempts (last status \(lastStatusCode)) for query: \(query)")
         }
-        print("USDA search failed after \(Self.maxSearchAttempts) attempts (last status \(lastStatusCode)) for query: \(query)")
         throw AIServiceError.usdaUnreachable
     }
 
@@ -248,7 +243,7 @@ class USDAapiCaller {
         return foods[responseIndex]
     }
 
-    func getNutritionFacts(decodedResponse: FDCSearchResponse, query: String) async throws -> NutritionFacts {
+    func getNutritionFacts(decodedResponse: FDCSearchResponse, query: String, component: Component) async throws -> NutritionFacts {
         guard !decodedResponse.foods.isEmpty else { throw AIServiceError.emptyResponse }
 
         let topFood = try await evalTopFoods(foods: decodedResponse.foods, query: query)
@@ -259,20 +254,38 @@ class USDAapiCaller {
             uniquingKeysWith: { first, _ in first }
         )
 
-        let calories = Int(nutrientsById[1008]?.value ?? 0)
-        let protein = nutrientsById[1003]?.value ?? 0
-        let carbs = nutrientsById[1005]?.value ?? 0
-        let fat = nutrientsById[1004]?.value ?? 0
-        let fiber = nutrientsById[1079]?.value ?? 0
+        // The FDC *search* endpoint normalizes every foodNutrient value to per-100g,
+        // including Branded items ("Calculated from value per serving size measure").
+        // Scale to the portion the user actually ate.
+        let per100 = (
+            calories: nutrientsById[1008]?.value ?? 0,
+            protein: nutrientsById[1003]?.value ?? 0,
+            carbs: nutrientsById[1005]?.value ?? 0,
+            fat: nutrientsById[1004]?.value ?? 0,
+            fiber: nutrientsById[1079]?.value ?? 0
+        )
+        // Guard against a missing/zero estimate — fall back to a single 100 g serving
+        // rather than logging zeros.
+        let grams = component.estimatedGrams > 0 ? component.estimatedGrams : 100
+        let scale = grams / 100.0
+
+        let quantityText: String = {
+            let q = component.quantity
+            guard q.amount > 0, !q.unit.isEmpty else { return "\(Int(grams.rounded())) g" }
+            let amount = q.amount == q.amount.rounded()
+                ? String(Int(q.amount))
+                : String(format: "%.2g", q.amount)
+            return "\(amount) \(q.unit) (\(Int(grams.rounded())) g)"
+        }()
 
         return NutritionFacts(
             name: topFood.description,
-            calories: calories,
-            proteinG: protein,
-            carbsG: carbs,
-            fatG: fat,
-            fiberG: fiber,
-            servingDescription: "100g" // USDA is always by 100g
+            calories: Int((per100.calories * scale).rounded()),
+            proteinG: per100.protein * scale,
+            carbsG: per100.carbs * scale,
+            fatG: per100.fat * scale,
+            fiberG: per100.fiber * scale,
+            servingDescription: quantityText
         )
     }
 }
@@ -357,6 +370,19 @@ struct NutritionFacts: Identifiable, Equatable {
 }
 
 extension NutritionFacts {
+    /// Same numbers, different display name.
+    func renamed(to newName: String) -> NutritionFacts {
+        NutritionFacts(
+            name: newName,
+            calories: calories,
+            proteinG: proteinG,
+            carbsG: carbsG,
+            fatG: fatG,
+            fiberG: fiberG,
+            servingDescription: servingDescription
+        )
+    }
+
     static func + (lhs: NutritionFacts, rhs: NutritionFacts) -> NutritionFacts {
         NutritionFacts(
             name: "\(lhs.name), \(rhs.name)",

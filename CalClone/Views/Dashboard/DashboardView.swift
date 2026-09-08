@@ -442,6 +442,8 @@ private struct LoggedMealsSection: View {
     let logs: [FoodLog]
     let onDelete: (FoodLog) -> Void
 
+    @State private var editingLog: FoodLog?
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Logged").font(.headline)
@@ -454,7 +456,10 @@ private struct LoggedMealsSection: View {
             } else {
                 ForEach(logs) { log in
                     HStack {
-                        FoodLogRow(log: log)
+                        Button { editingLog = log } label: {
+                            FoodLogRow(log: log)
+                        }
+                        .buttonStyle(.plain)
                         Button { onDelete(log) } label: {
                             Image(systemName: "minus.circle")
                                 .foregroundStyle(.secondary)
@@ -466,6 +471,9 @@ private struct LoggedMealsSection: View {
                     }
                 }
             }
+        }
+        .sheet(item: $editingLog) { log in
+            EditMealView(log: log)
         }
     }
 }

@@ -7,9 +7,15 @@ struct PhotoCaptureFlowView: View {
     @State private var capturedImage: UIImage?
     @State private var photoPickerItem: PhotosPickerItem?
     @State private var showCamera = false
-    @State private var isAnalyzing = false
+    @State private var coordinator = MealAnalysisCoordinator()
     @State private var nutritionFacts: NutritionFacts?
-    @State private var errorMessage: String?
+
+    private var isAnalyzing: Bool {
+        switch coordinator.phase {
+        case .idle, .done, .failed: return false
+        default: return true
+        }
+    }
     
     func getImageBase64() throws -> String {
         // uses the same method to convert the UIImage to base64 in the analysPhoto function to just return that image in base64
@@ -39,12 +45,8 @@ struct PhotoCaptureFlowView: View {
                     )
                 }
 
-                if isAnalyzing {
-                    RotatingStatusView(messages: RotatingStatusView.mealAnalysis).padding()
-                }
-
-                if let errorMessage {
-                    Text(errorMessage).font(.footnote).foregroundStyle(.red).padding(.horizontal)
+                if coordinator.phase != .idle {
+                    MealAnalysisProgressView(coordinator: coordinator).padding(.vertical)
                 }
 
                 Spacer()
@@ -64,7 +66,7 @@ struct PhotoCaptureFlowView: View {
                     }
                     .buttonStyle(.bordered)
 
-                    if capturedImage != nil {
+                    if capturedImage != nil && !isAnalyzing {
                         Button {
                             analyze()
                         } label: {
@@ -73,7 +75,6 @@ struct PhotoCaptureFlowView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.themeOlive)
-                        .disabled(isAnalyzing)
                     }
                 }
                 .padding()
@@ -100,26 +101,22 @@ struct PhotoCaptureFlowView: View {
             .fullScreenCover(item: $nutritionFacts) { facts in
                 NutritionConfirmView(result: facts, image: capturedImage, source: .photo, onFinished: onFinished)
             }
+            .onChange(of: coordinator.phase) { _, phase in
+                if case .done(let facts) = phase {
+                    nutritionFacts = facts
+                }
+            }
         }
     }
 
     private func analyze() {
         guard let capturedImage else { return }
-        isAnalyzing = true
-        errorMessage = nil
-        Task {
-            do {
-                let result = try await AINutritionService.shared.analyzePhoto(capturedImage, userNote: nil)
-                await MainActor.run {
-                    isAnalyzing = false
-                    nutritionFacts = result
-                }
-            } catch {
-                await MainActor.run {
-                    isAnalyzing = false
-                    errorMessage = error.localizedDescription
-                }
-            }
+        do {
+            let base64 = try getImageBase64()
+            coordinator.start(.init(userText: nil, imageBase64: base64, kind: .photo))
+        } catch {
+            // getImageBase64 only throws on encode failure; nothing actionable to show
+            // beyond retrying with a new photo.
         }
     }
 }
