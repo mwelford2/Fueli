@@ -11,7 +11,6 @@
 		27F784FE9F965A5456CC3728 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */; };
 		14FB60B31DE1816FBFC0535D /* WorkoutLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C11D89532BB49AA08EEB13 /* WorkoutLog.swift */; };
 		1A90AB01143933FBD636507F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A31FB6E155EE90307643C7C /* Assets.xcassets */; };
-		1BEFEA4F301B9B13004FE014 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */; };
 		1BEFEA51301BBDA6004FE014 /* fdc_ingredient_prompt.md in Resources */ = {isa = PBXBuildFile; fileRef = 1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */; };
 		36379C3D27A4ACDC95D6321E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29150FED90D3C029F2605DB7 /* HistoryView.swift */; };
 		3CF2D59857CD9551D89A6D5E /* StreaksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F08AC7F1F27DD95287A71B /* StreaksView.swift */; };
@@ -371,7 +370,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BEFEA4F301B9B13004FE014 /* Secrets.xcconfig in Resources */,
 				1A90AB01143933FBD636507F /* Assets.xcassets in Resources */,
 				1BEFEA51301BBDA6004FE014 /* fdc_ingredient_prompt.md in Resources */,
 			);
