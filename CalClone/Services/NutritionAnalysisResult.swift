@@ -132,7 +132,9 @@ class USDAapiCaller {
         let (data, response) = try await URLSession.shared.data(from: URL)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+            let body = String(data: data, encoding: .utf8) ?? "<no body>"
+            throw AIServiceError.httpError(statusCode, body)
         }
 
         return try JSONDecoder().decode(FDCSearchResponse.self, from: data)
