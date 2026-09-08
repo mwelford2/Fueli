@@ -16,7 +16,7 @@ enum BarcodeLookupError: LocalizedError {
 final class BarcodeLookupService {
     static let shared = BarcodeLookupService()
 
-    func lookup(barcode: String) async throws -> NutritionAnalysisResult {
+    func lookup(barcode: String) async throws -> NutritionFacts {
         guard let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/\(barcode).json") else {
             throw BarcodeLookupError.requestFailed("Invalid barcode.")
         }
@@ -98,7 +98,7 @@ final class BarcodeLookupService {
             serving = "100 g"
         }
 
-        return NutritionAnalysisResult(
+        return NutritionFacts(
             name: name,
             calories: calories,
             proteinG: protein,

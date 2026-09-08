@@ -1,5 +1,235 @@
 import Foundation
 
+//TODO: Add USDA API Call from AI response. Needs to send description to API and get 5 most relevant responses for AI to evaluate.
+
+class USDAapiCaller {
+    static let shared = USDAapiCaller()
+    
+    let APIKey: String
+    private var description: String?
+    private var imageBase64: String?
+
+    init() {
+        self.APIKey = Bundle.main.object(forInfoDictionaryKey: "USDA_API_KEY") as? String ?? ""
+    }
+    
+    func analyzeFood(description: String?, imageBase64: String?, AIResponse: String) async throws -> NutritionFacts {
+        self.description = description
+        self.imageBase64 = imageBase64
+        
+//        print("AI's Response to this input: \(AIResponse)")
+        
+        let components = try parseAIResponse(response: AIResponse)
+
+        var indexedFacts: [(Int, NutritionFacts)] = []
+        try await withThrowingTaskGroup(of: (Int, NutritionFacts).self) { group in
+            for (index, component) in components.enumerated() {
+                group.addTask {
+                    let searchResults = try await self.searchWithFallbacks(
+                        primaryQuery: component.fdcQuery,
+                        fallbackQueries: component.fallbackQueries
+                    )
+                    let facts = try await self.getNutritionFacts(decodedResponse: searchResults, query: component.fdcQuery)
+                    return (index, facts)
+                }
+            }
+            for try await result in group {
+                indexedFacts.append(result)
+            }
+        }
+
+        let sorted = indexedFacts.sorted { $0.0 < $1.0 }.map(\.1)
+        guard let first = sorted.first else { throw AIServiceError.emptyResponse }
+        return sorted.dropFirst().reduce(first, +)
+    }
+    
+    struct FDCSearchResponse: Codable {
+        let foods: [FDCFood]
+    }
+
+    struct FDCFood: Codable {
+        let fdcId: Int
+        let description: String
+        let nutrients: [FDCNutrient]?
+
+        enum CodingKeys: String, CodingKey {
+            case fdcId, description
+            case nutrients = "foodNutrients"
+        }
+    }
+
+    struct FDCNutrient: Codable, Identifiable{
+        var id: Int { nutrientId }
+        
+        let nutrientId: Int
+        let nutrientName: String
+        let nutrientNumber: String
+        let unitName: String
+        let value: Double?
+        let foodNutrientId: Int?
+        
+        // Optional fields from USDA API (captured but not required for core functionality)
+        let derivationCode: String?
+        let derivationDescription: String?
+        let rank: Int?
+        let percentDailyValue: Int?
+    }
+    
+    /// Parses the AI's structured meal breakdown and returns the non-negligible components,
+    /// each carrying its primary FDC search query plus fallback queries to try if the
+    /// primary comes up short.
+    func parseAIResponse(response: String) throws -> [Component] {
+        let clean = NutritionAnalysisResult.stripMarkdownFences(response)
+
+        let responseJSON: NutritionAnalysisResult
+        do {
+            guard let data = clean.data(using: .utf8) else { throw AIServiceError.unparsableResponse(response) }
+            responseJSON = try JSONDecoder().decode(NutritionAnalysisResult.self, from: data)
+        } catch {
+            print("parseAIResponse decode failed:", error)
+            throw error
+        }
+        let components = responseJSON.components.filter { !$0.negligible }
+
+        guard !components.isEmpty else {
+            throw AIServiceError.emptyResponse
+        }
+
+        return components
+    }
+    
+    /// Data types accepted, in USDA's own preference order for whole/generic ingredients:
+    /// Foundation and SR Legacy are lab-analyzed generic foods (most reliable for "chicken
+    /// breast, grilled"-style queries); Survey (FNDDS) covers as-eaten/prepared dishes;
+    /// Branded is included last since a bare ingredient query should prefer generic data
+    /// over a specific product unless nothing else matches.
+    private static let defaultDataTypes = ["Foundation", "SR Legacy", "Survey (FNDDS)", "Branded"]
+
+    /// Minimum number of results required before we trust the batch enough to hand it to
+    /// the classifier — below this, a fallback query is tried instead.
+    private static let minAcceptableResults = 3
+    private static let searchPageSize = 5
+
+    func search(query: String, dataTypes: [String]? = nil) async throws -> FDCSearchResponse {
+        let API_KEY = self.APIKey
+        let BASE_URL = "https://api.nal.usda.gov/fdc/v1/foods/search"
+
+        guard var components = URLComponents(string: BASE_URL) else { throw URLError(.badURL) }
+        var queryItems = [
+            URLQueryItem(name: "api_key", value: API_KEY),
+            URLQueryItem(name: "query", value: query),
+            URLQueryItem(name: "pageSize", value: String(Self.searchPageSize)),
+            URLQueryItem(name: "sortBy", value: "score"),
+            URLQueryItem(name: "sortOrder", value: "desc")
+        ]
+        for dataType in dataTypes ?? Self.defaultDataTypes {
+            queryItems.append(URLQueryItem(name: "dataType", value: dataType))
+        }
+        components.queryItems = queryItems
+
+        guard let URL = components.url else { throw URLError(.badURL) }
+
+        let (data, response) = try await URLSession.shared.data(from: URL)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode(FDCSearchResponse.self, from: data)
+    }
+
+    /// Searches the primary query, then each fallback in order, stopping at the first
+    /// batch with enough results to be worth ranking. Falls back to whatever the primary
+    /// query returned (even if sparse) if every fallback also comes up short.
+    func searchWithFallbacks(primaryQuery: String, fallbackQueries: [String]) async throws -> FDCSearchResponse {
+        var best: FDCSearchResponse?
+        for query in [primaryQuery] + fallbackQueries {
+            let result = try await search(query: query)
+            if result.foods.count >= Self.minAcceptableResults {
+                return result
+            }
+            if best == nil || result.foods.count > (best?.foods.count ?? 0) {
+                best = result
+            }
+        }
+        guard let best else { throw AIServiceError.emptyResponse }
+        return best
+    }
+
+    func evalTopFoods(foods: [FDCFood], query: String) async throws -> FDCFood {
+        guard !foods.isEmpty else { throw AIServiceError.emptyResponse }
+        guard foods.count > 1 else { return foods[0] }
+
+        let candidateList = foods.enumerated()
+            .map { index, food in "\(index): \(food.description)" }
+            .joined(separator: "\n")
+
+        let prompt = """
+        You are a food-matching classifier. You will be given the name of a food item and up to \(foods.count) candidate descriptions from a USDA nutrition database, indexed starting at 0.
+
+        Your job: determine which candidate best matches the food, and output ONLY that index number.
+
+        MATCHING CRITERIA (in priority order):
+        1. Core food identity — is it the same base food? (e.g. "chicken breast" vs "chicken thigh" vs "chicken nuggets" are different foods)
+        2. Preparation method — grilled, fried, baked, raw, steamed, etc.
+        3. Form/cut — whole, sliced, diced, shredded, ground
+        4. Additional qualifiers — fat content (whole/skim/2%), skin on/off, bone in/out, seasoning, brand vs generic
+
+        Match on the most specific overlapping terms, not just the first shared word.
+
+        TIE-BREAKING / AMBIGUITY:
+        - If two candidates seem equally close, prefer the one that matches preparation method over the one that only matches the base ingredient.
+        - You must always pick exactly one index, even if no candidate is a perfect match — choose the closest.
+
+        OUTPUT FORMAT (strict):
+        Respond with a single number from 0 to \(foods.count - 1).
+        No words, no punctuation, no explanation, no newline before or after.
+
+        ---
+
+        Food item: \(query)
+
+        Candidate descriptions:
+        \(candidateList)
+        """
+
+        let response = try await AINutritionService.shared.runRawText(userText: "Match the food item to the best candidate.", imageBase64: nil, prompt: prompt)
+        let trimmed = response.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let responseIndex = Int(trimmed), foods.indices.contains(responseIndex) else {
+            return foods[0]
+        }
+        return foods[responseIndex]
+    }
+
+    func getNutritionFacts(decodedResponse: FDCSearchResponse, query: String) async throws -> NutritionFacts {
+        guard !decodedResponse.foods.isEmpty else { throw AIServiceError.emptyResponse }
+
+        let topFood = try await evalTopFoods(foods: decodedResponse.foods, query: query)
+
+        let foodNutrients = topFood.nutrients ?? []
+        let nutrientsById = Dictionary(
+            foodNutrients.map { ($0.nutrientId, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+
+        let calories = Int(nutrientsById[1008]?.value ?? 0)
+        let protein = nutrientsById[1003]?.value ?? 0
+        let carbs = nutrientsById[1005]?.value ?? 0
+        let fat = nutrientsById[1004]?.value ?? 0
+        let fiber = nutrientsById[1079]?.value ?? 0
+
+        return NutritionFacts(
+            name: topFood.description,
+            calories: calories,
+            proteinG: protein,
+            carbsG: carbs,
+            fatG: fat,
+            fiberG: fiber,
+            servingDescription: "100g" // USDA is always by 100g
+        )
+    }
+}
+
 enum MatchStrategy: String, Codable, Equatable {
     case composite, ingredients
 }
@@ -76,6 +306,51 @@ struct NutritionFacts: Identifiable, Equatable {
         self.fatG = fatG
         self.fiberG = fiberG
         self.servingDescription = servingDescription
+    }
+}
+
+extension NutritionFacts {
+    static func + (lhs: NutritionFacts, rhs: NutritionFacts) -> NutritionFacts {
+        NutritionFacts(
+            name: "\(lhs.name), \(rhs.name)",
+            calories: lhs.calories + rhs.calories,
+            proteinG: lhs.proteinG + rhs.proteinG,
+            carbsG: lhs.carbsG + rhs.carbsG,
+            fatG: lhs.fatG + rhs.fatG,
+            fiberG: lhs.fiberG + rhs.fiberG,
+            servingDescription: lhs.servingDescription + "; " + rhs.servingDescription
+        )
+    }
+
+    static func - (lhs: NutritionFacts, rhs: NutritionFacts) -> NutritionFacts {
+        NutritionFacts(
+            name: lhs.name,
+            calories: lhs.calories - rhs.calories,
+            proteinG: lhs.proteinG - rhs.proteinG,
+            carbsG: lhs.carbsG - rhs.carbsG,
+            fatG: lhs.fatG - rhs.fatG,
+            fiberG: lhs.fiberG - rhs.fiberG,
+            servingDescription: lhs.servingDescription
+        )
+    }
+}
+
+extension NutritionAnalysisResult {
+    /// Strips a leading ```json (or plain ```) fence and trailing ``` from an AI response.
+    static func stripMarkdownFences(_ text: String) -> String {
+        var s = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard s.hasPrefix("```") else { return s }
+        // Drop the opening fence line (e.g. "```json\n")
+        if let newline = s.firstIndex(of: "\n") {
+            s = String(s[s.index(after: newline)...])
+        } else {
+            s = String(s.dropFirst(3)) // no newline — just drop the backticks
+        }
+        // Drop the trailing fence
+        if s.hasSuffix("```") {
+            s = String(s.dropLast(3))
+        }
+        return s.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 

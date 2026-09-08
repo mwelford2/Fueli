@@ -10,6 +10,8 @@ struct NutritionConfirmView: View {
     let onFinished: () -> Void
     let image: UIImage?
     let source: LogSource
+    
+    var result: NutritionFacts
 
     @State var name: String
     @State var caloriesText: String
@@ -22,7 +24,8 @@ struct NutritionConfirmView: View {
     @State private var mealType: MealType = .suggested()
     @State private var saveAsFavorite = false
 
-    init(result: NutritionAnalysisResult, image: UIImage? = nil, source: LogSource, onFinished: @escaping () -> Void) {
+    init(result: NutritionFacts, image: UIImage? = nil, source: LogSource, onFinished: @escaping () -> Void) {
+        self.result = result
         self.image = image
         self.source = source
         self.onFinished = onFinished
@@ -61,6 +64,13 @@ struct NutritionConfirmView: View {
                                 .foregroundStyle(.primary)
                         }
                     }
+                    .onChange(of: servings) { _, newServings in
+                        caloriesText = String(Int((Double(result.calories) * newServings).rounded()))
+                        proteinText = String(format: "%.0f", result.proteinG * newServings)
+                        carbsText = String(format: "%.0f", result.carbsG * newServings)
+                        fatText = String(format: "%.0f", result.fatG * newServings)
+                        fiberText = String(format: "%.0f", result.fiberG * newServings)
+                    }
                     Picker("Meal", selection: $mealType) {
                         ForEach(MealType.allCases) { type in
                             Label(type.label, systemImage: type.icon).tag(type)
@@ -68,7 +78,7 @@ struct NutritionConfirmView: View {
                     }
                 }
 
-                Section("Nutrition (per serving)") {
+                Section("Nutrition (total)") {
                     NumericRow(label: "Calories", text: $caloriesText, unit: "kcal")
                     NumericRow(label: "Protein", text: $proteinText, unit: "g")
                     NumericRow(label: "Carbs", text: $carbsText, unit: "g")
@@ -94,26 +104,26 @@ struct NutritionConfirmView: View {
             }
         }
     }
-
+    
     private var servingsLabel: String {
         servings == servings.rounded() ? "\(Int(servings))" : String(format: "%.1f", servings)
     }
 
     private func save() {
-        let caloriesPerServing = Int(caloriesText) ?? 0
-        let proteinPerServing = Double(proteinText) ?? 0
-        let carbsPerServing = Double(carbsText) ?? 0
-        let fatPerServing = Double(fatText) ?? 0
-        let fiberPerServing = Double(fiberText) ?? 0
+        let totalCalories = Int(caloriesText) ?? 0
+        let totalProtein = Double(proteinText) ?? 0
+        let totalCarbs = Double(carbsText) ?? 0
+        let totalFat = Double(fatText) ?? 0
+        let totalFiber = Double(fiberText) ?? 0
         let photoData = image?.jpegData(compressionQuality: 0.6)
 
         let log = FoodLog(
             name: name,
-            calories: Int((Double(caloriesPerServing) * servings).rounded()),
-            proteinG: proteinPerServing * servings,
-            carbsG: carbsPerServing * servings,
-            fatG: fatPerServing * servings,
-            fiberG: fiberPerServing * servings,
+            calories: totalCalories,
+            proteinG: totalProtein,
+            carbsG: totalCarbs,
+            fatG: totalFat,
+            fiberG: totalFiber,
             servingDescription: servingDescription,
             servings: servings,
             mealType: mealType,
@@ -126,11 +136,11 @@ struct NutritionConfirmView: View {
             // Favorites store per-serving values so the user can choose servings when re-logging.
             let favorite = SavedMeal(
                 name: name,
-                calories: caloriesPerServing,
-                proteinG: proteinPerServing,
-                carbsG: carbsPerServing,
-                fatG: fatPerServing,
-                fiberG: fiberPerServing,
+                calories: Int((Double(totalCalories) / servings).rounded()),
+                proteinG: totalProtein / servings,
+                carbsG: totalCarbs / servings,
+                fatG: totalFat / servings,
+                fiberG: totalFiber / servings,
                 servingDescription: servingDescription,
                 photoData: photoData
             )

@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		05252CF8C0071D1261B0301C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A549B046393372304364C2 /* Theme.swift */; };
+		27F784FE9F965A5456CC3728 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */; };
 		14FB60B31DE1816FBFC0535D /* WorkoutLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C11D89532BB49AA08EEB13 /* WorkoutLog.swift */; };
 		1A90AB01143933FBD636507F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A31FB6E155EE90307643C7C /* Assets.xcassets */; };
+		1BEFEA4F301B9B13004FE014 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */; };
+		1BEFEA51301BBDA6004FE014 /* fdc_ingredient_prompt.md in Resources */ = {isa = PBXBuildFile; fileRef = 1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */; };
 		36379C3D27A4ACDC95D6321E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29150FED90D3C029F2605DB7 /* HistoryView.swift */; };
 		3CF2D59857CD9551D89A6D5E /* StreaksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F08AC7F1F27DD95287A71B /* StreaksView.swift */; };
 		476809C78A725AA761A5A573 /* NutritionConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8988A9E56CE2024300051C8 /* NutritionConfirmView.swift */; };
@@ -44,12 +47,26 @@
 		F57919F470DC03CFCDF14A3E /* BarcodeLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		1B9EC4E2301D40450087CD9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E2BDA7183732E36C25FAC561 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3233CEDD6AD0BD5A7992E510;
+			remoteInfo = CalClone;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeLookupService.swift; sourceTree = "<group>"; };
 		1169260177948F799435AFDD /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
+		F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
 		12A1B6CD5AAECAB6DC60C8E7 /* CalClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16EB30415FBAD9D92423D7E8 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		19A549B046393372304364C2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		1B9EC4DE301D40450087CD9F /* CalCloneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalCloneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = fdc_ingredient_prompt.md; sourceTree = "<group>"; };
 		21F2AF3433A4DD690EFE9066 /* SavedMeal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMeal.swift; sourceTree = "<group>"; };
 		26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScanFlowView.swift; sourceTree = "<group>"; };
 		27F169B11435F3004FCDB51B /* CalCloneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalCloneApp.swift; sourceTree = "<group>"; };
@@ -65,6 +82,7 @@
 		6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterEntry.swift; sourceTree = "<group>"; };
 		6FC3718973051613808BA54C /* DescribeMealFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribeMealFlowView.swift; sourceTree = "<group>"; };
 		70F631071EE8D8F329402B57 /* CalClone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalClone.entitlements; sourceTree = "<group>"; };
+		24C7AB2338D8E1B4675D8767 /* CalClone-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CalClone-Free.entitlements"; sourceTree = "<group>"; };
 		87F08AC7F1F27DD95287A71B /* StreaksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksView.swift; sourceTree = "<group>"; };
 		ACE4F96C664C3F7493DACF28 /* WeightEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightEntry.swift; sourceTree = "<group>"; };
 		B73C2B66660B0C8AFA14A937 /* AIProviderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderSettingsView.swift; sourceTree = "<group>"; };
@@ -84,6 +102,24 @@
 		F3F2F9B4C9B1F43B27F75065 /* PhotoCaptureFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureFlowView.swift; sourceTree = "<group>"; };
 		F8D53B8ABBE92D9722C4B260 /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEntryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		1B9EC4DF301D40450087CD9F /* CalCloneTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CalCloneTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1B9EC4DB301D40450087CD9F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		05161F1B4E11BDF96D311B0C /* Onboarding */ = {
@@ -130,6 +166,7 @@
 		56D3A14404DE76C6C219DADB /* CalClone */ = {
 			isa = PBXGroup;
 			children = (
+				1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */,
 				7FE366FD89C3B7E27A716F29 /* App */,
 				6E758AC930C2F427618F002A /* Models */,
 				6D433D46D86D7EDA9C86E1A3 /* Resources */,
@@ -156,6 +193,7 @@
 			children = (
 				5A31FB6E155EE90307643C7C /* Assets.xcassets */,
 				70F631071EE8D8F329402B57 /* CalClone.entitlements */,
+				24C7AB2338D8E1B4675D8767 /* CalClone-Free.entitlements */,
 				E6F60ACAF71E8ED6FED4D0DE /* Info.plist */,
 			);
 			path = Resources;
@@ -187,6 +225,7 @@
 			isa = PBXGroup;
 			children = (
 				56D3A14404DE76C6C219DADB /* CalClone */,
+				1B9EC4DF301D40450087CD9F /* CalCloneTests */,
 				FCACD0F620743B5F9780B88A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -207,9 +246,11 @@
 		A2B663DEA8F8BBDB539F735F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */,
 				466CC25E396E30308222BB52 /* AINutritionService.swift */,
 				D9CFE8D248D0D6B350396203 /* AIProviderConfig.swift */,
 				07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */,
+				F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */,
 				EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */,
 				366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */,
 				C62894909AD6AE6BD055E158 /* PedometerService.swift */,
@@ -230,6 +271,7 @@
 			isa = PBXGroup;
 			children = (
 				12A1B6CD5AAECAB6DC60C8E7 /* CalClone.app */,
+				1B9EC4DE301D40450087CD9F /* CalCloneTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -237,6 +279,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1B9EC4DD301D40450087CD9F /* CalCloneTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B9EC4E4301D40450087CD9F /* Build configuration list for PBXNativeTarget "CalCloneTests" */;
+			buildPhases = (
+				1B9EC4DA301D40450087CD9F /* Sources */,
+				1B9EC4DB301D40450087CD9F /* Frameworks */,
+				1B9EC4DC301D40450087CD9F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1B9EC4E3301D40450087CD9F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1B9EC4DF301D40450087CD9F /* CalCloneTests */,
+			);
+			name = CalCloneTests;
+			packageProductDependencies = (
+			);
+			productName = CalCloneTests;
+			productReference = 1B9EC4DE301D40450087CD9F /* CalCloneTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		3233CEDD6AD0BD5A7992E510 /* CalClone */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BBADC42C1D79F46D2FC2D19F /* Build configuration list for PBXNativeTarget "CalClone" */;
@@ -262,8 +327,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					1B9EC4DD301D40450087CD9F = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 3233CEDD6AD0BD5A7992E510;
+					};
 					3233CEDD6AD0BD5A7992E510 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -284,22 +354,39 @@
 			projectRoot = "";
 			targets = (
 				3233CEDD6AD0BD5A7992E510 /* CalClone */,
+				1B9EC4DD301D40450087CD9F /* CalCloneTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1B9EC4DC301D40450087CD9F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		72A7B17F81852116BA30A984 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BEFEA4F301B9B13004FE014 /* Secrets.xcconfig in Resources */,
 				1A90AB01143933FBD636507F /* Assets.xcassets in Resources */,
+				1BEFEA51301BBDA6004FE014 /* fdc_ingredient_prompt.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1B9EC4DA301D40450087CD9F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		994866A6160D95868DA1BDE5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -317,6 +404,7 @@
 				7C5A398C025A42740BFB45A4 /* DescribeMealFlowView.swift in Sources */,
 				726615D068D1A35BEDE25B97 /* FoodLog.swift in Sources */,
 				36379C3D27A4ACDC95D6321E /* HistoryView.swift in Sources */,
+				27F784FE9F965A5456CC3728 /* HealthKitService.swift in Sources */,
 				97EACDC77BC025823BBE0F7B /* KeychainStore.swift in Sources */,
 				7A16E03E11BB93F9F21EADCA /* LogEntryHubView.swift in Sources */,
 				B1B117456C59FFD2564E50CD /* MainTabView.swift in Sources */,
@@ -343,7 +431,75 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		1B9EC4E3301D40450087CD9F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3233CEDD6AD0BD5A7992E510 /* CalClone */;
+			targetProxy = 1B9EC4E2301D40450087CD9F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		1B9EC4E5301D40450087CD9F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8RBLV22YJJ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.CalCloneTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CalClone.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CalClone";
+			};
+			name = Debug;
+		};
+		1B9EC4E6301D40450087CD9F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8RBLV22YJJ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.CalCloneTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CalClone.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CalClone";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		1CB8705B02CEA9AF35679E63 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -412,8 +568,77 @@
 			};
 			name = Debug;
 		};
+		B7B7F706EA674BDCE8787E99 /* Free */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Free;
+		};
 		23393CDB95958843FC4213CA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -428,13 +653,45 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
+		};
+		D909C2BF19312B71EE93A92E /* Free */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				// No HealthKit entitlement here — a free/personal-team signing identity
+				// cannot include com.apple.developer.healthkit at all, so this
+				// configuration points at an entitlements file without it. The app code
+				// already checks HKHealthStore.isHealthDataAvailable() and falls back to
+				// CoreMotion step data, so this configuration just builds and runs with
+				// Health features disabled instead of failing to sign.
+				CODE_SIGN_ENTITLEMENTS = "CalClone/Resources/CalClone-Free.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = CalClone/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Free;
 		};
 		46E909D1456C781FB778DE50 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -499,6 +756,7 @@
 		};
 		704648AD6EB3D0F64FA50DC2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -513,7 +771,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -524,11 +782,21 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1B9EC4E4301D40450087CD9F /* Build configuration list for PBXNativeTarget "CalCloneTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B9EC4E5301D40450087CD9F /* Debug */,
+				1B9EC4E6301D40450087CD9F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		9934216C2C2C4C3BDA773FAC /* Build configuration list for PBXProject "CalClone" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CB8705B02CEA9AF35679E63 /* Debug */,
 				46E909D1456C781FB778DE50 /* Release */,
+				B7B7F706EA674BDCE8787E99 /* Free */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -538,6 +806,7 @@
 			buildConfigurations = (
 				23393CDB95958843FC4213CA /* Debug */,
 				704648AD6EB3D0F64FA50DC2 /* Release */,
+				D909C2BF19312B71EE93A92E /* Free */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

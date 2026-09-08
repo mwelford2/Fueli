@@ -51,50 +51,50 @@ enum StepsTier: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-func avgStepsOver(days: Int){
-    let pedometer = CMPedometer()
-    let cal = Calendar.current
-    let today = Date()
-    
-    let group = DispatchGroup()
-    var totalSteps = 0
-    var daysWithData = 0
-    let lock = NSLock()
-    
-    for offset in 0..<days {
-        // guard is if date calculation works fine, keep going, if it fails continue (skip this iteration)
-        guard let start = cal.date(byAdding: .day, value: -offset - 1, to: today),
-              let end = cal.date(byAdding: .day, value: -offset, to: today)
-                else { continue }
-        
-        // group is because pedometer queries are asynchronous, groups just track them and notify when all are finished.
-        group.enter()
-        pedometer.queryPedometerData(from: start, to: end) { data, error in
-            // defer just defer the instructions inside until the current scope is left
-            defer { group.leave() }
-            guard let data = data else { return }
-            
-            // Since the queries can run on multiple threads at a time, lock ensures multiple different things can't modify the same piece of data. It does this by making everything wait before the stuff inside the lock is done running.
-            lock.lock()
-            defer { lock.unlock() } // Guards against some error not letting code reach the unlock stage
-            totalSteps += data.numberOfSteps.intValue
-            daysWithData += 1
-            lock.unlock()
-            
-            
-        }
-        
-    }
-    
-    group.notify(queue: .main) { [weak self] in
-        guard daysWithData > 0 else {
-            self?.averageSteps = 0
-            return
-        }
-        self?.averageSteps = Double(totalSteps)/Double(daysWithData)
-        
-    }
-}
+//func avgStepsOver(days: Int){
+//    let pedometer = CMPedometer()
+//    let cal = Calendar.current
+//    let today = Date()
+//    
+//    let group = DispatchGroup()
+//    var totalSteps = 0
+//    var daysWithData = 0
+//    let lock = NSLock()
+//    
+//    for offset in 0..<days {
+//        // guard is if date calculation works fine, keep going, if it fails continue (skip this iteration)
+//        guard let start = cal.date(byAdding: .day, value: -offset - 1, to: today),
+//              let end = cal.date(byAdding: .day, value: -offset, to: today)
+//                else { continue }
+//        
+//        // group is because pedometer queries are asynchronous, groups just track them and notify when all are finished.
+//        group.enter()
+//        pedometer.queryPedometerData(from: start, to: end) { data, error in
+//            // defer just defer the instructions inside until the current scope is left
+//            defer { group.leave() }
+//            guard let data = data else { return }
+//            
+//            // Since the queries can run on multiple threads at a time, lock ensures multiple different things can't modify the same piece of data. It does this by making everything wait before the stuff inside the lock is done running.
+//            lock.lock()
+//            defer { lock.unlock() } // Guards against some error not letting code reach the unlock stage
+//            totalSteps += data.numberOfSteps.intValue
+//            daysWithData += 1
+//            lock.unlock()
+//            
+//            
+//        }
+//        
+//    }
+//    
+//    group.notify(queue: .main) { [weak self] in
+//        guard daysWithData > 0 else {
+//            self?.averageSteps = 0
+//            return
+//        }
+//        self?.averageSteps = Double(totalSteps)/Double(daysWithData)
+//        
+//    }
+//}
 
 /// Hours spent doing formal exercise per week — drives the EAT (exercise activity
 /// thermogenesis) contribution to TDEE, separate from everyday NEAT/steps.

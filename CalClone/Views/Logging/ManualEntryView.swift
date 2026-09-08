@@ -41,7 +41,7 @@ struct ManualEntryView: View {
             }
             .fullScreenCover(isPresented: $showConfirm) {
                 NutritionConfirmView(
-                    result: NutritionAnalysisResult(
+                    result: NutritionFacts(
                         name: name,
                         calories: Int(caloriesText) ?? 0,
                         proteinG: Double(proteinText) ?? 0,

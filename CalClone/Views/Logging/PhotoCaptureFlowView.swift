@@ -8,8 +8,19 @@ struct PhotoCaptureFlowView: View {
     @State private var photoPickerItem: PhotosPickerItem?
     @State private var showCamera = false
     @State private var isAnalyzing = false
-    @State private var analysisResult: NutritionAnalysisResult?
+    @State private var nutritionFacts: NutritionFacts?
     @State private var errorMessage: String?
+    
+    func getImageBase64() throws -> String {
+        // uses the same method to convert the UIImage to base64 in the analysPhoto function to just return that image in base64
+        guard let capturedImage else { return "" } // because capturedImage is an optional need to unwrap it first before doing the rest
+        let resized = AINutritionService.resized(capturedImage, maxDimension: 1024)
+        guard let jpegData = resized.jpegData(compressionQuality: 0.7) else {
+            throw AIServiceError.requestFailed("Could not encode image.")
+        }
+        let base64 = jpegData.base64EncodedString()
+        return base64
+    }
 
     var body: some View {
         NavigationStack {
@@ -86,8 +97,8 @@ struct PhotoCaptureFlowView: View {
                     }
                 }
             }
-            .fullScreenCover(item: $analysisResult) { result in
-                NutritionConfirmView(result: result, image: capturedImage, source: .photo, onFinished: onFinished)
+            .fullScreenCover(item: $nutritionFacts) { facts in
+                NutritionConfirmView(result: facts, image: capturedImage, source: .photo, onFinished: onFinished)
             }
         }
     }
@@ -101,7 +112,7 @@ struct PhotoCaptureFlowView: View {
                 let result = try await AINutritionService.shared.analyzePhoto(capturedImage, userNote: nil)
                 await MainActor.run {
                     isAnalyzing = false
-                    analysisResult = result
+                    nutritionFacts = result
                 }
             } catch {
                 await MainActor.run {
@@ -113,6 +124,3 @@ struct PhotoCaptureFlowView: View {
     }
 }
 
-extension NutritionAnalysisResult: Identifiable {
-    var id: String { name + servingDescription }
-}

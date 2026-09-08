@@ -1,29 +1,38 @@
 import Foundation
 import UIKit
 
+enum Error {
+    case runtimeError(String)
+}
+
 /// Talks to whatever AI provider the user has configured (OpenAI, Anthropic, Grok, or a
 /// custom/school OpenAI-compatible gateway) to turn a food photo or text description into
 /// a structured nutrition estimate.
 final class AINutritionService {
     static let shared = AINutritionService()
 
-    private let systemPrompt = """
-    You are a nutrition estimation assistant embedded in a calorie tracking app. \
-    Given a photo of food and/or a text description, identify the food and estimate its \
-    nutritional content PER SINGLE SERVING. Account for visible portion size to determine \
-    a reasonable single-serving size; describe it in "serving_description" (e.g. "1 cup (240 ml)", \
-    "1 slice (28 g)", "1 medium banana"). If multiple distinct items are present, treat the whole \
-    plate as one combined serving. All numeric values must be for that ONE serving only — do NOT \
-    multiply by an implied quantity. Respond with ONLY a single JSON object, no prose, no markdown \
-    fences, matching exactly this shape:
-    {"name": string, "calories": integer, "protein_g": number, "carbs_g": number, "fat_g": number, "fiber_g": number, "serving_description": string}
-    """
-
+    private let systemPrompt = loadPrompt(named: "fdc_ingredient_prompt")
+    
+    private static func loadPrompt(named name: String, ext: String = "md") -> String {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "md")
+        else {
+            assertionFailure("Missing \(name).\(ext)")
+            return ""
+        }
+        
+        do {
+            return try String(contentsOf: url, encoding: .utf8)
+        } catch {
+            assertionFailure("Failed to read \(name).md")
+            return ""
+        }
+    }
+            
     private var config: AIProviderConfig { AIProviderConfig.load() }
 
     // MARK: - Public API
 
-    func analyzePhoto(_ image: UIImage, userNote: String?) async throws -> NutritionAnalysisResult {
+    func analyzePhoto(_ image: UIImage, userNote: String?) async throws -> NutritionFacts {
         let resized = Self.resized(image, maxDimension: 1024)
         guard let jpegData = resized.jpegData(compressionQuality: 0.7) else {
             throw AIServiceError.requestFailed("Could not encode image.")
@@ -35,37 +44,50 @@ final class AINutritionService {
         return try await runAnalysis(userText: userText, imageBase64: base64)
     }
 
-    func analyzeDescription(_ text: String) async throws -> NutritionAnalysisResult {
+    func analyzeDescription(_ text: String) async throws -> NutritionFacts {
         try await runAnalysis(userText: "Analyze this meal description: \(text)", imageBase64: nil)
     }
 
-    /// Simple connectivity check used by the Settings screen's "Test Connection" action.
+    // Simple connectivity check used by the Settings screen's "Test Connection" action.
     func testConnection() async throws {
-        _ = try await runAnalysis(userText: "Analyze this meal description: one medium banana", imageBase64: nil)
+        _ = try await runRawText(userText: "Hi there!", imageBase64: nil)
     }
 
     // MARK: - Dispatch
 
-    private func runAnalysis(userText: String, imageBase64: String?) async throws -> NutritionAnalysisResult {
+    func runAnalysis(userText: String, imageBase64: String?, prompt: String? = nil) async throws -> NutritionFacts {
+        let response = try await runRawText(userText: userText, imageBase64: imageBase64, prompt: prompt)
+        
+        if userText.contains("Analyze the food in this photo") {
+            return try await USDAapiCaller.shared.analyzeFood(description: "", imageBase64: imageBase64, AIResponse: response)
+        }
+        
+        let description = userText.replacingOccurrences(of: "Analyze this meal description: ", with: "")
+        
+        return try await USDAapiCaller.shared.analyzeFood(description: description, imageBase64: "", AIResponse: response)
+    }
+
+    /// Calls the AI and returns the raw response string without JSON parsing.
+    /// Use this for prompts that don't return a NutritionAnalysisResult (e.g. the FDC candidate classifier).
+    func runRawText(userText: String, imageBase64: String?, prompt: String? = nil) async throws -> String {
         let config = self.config
         guard config.isConfigured else { throw AIServiceError.notConfigured }
         guard URL(string: config.normalizedBaseURL) != nil else { throw AIServiceError.invalidBaseURL }
-
-        let rawText: String
         if config.preset.isOpenAICompatible {
-            rawText = try await callOpenAICompatible(config: config, userText: userText, imageBase64: imageBase64)
+            return try await callOpenAICompatible(config: config, userText: userText, imageBase64: imageBase64, systemPrompt: prompt)
         } else {
-            rawText = try await callAnthropic(config: config, userText: userText, imageBase64: imageBase64)
+            return try await callAnthropic(config: config, userText: userText, imageBase64: imageBase64, systemPrompt: prompt)
         }
-        return try Self.parseResult(from: rawText)
     }
 
     // MARK: - OpenAI-compatible (OpenAI, Grok, custom/school gateways)
 
-    private func callOpenAICompatible(config: AIProviderConfig, userText: String, imageBase64: String?) async throws -> String {
+    private func callOpenAICompatible(config: AIProviderConfig, userText: String, imageBase64: String?, systemPrompt: String? = nil) async throws -> String {
         guard let url = URL(string: config.normalizedBaseURL + "/chat/completions") else {
             throw AIServiceError.invalidBaseURL
         }
+        
+        let prompt = systemPrompt ?? self.systemPrompt
 
         // When an image is present, merge the system prompt into the user content array
         // instead of using a separate system message. Some vLLM-backed gateways (e.g.
@@ -74,13 +96,13 @@ final class AINutritionService {
         let messages: [[String: Any]]
         if let imageBase64 {
             let userContent: [[String: Any]] = [
-                ["type": "text", "text": systemPrompt + "\n\n" + userText],
+                ["type": "text", "text": prompt + "\n\n" + userText],
                 ["type": "image_url", "image_url": ["url": "data:image/jpeg;base64,\(imageBase64)"]]
             ]
             messages = [["role": "user", "content": userContent]]
         } else {
             messages = [
-                ["role": "system", "content": systemPrompt],
+                ["role": "system", "content": prompt],
                 ["role": "user", "content": [["type": "text", "text": userText]]]
             ]
         }
@@ -89,7 +111,7 @@ final class AINutritionService {
             "model": config.model,
             "messages": messages,
             "temperature": 0.2,
-            "max_tokens": 500
+            "max_tokens": 2000
         ]
 
         var request = URLRequest(url: url)
@@ -113,15 +135,19 @@ final class AINutritionService {
         guard let content = decoded.choices.first?.message.content, !content.isEmpty else {
             throw AIServiceError.emptyResponse
         }
+        
+        print(content)
         return content
     }
 
     // MARK: - Anthropic native
 
-    private func callAnthropic(config: AIProviderConfig, userText: String, imageBase64: String?) async throws -> String {
+    private func callAnthropic(config: AIProviderConfig, userText: String, imageBase64: String?, systemPrompt: String? = nil) async throws -> String {
         guard let url = URL(string: config.normalizedBaseURL + "/messages") else {
             throw AIServiceError.invalidBaseURL
         }
+        
+        let prompt = systemPrompt ?? self.systemPrompt
 
         var userContent: [[String: Any]] = []
         if let imageBase64 {
@@ -134,8 +160,8 @@ final class AINutritionService {
 
         let body: [String: Any] = [
             "model": config.model,
-            "max_tokens": 500,
-            "system": systemPrompt,
+            "max_tokens": 2000,
+            "system": prompt,
             "messages": [
                 ["role": "user", "content": userContent]
             ]
@@ -182,7 +208,7 @@ final class AINutritionService {
     }
 
     /// Scales an image down so its longest side is at most `maxDimension` pixels.
-    private static func resized(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
+    static func resized(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
         let size = image.size
         let longest = max(size.width, size.height)
         guard longest > maxDimension else { return image }
@@ -194,12 +220,7 @@ final class AINutritionService {
 
     /// Strips optional markdown code fences and parses the model's JSON reply.
     static func parseResult(from rawText: String) throws -> NutritionAnalysisResult {
-        var text = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
-        if text.hasPrefix("```") {
-            text = text.replacingOccurrences(of: "```json", with: "")
-            text = text.replacingOccurrences(of: "```", with: "")
-            text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
+        let text = NutritionAnalysisResult.stripMarkdownFences(rawText)
         guard let firstBrace = text.firstIndex(of: "{"), let lastBrace = text.lastIndex(of: "}") else {
             throw AIServiceError.unparsableResponse(rawText)
         }

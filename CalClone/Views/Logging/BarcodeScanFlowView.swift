@@ -5,16 +5,17 @@ struct BarcodeScanFlowView: View {
 
     @State private var isLookingUp = false
     @State private var errorMessage: String?
-    @State private var analysisResult: NutritionAnalysisResult?
+    @State private var analysisResult: NutritionFacts?
     @State private var manualBarcode = ""
     @State private var lastScanned: String?
+    @State private var scannerResetToken = 0
 
     var body: some View {
         NavigationStack {
             Group {
                 if BarcodeScannerView.isSupported {
                     ZStack(alignment: .bottom) {
-                        BarcodeScannerView { code in
+                        BarcodeScannerView(resetToken: scannerResetToken) { code in
                             guard code != lastScanned, !isLookingUp else { return }
                             lastScanned = code
                             lookup(code)
@@ -91,6 +92,7 @@ struct BarcodeScanFlowView: View {
                     isLookingUp = false
                     errorMessage = error.localizedDescription
                     lastScanned = nil
+                    scannerResetToken += 1
                 }
             }
         }

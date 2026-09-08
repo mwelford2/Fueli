@@ -7,6 +7,7 @@ struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var selectedDate = Calendar.current.startOfDay(for: Date())
     @State private var pedometer = PedometerService.shared
+    @State private var healthKit = HealthKitService.shared
     @State private var confettiTrigger = 0
 
     @Query private var profiles: [UserProfile]
@@ -64,10 +65,24 @@ struct DashboardView: View {
     private var fatConsumed: Double { logsForDay.reduce(0) { $0 + $1.fatG } }
     private var fiberConsumed: Double { logsForDay.reduce(0) { $0 + $1.fiberG } }
 
-    /// Live step count for the selected day, from CMPedometer.
+    /// Live step count for the selected day. Prefers HealthKit (aggregates all sources —
+    /// Apple Watch, other apps, etc.) when it's available and authorized, falling back to
+    /// the device pedometer (CoreMotion) otherwise — e.g. on a free-team build without the
+    /// HealthKit entitlement, or if the user denied Health access.
     private var liveStepsToday: Int? {
         guard Calendar.current.isDateInToday(selectedDate) else { return nil }
+        if healthKit.isAvailable, healthKit.isAuthorized, healthKit.todaySteps > 0 {
+            return healthKit.todaySteps
+        }
         return pedometer.todaySteps > 0 ? pedometer.todaySteps : nil
+    }
+
+    /// Active energy burned today from HealthKit (e.g. Apple Watch workouts, other apps),
+    /// on top of calories logged from in-app workouts. Nil when HealthKit has no data.
+    private var healthKitActiveCalories: Int? {
+        guard Calendar.current.isDateInToday(selectedDate), healthKit.isAvailable, healthKit.isAuthorized,
+              healthKit.todayActiveEnergy > 0 else { return nil }
+        return healthKit.todayActiveEnergy
     }
 
     private var yesterdayOvershoot: Int {

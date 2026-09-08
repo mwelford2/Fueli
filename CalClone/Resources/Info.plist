@@ -24,10 +24,16 @@
 	<false/>
 	<key>NSMotionUsageDescription</key>
 	<string>Fueli counts your steps and tracks workout distance using the motion sensor.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Fueli reads your steps, active and resting energy, workouts, and body weight from Health to personalize your calorie and macro targets.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Fueli can save workouts and weight entries you log back to Health.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Fueli uses your camera to identify food and estimate its nutrition.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Fueli lets you pick photos of meals to log their nutrition.</string>
+	<key>USDA_API_KEY</key>
+	<string>$(USDA_API_KEY)</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

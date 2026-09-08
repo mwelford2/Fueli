@@ -6,10 +6,12 @@ struct DescribeMealFlowView: View {
     @State private var description = ""
     @State private var isAnalyzing = false
     @State private var errorMessage: String?
-    @State private var analysisResult: NutritionAnalysisResult?
+    @State private var nutritionFacts: NutritionFacts?
     @State private var needsSetup = false
     @State private var showProviderSettings = false
     @FocusState private var isFocused: Bool
+    
+    func getDescription() -> String {  description.trimmingCharacters(in: .whitespacesAndNewlines)  }
 
     var body: some View {
         NavigationStack {
@@ -67,8 +69,8 @@ struct DescribeMealFlowView: View {
                     Button("Cancel") { onFinished() }
                 }
             }
-            .fullScreenCover(item: $analysisResult) { result in
-                NutritionConfirmView(result: result, source: .textDescription, onFinished: onFinished)
+            .fullScreenCover(item: $nutritionFacts) { facts in
+                NutritionConfirmView(result: facts, source: .textDescription, onFinished: onFinished)
             }
             .sheet(isPresented: $showProviderSettings) {
                 NavigationStack {
@@ -98,9 +100,10 @@ struct DescribeMealFlowView: View {
         Task {
             do {
                 let result = try await AINutritionService.shared.analyzeDescription(description)
+                print(result)
                 await MainActor.run {
                     isAnalyzing = false
-                    analysisResult = result
+                    nutritionFacts = result
                 }
             } catch {
                 await MainActor.run {
