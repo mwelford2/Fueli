@@ -60,3 +60,56 @@ extension View {
             .background(Color.themeBackground.ignoresSafeArea())
     }
 }
+
+/// A spinner with a caption that cycles through a sequence of status messages while
+/// a long-running task (AI analysis, USDA lookup) is in flight. Messages advance on
+/// a timer and hold on the last one until the view disappears, so the user sees
+/// steady forward motion even though we can't report real progress from the model.
+struct RotatingStatusView: View {
+    let messages: [String]
+    var interval: TimeInterval = 2.2
+
+    @State private var index = 0
+    @State private var timer: Timer?
+
+    var body: some View {
+        HStack(spacing: 10) {
+            ProgressView()
+            Text(messages.indices.contains(index) ? messages[index] : (messages.last ?? ""))
+                .font(.themeSubheadline)
+                .foregroundStyle(.secondary)
+                .id(index)
+                .transition(.opacity)
+        }
+        .animation(.easeInOut(duration: 0.35), value: index)
+        .onAppear { start() }
+        .onDisappear { stop() }
+    }
+
+    private func start() {
+        stop()
+        index = 0
+        guard messages.count > 1 else { return }
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            if index < messages.count - 1 { index += 1 }
+        }
+    }
+
+    private func stop() {
+        timer?.invalidate()
+        timer = nil
+    }
+
+    /// Standard sequence for the "describe a meal" / photo analysis flow.
+    static var mealAnalysis: [String] {
+        [
+            "Sending your description…",
+            "Reading your meal…",
+            "Breaking it into ingredients…",
+            "Looking up nutrition data…",
+            "Matching USDA food entries…",
+            "Crunching the numbers…",
+            "Almost there…"
+        ]
+    }
+}

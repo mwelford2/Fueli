@@ -39,7 +39,7 @@ struct DescribeMealFlowView: View {
                     }
 
                 if isAnalyzing {
-                    ProgressView("Analyzing with AI…")
+                    RotatingStatusView(messages: RotatingStatusView.mealAnalysis)
                 }
                 if let errorMessage {
                     Text(errorMessage).font(.footnote).foregroundStyle(.red).padding(.horizontal)

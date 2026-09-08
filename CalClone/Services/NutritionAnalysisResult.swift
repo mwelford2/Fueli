@@ -16,9 +16,7 @@ class USDAapiCaller {
     func analyzeFood(description: String?, imageBase64: String?, AIResponse: String) async throws -> NutritionFacts {
         self.description = description
         self.imageBase64 = imageBase64
-        
-//        print("AI's Response to this input: \(AIResponse)")
-        
+
         let components = try parseAIResponse(response: AIResponse)
 
         var indexedFacts: [(Int, NutritionFacts)] = []
@@ -110,6 +108,11 @@ class USDAapiCaller {
     private static let minAcceptableResults = 3
     private static let searchPageSize = 5
 
+    /// The USDA FDC `/foods/search` endpoint intermittently returns HTTP 400/429/5xx for
+    /// requests that are otherwise valid (the same request often succeeds on the next
+    /// attempt). Retry a few times with backoff before giving up.
+    private static let maxSearchAttempts = 4
+
     func search(query: String, dataTypes: [String]? = nil) async throws -> FDCSearchResponse {
         let API_KEY = self.APIKey
         let BASE_URL = "https://api.nal.usda.gov/fdc/v1/foods/search"
@@ -129,13 +132,28 @@ class USDAapiCaller {
 
         guard let URL = components.url else { throw URLError(.badURL) }
 
-        let (data, response) = try await URLSession.shared.data(from: URL)
+        var lastStatusCode = -1
+        for attempt in 1...Self.maxSearchAttempts {
+            let (data, response) = try await URLSession.shared.data(from: URL)
 
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw URLError(.badServerResponse)
+            }
+
+            if httpResponse.statusCode == 200 {
+                return try JSONDecoder().decode(FDCSearchResponse.self, from: data)
+            }
+
+            lastStatusCode = httpResponse.statusCode
+            // 400/429/5xx from FDC are usually transient; back off and retry.
+            if attempt < Self.maxSearchAttempts {
+                let delayNanos = UInt64(0.4 * pow(2.0, Double(attempt - 1)) * 1_000_000_000)
+                try? await Task.sleep(nanoseconds: delayNanos)
+            }
         }
 
-        return try JSONDecoder().decode(FDCSearchResponse.self, from: data)
+        print("USDA search failed after \(Self.maxSearchAttempts) attempts (last status \(lastStatusCode)) for query: \(query)")
+        throw URLError(.badServerResponse)
     }
 
     /// Searches the primary query, then each fallback in order, stopping at the first

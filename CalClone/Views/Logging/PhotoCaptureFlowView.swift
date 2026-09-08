@@ -40,7 +40,7 @@ struct PhotoCaptureFlowView: View {
                 }
 
                 if isAnalyzing {
-                    ProgressView("Analyzing with AI…").padding()
+                    RotatingStatusView(messages: RotatingStatusView.mealAnalysis).padding()
                 }
 
                 if let errorMessage {
