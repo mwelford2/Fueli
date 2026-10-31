@@ -6,12 +6,21 @@ final class SavedMeal {
     var id: UUID
     var name: String
     var calories: Int
+    var caloriesExact: Double?
+    var caloriesValue: Double { caloriesExact ?? Double(calories) }
     var proteinG: Double
     var carbsG: Double
     var fatG: Double
     var fiberG: Double = 0
     var servingDescription: String
     @Attribute(.externalStorage) var photoData: Data?
+    var ingredientData: Data?
+    var canonicalBarcode: String?
+    var nutritionSourceID: String?
+    var gramsPerServing: Double?
+    var millilitersPerServing: Double?
+    var isFavorite: Bool = false
+    var lastLoggedAt: Date?
     var createdAt: Date
     var timesLogged: Int
 
@@ -42,7 +51,7 @@ final class SavedMeal {
     }
 
     func makeLog(mealType: MealType) -> FoodLog {
-        FoodLog(
+        let log = FoodLog(
             name: name,
             calories: calories,
             proteinG: proteinG,
@@ -54,5 +63,9 @@ final class SavedMeal {
             source: .savedMeal,
             photoData: photoData
         )
+        log.caloriesExact = caloriesExact
+        log.savedFoodID = id
+        log.recipeIngredientsData = ingredientData
+        return log
     }
 }

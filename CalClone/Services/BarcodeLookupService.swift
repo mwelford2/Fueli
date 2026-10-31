@@ -3,109 +3,146 @@ import Foundation
 enum BarcodeLookupError: LocalizedError {
     case notFound
     case requestFailed(String)
-
     var errorDescription: String? {
         switch self {
-        case .notFound: return "No product found for that barcode."
+        case .notFound: return "No exact product match was found. Try manual entry."
         case .requestFailed(let message): return "Lookup failed: \(message)"
         }
     }
 }
 
-/// Looks up packaged-food nutrition by barcode using the free, keyless Open Food Facts API.
-final class BarcodeLookupService {
+actor BarcodeLookupService {
     static let shared = BarcodeLookupService()
+    private var cache: [String: (Date, NutritionFacts)] = [:]
+    private var nextRequest = Date.distantPast
+    private let session: URLSession
+    init(session: URLSession = .shared) { self.session = session }
+
+    func clearCache() { cache.removeAll() }
+
+    struct OFFResponse: Decodable {
+        struct Product: Decodable {
+            let code: String?
+            let product_name: String?
+            let brands: String?
+            let product_quantity_unit: String?
+            let serving_quantity_unit: String?
+            let nutriments: Nutrients?
+        }
+        struct Nutrients: Decodable {
+            let kcal, kj, protein, availableCarbs, totalCarbs, fat, fiber: Double?
+            enum CodingKeys: String, CodingKey {
+                case kcal = "energy-kcal_100g", kj = "energy-kj_100g", protein = "proteins_100g"
+                case availableCarbs = "carbohydrates_100g", totalCarbs = "carbohydrates-total_100g"
+                case fat = "fat_100g", fiber = "fiber_100g"
+            }
+        }
+        let product: Product?
+    }
+
+    static func databaseBarcode(_ code: String) -> String? {
+        let normalized = code.count == 14 && code.first == "0" ? String(code.dropFirst()) : code
+        return try? RetailBarcode(normalized).canonical
+    }
+
+    /// GS1 database records may pad GTIN-8/12/13 to fourteen digits.
+    /// Padding is only for comparison; scanner format and leading zeros are retained.
+    static func gtinIdentity(_ code: String) -> String? {
+        guard let canonical = databaseBarcode(code) else { return nil }
+        return String(repeating: "0", count: 14 - canonical.count) + canonical
+    }
+
+    static func sameGTIN(_ lhs: String, _ rhs: String) -> Bool {
+        guard let left = gtinIdentity(lhs), let right = gtinIdentity(rhs) else { return false }
+        return left == right
+    }
+
+    static func normalize(_ response: OFFResponse, barcode: String) throws -> NutritionFacts {
+        guard let product = response.product, let code = product.code,
+              sameGTIN(code, barcode), let n = product.nutriments else { throw BarcodeLookupError.notFound }
+        let unit = (product.product_quantity_unit ?? product.serving_quantity_unit ?? "").lowercased()
+        let volume = ["ml", "cl", "l"].contains(unit)
+        guard volume || ["g", "kg", "oz", "lb"].contains(unit) else {
+            throw BarcodeLookupError.requestFailed("This record does not establish a mass or volume basis. Review its package and use manual entry.")
+        }
+        // OFF available carbohydrate excludes fiber. Prefer its explicit total; otherwise
+        // derive a total only when BOTH available carbohydrate and fiber are present.
+        let carbs = n.totalCarbs ?? n.availableCarbs.flatMap { available in n.fiber.map { available + $0 } }
+        guard let c = n.kcal ?? n.kj.map({ $0 / 4.184 }), let p = n.protein,
+              let carbs, let fat = n.fat, let fiber = n.fiber else { throw NutritionValidationError.incomplete }
+        _ = try ServingNutrition(calories: c, protein: p, carbohydrates: carbs, fat: fat, fiber: fiber)
+        guard c <= 1000, p <= 100, carbs <= 100, fat <= 100, fiber <= 100 else { throw NutritionValidationError.invalidValues }
+        guard let productName = product.product_name, !productName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw BarcodeLookupError.notFound }
+        let name = [product.brands, productName].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+        guard !name.isEmpty else { throw BarcodeLookupError.notFound }
+        return NutritionFacts(name: name, calories: Int(c.rounded()), proteinG: p, carbsG: carbs, fatG: fat,
+                              fiberG: fiber, servingDescription: "100 \(volume ? "mL" : "g") · Open Food Facts · \(code)", barcode: databaseBarcode(barcode), sourceRecordID: "OFF:" + code, gramsPerServing: volume ? nil : 100, millilitersPerServing: volume ? 100 : nil, caloriesExact: c)
+    }
+
+    static func materiallyDisagree(_ lhs: NutritionFacts, _ rhs: NutritionFacts) -> Bool {
+        guard lhs.gramsPerServing == rhs.gramsPerServing, lhs.millilitersPerServing == rhs.millilitersPerServing else { return true }
+        let energyDifference = abs(lhs.caloriesValue - rhs.caloriesValue)
+        if energyDifference > max(20, Double(max(lhs.calories, rhs.calories)) * 0.15) { return true }
+        return [(lhs.proteinG, rhs.proteinG), (lhs.carbsG, rhs.carbsG), (lhs.fatG, rhs.fatG)].contains {
+            abs($0.0 - $0.1) > max(2, max($0.0, $0.1) * 0.2)
+        }
+    }
 
     func lookup(barcode: String) async throws -> NutritionFacts {
-        guard let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/\(barcode).json") else {
-            throw BarcodeLookupError.requestFailed("Invalid barcode.")
-        }
-
-        let (data, response) = try await URLSession.shared.data(from: url)
-        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
-            throw BarcodeLookupError.requestFailed("Server error.")
-        }
-
-        struct OFFResponse: Decodable {
-            struct Product: Decodable {
-                struct Nutriments: Decodable {
-                    // Per-serving values (present when the product has a serving_size)
-                    let energyKcalServing: Double?
-                    let proteinsServing: Double?
-                    let carbohydratesServing: Double?
-                    let fatServing: Double?
-                    let fiberServing: Double?
-                    // Per-100g fallback values
-                    let energyKcal100g: Double?
-                    let proteins100g: Double?
-                    let carbohydrates100g: Double?
-                    let fat100g: Double?
-                    let fiber100g: Double?
-
-                    enum CodingKeys: String, CodingKey {
-                        case energyKcalServing = "energy-kcal_serving"
-                        case proteinsServing = "proteins_serving"
-                        case carbohydratesServing = "carbohydrates_serving"
-                        case fatServing = "fat_serving"
-                        case fiberServing = "fiber_serving"
-                        case energyKcal100g = "energy-kcal_100g"
-                        case proteins100g = "proteins_100g"
-                        case carbohydrates100g = "carbohydrates_100g"
-                        case fat100g = "fat_100g"
-                        case fiber100g = "fiber_100g"
-                    }
-                }
-                let productName: String?
-                let nutriments: Nutriments?
-                let servingSize: String?
-
-                enum CodingKeys: String, CodingKey {
-                    case productName = "product_name"
-                    case nutriments
-                    case servingSize = "serving_size"
-                }
+        let barcode = try RetailBarcode(barcode).canonical
+        if let (date, facts) = cache[barcode], Date().timeIntervalSince(date) < 86400 { return facts }
+        guard Date() >= nextRequest else { throw BarcodeLookupError.requestFailed("Product service is rate limited. Wait before retrying.") }
+        let url = URL(string: "https://world.openfoodfacts.org/api/v3/product/\(barcode)?fields=code,product_name,brands,nutriments,product_quantity_unit,serving_quantity_unit")!
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 20
+        request.setValue("Fueli/1.0 (https://github.com/mwelford2/Fueli)", forHTTPHeaderField: "User-Agent")
+        for attempt in 0..<3 {
+            let (data, response) = try await session.data(for: request)
+            guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
+            if http.statusCode == 429 {
+                let seconds = min(3600, max(60, Double(http.value(forHTTPHeaderField: "Retry-After") ?? "") ?? 60))
+                nextRequest = Date().addingTimeInterval(seconds)
+                throw BarcodeLookupError.requestFailed("Rate limit reached. Retry after \(Int(seconds)) seconds.")
             }
-            let status: Int
-            let product: Product?
+            if http.statusCode >= 500 && attempt < 2 {
+                try await Task.sleep(for: .seconds(pow(2, Double(attempt)) + Double.random(in: 0...0.3)))
+                continue
+            }
+            if http.statusCode == 404 { return try await usdaFallback(barcode) }
+            guard http.statusCode == 200 else { throw BarcodeLookupError.requestFailed("Product service returned HTTP \(http.statusCode). Retry later.") }
+            let decoded = try JSONDecoder().decode(OFFResponse.self, from: data)
+            guard decoded.product != nil else { return try await usdaFallback(barcode) }
+            let facts: NutritionFacts
+            do { facts = try Self.normalize(decoded, barcode: barcode) }
+            catch {
+                if let fallback = try? await usdaFallback(barcode) { return fallback }
+                throw error
+            }
+            if !USDAapiCaller.shared.APIKey.isEmpty, let alternative = try? await usdaFallback(barcode),
+               Self.materiallyDisagree(facts, alternative) {
+                cache[barcode] = nil
+                throw BarcodeLookupError.requestFailed("Open Food Facts and USDA disagree for this exact barcode (\(facts.calories) vs \(alternative.calories) kcal per reference portion), or use different mass/volume bases. Review the package and use manual entry.")
+            }
+            cache[barcode] = (Date(), facts)
+            return facts
         }
+        throw URLError(.badServerResponse)
+    }
 
-        let decoded = try JSONDecoder().decode(OFFResponse.self, from: data)
-        guard decoded.status == 1, let product = decoded.product, let nutriments = product.nutriments else {
-            throw BarcodeLookupError.notFound
+    private func usdaFallback(_ barcode: String) async throws -> NutritionFacts {
+        guard !USDAapiCaller.shared.APIKey.isEmpty else { throw BarcodeLookupError.notFound }
+        let response = try await USDAapiCaller.shared.search(query: barcode, dataTypes: ["Branded"])
+        let exact = response.foods.filter { $0.gtinUpc.map { Self.sameGTIN($0, barcode) } == true }
+        guard exact.count == 1, let food = exact.first else { throw BarcodeLookupError.notFound }
+        let n = try await USDAapiCaller.shared.foodDetail(id: food.fdcId).coreValues()
+        func required(_ id: Int) throws -> Double {
+            guard let value = n[id] else { throw NutritionValidationError.incomplete }; return value
         }
-
-        let name = product.productName?.isEmpty == false ? product.productName! : "Scanned item"
-
-        // Prefer per-serving values when available; fall back to per-100g.
-        let useServing = nutriments.energyKcalServing != nil && product.servingSize != nil
-        let calories: Int
-        let protein, carbs, fat, fiber: Double
-        let serving: String
-
-        if useServing {
-            calories = Int((nutriments.energyKcalServing ?? 0).rounded())
-            protein = nutriments.proteinsServing ?? 0
-            carbs = nutriments.carbohydratesServing ?? 0
-            fat = nutriments.fatServing ?? 0
-            fiber = nutriments.fiberServing ?? 0
-            serving = product.servingSize!
-        } else {
-            calories = Int((nutriments.energyKcal100g ?? 0).rounded())
-            protein = nutriments.proteins100g ?? 0
-            carbs = nutriments.carbohydrates100g ?? 0
-            fat = nutriments.fat100g ?? 0
-            fiber = nutriments.fiber100g ?? 0
-            serving = "100 g"
-        }
-
-        return NutritionFacts(
-            name: name,
-            calories: calories,
-            proteinG: protein,
-            carbsG: carbs,
-            fatG: fat,
-            fiberG: fiber,
-            servingDescription: serving
-        )
+        let c = try required(1008), p = try required(1003), carbs = try required(1005), fat = try required(1004), fiber = try required(1079)
+        _ = try ServingNutrition(calories: c, protein: p, carbohydrates: carbs, fat: fat, fiber: fiber)
+        let facts = NutritionFacts(name: food.description, calories: Int(c.rounded()), proteinG: p,
+            carbsG: carbs, fatG: fat, fiberG: fiber, servingDescription: "100 g · USDA \(food.fdcId) · \(barcode)", barcode: barcode, sourceRecordID: "USDA:\(food.fdcId)", gramsPerServing: 100, caloriesExact: c)
+        cache[barcode] = (Date(), facts)
+        return facts
     }
 }

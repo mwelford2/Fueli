@@ -23,7 +23,7 @@ struct HistoryView: View {
         let calendar = Calendar.current
         return (0..<7).reversed().map { offset in
             let day = calendar.date(byAdding: .day, value: -offset, to: calendar.startOfDay(for: Date()))!
-            let total = allLogs.filter { calendar.isDate($0.loggedAt, inSameDayAs: day) }.reduce(0) { $0 + $1.calories }
+            let total = Int(allLogs.filter { calendar.isDate($0.loggedAt, inSameDayAs: day) }.reduce(0.0) { $0 + $1.caloriesValue }.rounded())
             return (day, total)
         }
     }

@@ -11,7 +11,7 @@ import UIKit
 
 struct CalCloneTests {
 
-    @Test func example() async throws {
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["FUELI_LIVE_AI_TESTS"] == "1")) func example() async throws {
         let userText = "Medium banana"
 
         // These are the 5 FDC candidate descriptions you'd get back from a USDA FoodData Central search.

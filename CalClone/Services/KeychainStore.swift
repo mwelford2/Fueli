@@ -42,4 +42,29 @@ enum KeychainStore {
         ]
         SecItemDelete(query as CFDictionary)
     }
+    /// Update first so a failed write never deletes an existing credential.
+    /// New personal USDA keys remain on this device and are excluded from backups.
+    static func saveChecked(_ value: String, account: String) throws {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service, kSecAttrAccount as String: account]
+        let data = Data(value.utf8)
+        var status = SecItemUpdate(query as CFDictionary, [kSecValueData as String: data] as CFDictionary)
+        if status == errSecItemNotFound {
+            var attributes = query
+            attributes[kSecValueData as String] = data
+            attributes[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            status = SecItemAdd(attributes as CFDictionary, nil)
+        }
+        guard status == errSecSuccess else { throw NSError(domain: NSOSStatusErrorDomain, code: Int(status)) }
+    }
+
+    static func deleteChecked(account: String) throws {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service, kSecAttrAccount as String: account]
+        let status = SecItemDelete(query as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(status))
+        }
+    }
+
 }

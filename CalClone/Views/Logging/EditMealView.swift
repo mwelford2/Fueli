@@ -25,16 +25,23 @@ struct EditMealView: View {
     init(log: FoodLog) {
         self.log = log
         _name = State(initialValue: log.name)
-        _caloriesText = State(initialValue: String(log.calories))
-        _proteinText = State(initialValue: String(format: "%.0f", log.proteinG))
-        _carbsText = State(initialValue: String(format: "%.0f", log.carbsG))
-        _fatText = State(initialValue: String(format: "%.0f", log.fatG))
-        _fiberText = State(initialValue: String(format: "%.0f", log.fiberG))
+        _caloriesText = State(initialValue: String(log.caloriesValue))
+        _proteinText = State(initialValue: String(log.proteinG))
+        _carbsText = State(initialValue: String(log.carbsG))
+        _fatText = State(initialValue: String(log.fatG))
+        _fiberText = State(initialValue: String(log.fiberG))
         _servingDescription = State(initialValue: log.servingDescription)
         _servings = State(initialValue: log.servings)
         _mealType = State(initialValue: log.mealType)
         _loggedAt = State(initialValue: log.loggedAt)
         _notes = State(initialValue: log.notes ?? "")
+    }
+
+    private var valid: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        [caloriesText, proteinText, carbsText, fatText, fiberText].allSatisfy {
+            Double($0).map { $0.isFinite && $0 >= 0 && $0 <= 1000000 } ?? false
+        } && servings.isFinite && servings > 0
     }
 
     var body: some View {
@@ -71,7 +78,7 @@ struct EditMealView: View {
                     DatePicker("Logged at", selection: $loggedAt)
                 }
 
-                Section("Nutrition (total)") {
+                Section("Nutrition (logged total, editable)") {
                     EditNumericRow(label: "Calories", text: $caloriesText, unit: "kcal")
                     EditNumericRow(label: "Protein", text: $proteinText, unit: "g")
                     EditNumericRow(label: "Carbs", text: $carbsText, unit: "g")
@@ -98,7 +105,7 @@ struct EditMealView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
-                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty || Int(caloriesText) == nil)
+                        .disabled(!valid)
                 }
             }
             .confirmationDialog("Delete this meal?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
@@ -113,7 +120,9 @@ struct EditMealView: View {
 
     private func save() {
         log.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        log.calories = Int(caloriesText) ?? log.calories
+        guard valid, let calories = Double(caloriesText) else { return }
+        log.calories = Int(calories.rounded())
+        log.caloriesExact = calories
         log.proteinG = Double(proteinText) ?? log.proteinG
         log.carbsG = Double(carbsText) ?? log.carbsG
         log.fatG = Double(fatText) ?? log.fatG
@@ -138,7 +147,7 @@ private struct EditNumericRow: View {
             Text(label)
             Spacer()
             TextField("0", text: $text)
-                .keyboardType(.numberPad)
+                .keyboardType(.decimalPad)
                 .multilineTextAlignment(.trailing)
                 .frame(width: 80)
             Text(unit).foregroundStyle(.secondary)

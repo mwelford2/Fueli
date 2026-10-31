@@ -62,13 +62,17 @@ final class AINutritionService {
         let id: String
         /// nil == unknown. Non-nil == known from the provider's own metadata or models.dev.
         var capabilities: Set<ModelCapability>?
+        var capabilitySource: String? = nil
+        var hasCompleteCapabilityMetadata = true
+        var unsupportedCapabilities: Set<ModelCapability> = []
 
         var capabilityLabel: String {
             guard let capabilities else { return "Capabilities unknown" }
             let known = ModelCapability.allCases
                 .filter { capabilities.contains($0) }
                 .map(\.shortLabel)
-            return known.isEmpty ? "No text/image/audio/video input" : known.joined(separator: " · ")
+            let label = known.isEmpty ? "Capabilities unknown" : known.joined(separator: " · ")
+            return hasCompleteCapabilityMetadata ? label : label + " · Other inputs unknown"
         }
 
         /// True only when we positively know the model accepts both text and images.
@@ -128,21 +132,86 @@ final class AINutritionService {
             models = Self.parseModelList(try await Self.fetch(makeRequest("/models")))
         }
 
-        // Fill in unknown capabilities from models.dev — a free, keyless cross-provider
-        // model database. Anything still unknown after this stays nil (we never guess).
-        if models.contains(where: { $0.capabilities == nil }) {
-            let db = try? await Self.loadModelsDevDatabase()
-            if let db {
-                models = models.map { model in
-                    guard model.capabilities == nil else { return model }
-                    var updated = model
-                    updated.capabilities = db.capabilities(forModelID: model.id)
-                    return updated
-                }
-            }
+        // Sparse supports_* flags describe individual capabilities, not an exhaustive list.
+        // Consult exact, documented model cards first, then the community catalog.
+        models = models.map { Self.resolveCapabilities($0, database: nil) }
+        if models.contains(where: { !$0.hasCompleteCapabilityMetadata || $0.capabilities == nil }),
+           let db = try? await Self.loadModelsDevDatabase() {
+            models = models.map { Self.resolveCapabilities($0, database: db) }
         }
 
         return models
+    }
+
+    /// Reviewed against Google's official model card, 2026-10-30. Exact identifiers only;
+    /// this documents the base model, not a guarantee that a gateway enables every input.
+    static func resolveCapabilities(_ model: DiscoveredModel, database: ModelsDevDatabase?) -> DiscoveredModel {
+        var result = model
+        let id = model.id.lowercased()
+        let reference: Set<ModelCapability>?
+        if ["gemma-4-31b-it", "google/gemma-4-31b-it"].contains(id) {
+            reference = [.text, .image]
+            result.capabilitySource = "Google Gemma 4 model card · https://ai.google.dev/gemma/docs/core/model_card_4"
+        } else {
+            reference = database?.capabilities(forModelID: model.id)
+            if reference != nil { result.capabilitySource = "models.dev · https://models.dev" }
+        }
+        if let reference {
+            result.capabilities = reference
+            result.hasCompleteCapabilityMetadata = true
+        }
+        return result
+    }
+
+    /// Only exact repository IDs or reviewed publisher aliases; no fuzzy HF search.
+    static func huggingFaceRepository(for id: String) -> String? {
+        if ["gemma-4-31b-it", "google/gemma-4-31b-it"].contains(id.lowercased()) {
+            return "google/gemma-4-31B-it"
+        }
+        let parts = id.split(separator: "/", omittingEmptySubsequences: false)
+        let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.")
+        guard parts.count == 2, parts.allSatisfy({ !$0.isEmpty && $0 != "." && $0 != ".." && $0.unicodeScalars.allSatisfy(allowed.contains) }) else { return nil }
+        return id
+    }
+
+    static func capabilitiesFromHuggingFace(_ data: Data, repository: String, modelID: String) throws -> DiscoveredModel? {
+        struct Metadata: Decodable {
+            let id: String
+            let pipeline_tag: String?
+        }
+        let metadata = try JSONDecoder().decode(Metadata.self, from: data)
+        guard metadata.id.lowercased() == repository.lowercased() else { return nil }
+        let capabilities: Set<ModelCapability>
+        switch metadata.pipeline_tag {
+        case "image-text-to-text": capabilities = [.text, .image]
+        case "text-generation", "text2text-generation": capabilities = [.text]
+        case "image-to-text": capabilities = [.image]
+        case "video-text-to-text": capabilities = [.text, .video]
+        default: return nil
+        }
+        return DiscoveredModel(id: modelID, capabilities: capabilities,
+            capabilitySource: "Hugging Face model metadata · https://huggingface.co/" + metadata.id)
+    }
+
+    /// Public metadata only. Provider keys and endpoint URLs are never sent to HF.
+    static func lookupPublishedCapabilities(for model: DiscoveredModel, session: URLSession = .shared) async -> DiscoveredModel {
+        if let repository = huggingFaceRepository(for: model.id),
+           let url = URL(string: "https://huggingface.co/api/models/" + repository) {
+            var request = URLRequest(url: url)
+            request.timeoutInterval = 10
+            do {
+                let (data, response) = try await session.data(for: request)
+                if let http = response as? HTTPURLResponse, http.statusCode == 200,
+                   let published = try capabilitiesFromHuggingFace(data, repository: repository, modelID: model.id) {
+                    return published
+                }
+            } catch { /* Offline, gated, or unknown metadata: retain documented fallbacks. */ }
+        }
+        if Task.isCancelled { return model }
+        let reviewed = resolveCapabilities(model, database: nil)
+        if reviewed.capabilitySource != model.capabilitySource { return reviewed }
+        let database = try? await loadModelsDevDatabase()
+        return resolveCapabilities(model, database: database)
     }
 
     private static func fetch(_ request: URLRequest) async throws -> Data {
@@ -175,7 +244,14 @@ final class AINutritionService {
 
             // LiteLLM always reports a `mode`; when present we trust its capability flags.
             guard let mode = (info["mode"] as? String)?.lowercased() else {
-                models.append(DiscoveredModel(id: id, capabilities: nil))
+                var metadata = info
+                metadata["id"] = id
+                if let data = try? JSONSerialization.data(withJSONObject: ["data": [metadata]]),
+                   let partial = parseModelList(data).first {
+                    models.append(partial)
+                } else {
+                    models.append(DiscoveredModel(id: id, capabilities: nil, hasCompleteCapabilityMetadata: false))
+                }
                 continue
             }
 
@@ -194,7 +270,7 @@ final class AINutritionService {
                 // embedding, rerank, moderation, … — not a chat model, no input modalities.
                 break
             }
-            models.append(DiscoveredModel(id: id, capabilities: caps))
+            models.append(DiscoveredModel(id: id, capabilities: caps, capabilitySource: "Provider /model/info"))
         }
         return models.sorted { $0.id.localizedCaseInsensitiveCompare($1.id) == .orderedAscending }
     }
@@ -214,25 +290,33 @@ final class AINutritionService {
             guard let id = entry["id"] as? String, !id.isEmpty else { continue }
             var caps: Set<ModelCapability> = []
             var haveCapabilityData = false
+            var complete = false
+            var unsupported: Set<ModelCapability> = []
 
             // OpenRouter-style: architecture.input_modalities / modality ("text+image->text")
             if let arch = entry["architecture"] as? [String: Any] {
                 if let mods = arch["input_modalities"] as? [String] {
-                    caps.formUnion(mapModalityTokens(mods)); haveCapabilityData = true
+                    caps.formUnion(mapModalityTokens(mods)); haveCapabilityData = true; complete = true
                 }
                 if let modality = arch["modality"] as? String {
                     let inputSide = modality.components(separatedBy: "->").first ?? modality
                     caps.formUnion(mapModalityTokens(inputSide.components(separatedBy: CharacterSet(charactersIn: "+ ,"))))
                     haveCapabilityData = true
+                    complete = true
                 }
             }
             // LiteLLM-style flat booleans on the model object itself.
-            for key in ["supports_vision", "supports_audio_input", "supports_video_input"] where entry[key] != nil {
+            for (key, capability) in [("supports_vision", ModelCapability.image),
+                                      ("supports_audio_input", .audio), ("supports_video_input", .video)] {
+                if let supported = entry[key] as? Bool {
+                    haveCapabilityData = true
+                    if supported { caps.insert(capability) } else { unsupported.insert(capability) }
+                }
+            }
+            if let mode = entry["mode"] as? String, ["chat", "completion", "responses"].contains(mode.lowercased()) {
+                caps.insert(.text)
                 haveCapabilityData = true
             }
-            if entry["supports_vision"] as? Bool == true { caps.insert(.image) }
-            if entry["supports_audio_input"] as? Bool == true { caps.insert(.audio) }
-            if entry["supports_video_input"] as? Bool == true { caps.insert(.video) }
             // Anthropic capabilities object (fields are an open set).
             if let anthropicCaps = entry["capabilities"] as? [String: Any] {
                 haveCapabilityData = true
@@ -240,7 +324,9 @@ final class AINutritionService {
                 caps.insert(.text)
             }
 
-            models.append(DiscoveredModel(id: id, capabilities: haveCapabilityData ? caps : nil))
+            models.append(DiscoveredModel(id: id, capabilities: haveCapabilityData ? caps : nil,
+                capabilitySource: haveCapabilityData ? "Provider /models" : nil,
+                hasCompleteCapabilityMetadata: complete, unsupportedCapabilities: unsupported))
         }
         return models.sorted { $0.id.localizedCaseInsensitiveCompare($1.id) == .orderedAscending }
     }
@@ -263,9 +349,9 @@ final class AINutritionService {
 
     /// A parsed snapshot of models.dev's `api.json`, indexed by bare model id. The
     /// same id can appear under several providers with differing modalities — we
-    /// union the input modalities so "any provider supports images" wins.
+    /// retain only input modalities shared by all matching catalog entries.
     struct ModelsDevDatabase {
-        /// bare model id (lowercased) → union of input modalities seen for it
+        /// bare model id (lowercased) → intersection of input modalities seen for it
         private let byID: [String: Set<ModelCapability>]
 
         init(json: Data) throws {
@@ -286,15 +372,14 @@ final class AINutritionService {
                     else { continue }
                     let caps = AINutritionService.mapModalityTokens(input)
                     let key = modelID.lowercased()
-                    acc[key, default: []].formUnion(caps)
+                    acc[key] = acc[key].map { $0.intersection(caps) } ?? caps
                 }
             }
             self.byID = acc
         }
 
-        /// Looks up a provider's model id against the database. Only exact matches
-        /// (optionally ignoring a `provider/` prefix or a trailing date/version tag)
-        /// count — we would rather return nil than a wrong capability set.
+        /// Exact identifier lookup, allowing a provider namespace but never stripping
+        /// version/date suffixes that may distinguish models with different capabilities.
         func capabilities(forModelID id: String) -> Set<ModelCapability>? {
             let lower = id.lowercased()
             if let exact = byID[lower] { return exact }
@@ -302,19 +387,6 @@ final class AINutritionService {
             let bare = lower.split(separator: "/").last.map(String.init) ?? lower
             if let m = byID[bare] { return m }
 
-            // Ignore a trailing version/date tag: "-3.1", ".1", "-20250101", "-v2",
-            // "-latest", "-preview". The stem before the boundary must match a db key
-            // exactly — no arbitrary prefixes (so "nomic-embed-text-v1.5" won't match
-            // an unrelated "nomic-embed-text" chat key).
-            for candidate in [lower, bare] {
-                if let range = candidate.range(
-                    of: #"[-.](?:v?\d[\w.]*|\d{6,8}|latest|preview|instruct|it|chat)$"#,
-                    options: .regularExpression
-                ) {
-                    let stem = String(candidate[..<range.lowerBound])
-                    if let m = byID[stem] { return m }
-                }
-            }
             return nil
         }
     }
@@ -355,6 +427,29 @@ final class AINutritionService {
     /// Runs the decomposition model once. Does NOT touch the USDA API — returns the
     /// model's structured breakdown, which may carry a `clarifyingQuestion`.
     func decompose(_ input: AnalysisInput, clarifications: [Clarification]) async throws -> NutritionAnalysisResult {
+        if input.kind == .photo {
+            let prompt = """
+            Describe the meal image for user review. Return ONLY JSON with:
+            {"dishName":"string","observedFacts":["string"],"estimates":["string"],"unknowns":["string"],
+            "items":[{"name":"string","estimatedGrams":100.0,"preparation":"cooked/grilled/sauce/oil details or unknown","measureBasis":"raw|cooked|as_packaged"}],"clarifyingQuestion":null}
+            Separate observations from estimates and unknowns. Include visible components, serving count, sauces, oils, toppings,
+            preparation and hidden-ingredient uncertainties. Grams are estimates, not measurements without a scale reference.
+            Ask at most one material clarification question; respect supplied answers. Do NOT produce calories, nutrients or database queries.
+            """
+            let questionPolicy: String
+            switch config.assumptionLevel {
+            case .assume: questionPolicy = "Do not ask questions; clarifyingQuestion must be null. Record remaining unknowns."
+            case .alwaysAsk where clarifications.isEmpty: questionPolicy = "Ask one material clarifyingQuestion before finalizing the description."
+            case .ask: questionPolicy = "Ask about the most important uncertain ingredient, preparation, or quantity."
+            default: questionPolicy = "Ask only if an uncertainty could materially change nutrition; otherwise record unknowns."
+            }
+            let answers = clarifications.map { $0.question + ": " + $0.answer }.joined(separator: "\n")
+            let raw = try await runRawText(userText: (input.userText ?? "Describe this meal.") + "\n" + answers,
+                imageBase64: input.imageBase64, prompt: prompt + "\n" + questionPolicy, outputContract: .description)
+            let clean = NutritionAnalysisResult.stripMarkdownFences(raw)
+            let description = try JSONDecoder().decode(PhotoMealDescription.self, from: Data(clean.utf8))
+            return try description.reviewResult()
+        }
         let level = config.assumptionLevel
         let systemPrompt = self.systemPrompt.replacingOccurrences(
             of: "{{ASSUMPTION_POLICY}}",
@@ -378,13 +473,37 @@ final class AINutritionService {
             userText += "\n\nClarifications so far:\n\(block)"
         }
 
-        let raw = try await runRawText(userText: userText, imageBase64: input.imageBase64, prompt: systemPrompt)
+        let raw = try await runRawText(userText: userText, imageBase64: input.imageBase64, prompt: systemPrompt, outputContract: .lookupPlan)
         return try USDAapiCaller.parseNutritionResult(from: raw)
     }
 
     /// Turns a finalized decomposition into concrete numbers via the USDA API.
-    func resolveNutrition(from result: NutritionAnalysisResult, imageBase64: String?) async throws -> NutritionFacts {
-        try await USDAapiCaller.shared.analyzeFood(result: result, imageBase64: imageBase64)
+    func resolveNutrition(from result: NutritionAnalysisResult, imageBase64: String?, selections: [String: USDAapiCaller.FDCFood] = [:]) async throws -> NutritionFacts {
+        // Stage two receives ONLY the user's corrected description, never the image.
+        let description = try JSONEncoder().encode(result)
+        let instructions = systemPrompt.replacingOccurrences(of: "{{ASSUMPTION_POLICY}}", with: AssumptionLevel.assume.promptDirective)
+            + "\nPlan USDA search queries for this corrected structured description. Do not invent nutrition or claim USDA retrieval. Preserve component order and copy every component label EXACTLY; quantities are authoritative. Return the documented JSON contract only."
+        var planned: NutritionAnalysisResult?
+        for attempt in 0..<2 {
+            let text = String(decoding: description, as: UTF8.self) + (attempt == 1 ? "\nPrevious output was invalid. Return strict schema-conforming JSON only." : "")
+            let raw = try await runRawText(userText: text, imageBase64: nil, prompt: instructions, outputContract: .lookupPlan)
+            if let decoded = try? USDAapiCaller.parseNutritionResult(from: raw), decoded.components.count == result.components.count,
+               zip(decoded.components, result.components).allSatisfy({
+                   $0.0.label.trimmingCharacters(in: .whitespacesAndNewlines).localizedCaseInsensitiveCompare($0.1.label.trimmingCharacters(in: .whitespacesAndNewlines)) == .orderedSame
+               }) {
+                planned = decoded; break
+            }
+        }
+        guard var plan = planned else { throw AIServiceError.requestFailed("The USDA query planner returned invalid output. Correct the description and retry.") }
+        for index in result.components.indices {
+            plan.components[index].label = result.components[index].label
+            plan.components[index].estimatedGrams = result.components[index].estimatedGrams
+            plan.components[index].quantity = result.components[index].quantity
+            plan.components[index].preparation = result.components[index].preparation
+            plan.components[index].measureBasis = result.components[index].measureBasis
+        }
+        plan.dishName = result.dishName
+        return try await USDAapiCaller.shared.analyzeFood(result: plan, imageBase64: nil, selections: selections)
     }
 
     /// A fixed seed so gateways that honour it (OpenAI, vLLM, most LiteLLM backends)
@@ -395,20 +514,20 @@ final class AINutritionService {
     /// Calls the AI and returns the raw response string without JSON parsing.
     /// Use this for prompts that don't return a NutritionAnalysisResult (e.g. the FDC candidate classifier).
     /// `temperature` defaults to 0 for maximum run-to-run consistency.
-    func runRawText(userText: String, imageBase64: String?, prompt: String? = nil, temperature: Double = 0) async throws -> String {
+    func runRawText(userText: String, imageBase64: String?, prompt: String? = nil, temperature: Double = 0, outputContract: MealOutputContract? = nil) async throws -> String {
         let config = self.config
         guard config.isConfigured else { throw AIServiceError.notConfigured }
         guard URL(string: config.normalizedBaseURL) != nil else { throw AIServiceError.invalidBaseURL }
         if config.preset.isOpenAICompatible {
-            return try await callOpenAICompatible(config: config, userText: userText, imageBase64: imageBase64, systemPrompt: prompt, temperature: temperature)
+            return try await callOpenAICompatible(config: config, userText: userText, imageBase64: imageBase64, systemPrompt: prompt, temperature: temperature, outputContract: outputContract)
         } else {
-            return try await callAnthropic(config: config, userText: userText, imageBase64: imageBase64, systemPrompt: prompt, temperature: temperature)
+            return try await callAnthropic(config: config, userText: userText, imageBase64: imageBase64, systemPrompt: prompt, temperature: temperature, outputContract: outputContract)
         }
     }
 
     // MARK: - OpenAI-compatible (OpenAI, Grok, custom/school gateways)
 
-    private func callOpenAICompatible(config: AIProviderConfig, userText: String, imageBase64: String?, systemPrompt: String? = nil, temperature: Double = 0) async throws -> String {
+    private func callOpenAICompatible(config: AIProviderConfig, userText: String, imageBase64: String?, systemPrompt: String? = nil, temperature: Double = 0, outputContract: MealOutputContract? = nil) async throws -> String {
         guard let url = URL(string: config.normalizedBaseURL + "/chat/completions") else {
             throw AIServiceError.invalidBaseURL
         }
@@ -448,7 +567,7 @@ final class AINutritionService {
         request.setValue("Bearer \(config.apiKey)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, response) = try await send(request)
+        let (data, response) = try await sendWithStructuredOutput(request, contract: outputContract, anthropic: false)
         try Self.validate(response, data: data)
 
         struct ChatResponse: Decodable {
@@ -464,13 +583,12 @@ final class AINutritionService {
             throw AIServiceError.emptyResponse
         }
         
-        print(content)
         return content
     }
 
     // MARK: - Anthropic native
 
-    private func callAnthropic(config: AIProviderConfig, userText: String, imageBase64: String?, systemPrompt: String? = nil, temperature: Double = 0) async throws -> String {
+    private func callAnthropic(config: AIProviderConfig, userText: String, imageBase64: String?, systemPrompt: String? = nil, temperature: Double = 0, outputContract: MealOutputContract? = nil) async throws -> String {
         guard let url = URL(string: config.normalizedBaseURL + "/messages") else {
             throw AIServiceError.invalidBaseURL
         }
@@ -504,7 +622,7 @@ final class AINutritionService {
         request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, response) = try await send(request)
+        let (data, response) = try await sendWithStructuredOutput(request, contract: outputContract, anthropic: true)
         try Self.validate(response, data: data)
 
         struct MessagesResponse: Decodable {
@@ -521,9 +639,45 @@ final class AINutritionService {
 
     // MARK: - Shared networking helpers
 
+    /// Retry without the optional provider feature only when the endpoint explicitly
+    /// rejects that feature. Authentication, throttling and schema errors are not hidden.
+    private func sendWithStructuredOutput(_ original: URLRequest, contract: MealOutputContract?, anthropic: Bool) async throws -> (Data, URLResponse) {
+        guard let contract, let originalBody = original.httpBody,
+              var body = try JSONSerialization.jsonObject(with: originalBody) as? [String: Any] else {
+            return try await send(original)
+        }
+        if anthropic {
+            body["output_config"] = ["format": ["type": "json_schema", "schema": contract.schema]]
+        } else {
+            body["response_format"] = ["type": "json_schema", "json_schema": ["name": contract.name, "strict": true, "schema": contract.schema]]
+        }
+        var request = original
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        let (data, response) = try await send(request)
+        if let http = response as? HTTPURLResponse,
+           Self.rejectsStructuredOutput(status: http.statusCode, data: data, anthropic: anthropic) {
+            return try await send(original)
+        }
+        return (data, response)
+    }
+
+    static func rejectsStructuredOutput(status: Int, data: Data, anthropic: Bool) -> Bool {
+        guard [400, 422].contains(status) else { return false }
+        let message = String(decoding: data, as: UTF8.self).lowercased()
+        let parameter = anthropic ? "output_config" : "response_format"
+        return (message.contains(parameter) || message.contains("json_schema")) &&
+            ["not supported", "unsupported", "does not support", "unknown parameter", "unrecognized"].contains(where: message.contains)
+    }
+
     private func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         do {
-            return try await URLSession.shared.data(for: request)
+            var timed = request
+            timed.timeoutInterval = 90
+            return try await URLSession.shared.data(for: timed)
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch let error as URLError where error.code == .cancelled {
+            throw CancellationError()
         } catch {
             throw AIServiceError.requestFailed(error.localizedDescription)
         }

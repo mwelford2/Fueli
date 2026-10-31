@@ -8,27 +8,27 @@
 
 /* Begin PBXBuildFile section */
 		05252CF8C0071D1261B0301C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A549B046393372304364C2 /* Theme.swift */; };
-		27F784FE9F965A5456CC3728 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */; };
 		14FB60B31DE1816FBFC0535D /* WorkoutLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C11D89532BB49AA08EEB13 /* WorkoutLog.swift */; };
 		1A90AB01143933FBD636507F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A31FB6E155EE90307643C7C /* Assets.xcassets */; };
 		1BEFEA51301BBDA6004FE014 /* fdc_ingredient_prompt.md in Resources */ = {isa = PBXBuildFile; fileRef = 1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */; };
+		27F784FE9F965A5456CC3728 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */; };
 		36379C3D27A4ACDC95D6321E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29150FED90D3C029F2605DB7 /* HistoryView.swift */; };
 		3CF2D59857CD9551D89A6D5E /* StreaksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F08AC7F1F27DD95287A71B /* StreaksView.swift */; };
 		476809C78A725AA761A5A573 /* NutritionConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8988A9E56CE2024300051C8 /* NutritionConfirmView.swift */; };
 		49ADA83CE10B9F83D377825B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2E5315FC0864D62E3BAC21 /* SettingsView.swift */; };
 		4FD3061E64C2888158C4A470 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B74EE0F5F67DA1F25D5F404 /* DashboardView.swift */; };
+		58B09BCF6B64B8EC62C1F8C5 /* EditMealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0F88A784429709944D836 /* EditMealView.swift */; };
 		5A0BD72BE10EF32E47D04B2C /* AIProviderSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73C2B66660B0C8AFA14A937 /* AIProviderSettingsView.swift */; };
 		5D0AAE0D81CB5BB491909A8A /* NutritionAnalysisResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */; };
 		726615D068D1A35BEDE25B97 /* FoodLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E41A8A3786B08ED166050BD /* FoodLog.swift */; };
 		7A16E03E11BB93F9F21EADCA /* LogEntryHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366AD4A53F4C2EEF474DC8B4 /* LogEntryHubView.swift */; };
 		7C5A398C025A42740BFB45A4 /* DescribeMealFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC3718973051613808BA54C /* DescribeMealFlowView.swift */; };
-		939174EB99AA1E2A07BF7833 /* MealAnalysisFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEADF03981AA58270300172C /* MealAnalysisFlow.swift */; };
-		58B09BCF6B64B8EC62C1F8C5 /* EditMealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0F88A784429709944D836 /* EditMealView.swift */; };
 		800C804C19F850D13B5DAA17 /* BarcodeScanFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */; };
 		8565975DD9052CE2CD3CC4AA /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406A0704776FFD2516ABFC2E /* CameraPicker.swift */; };
 		87AE6596F52D397E7E21A273 /* WaterEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */; };
 		8F4DB85FA35FE60DF8909A5B /* SavedMealsFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C299BB268C4DB9CCDE233187 /* SavedMealsFlowView.swift */; };
 		92C35504A8D1E6522DA81FA8 /* AINutritionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466CC25E396E30308222BB52 /* AINutritionService.swift */; };
+		939174EB99AA1E2A07BF7833 /* MealAnalysisFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEADF03981AA58270300172C /* MealAnalysisFlow.swift */; };
 		9486ED200D17DA4D1ADDD896 /* PhotoCaptureFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F2F9B4C9B1F43B27F75065 /* PhotoCaptureFlowView.swift */; };
 		97EACDC77BC025823BBE0F7B /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */; };
 		98D57F8B7436E5A51D67AC37 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC09CE55217B52933D57210 /* RootView.swift */; };
@@ -46,6 +46,12 @@
 		F2772DB30C44A90257D3C305 /* ManualEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D53B8ABBE92D9722C4B260 /* ManualEntryView.swift */; };
 		F3BB892A8AD1AB9FEFC72F6C /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1169260177948F799435AFDD /* ProfileSettingsView.swift */; };
 		F57919F470DC03CFCDF14A3E /* BarcodeLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */; };
+		FA0000000000000000000002 /* ServingNutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0000000000000000000001 /* ServingNutrition.swift */; };
+		FA0000000000000000000012 /* RetailBarcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0000000000000000000011 /* RetailBarcode.swift */; };
+		FB0000000000000000000002 /* CalClone/Services/LibraryTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000001 /* CalClone/Services/LibraryTransfer.swift */; };
+		FB0000000000000000000012 /* CalClone/Views/Logging/MealBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000011 /* CalClone/Views/Logging/MealBuilderView.swift */; };
+		FB0000000000000000000022 /* CalClone/Views/Logging/ReceiptImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000021 /* CalClone/Views/Logging/ReceiptImportView.swift */; };
+FC0000000000000000000012 = {isa = PBXBuildFile; fileRef = FC0000000000000000000011; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,7 +67,6 @@
 /* Begin PBXFileReference section */
 		07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeLookupService.swift; sourceTree = "<group>"; };
 		1169260177948F799435AFDD /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
-		F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
 		12A1B6CD5AAECAB6DC60C8E7 /* CalClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16EB30415FBAD9D92423D7E8 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		19A549B046393372304364C2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -69,9 +74,11 @@
 		1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = fdc_ingredient_prompt.md; sourceTree = "<group>"; };
 		21F2AF3433A4DD690EFE9066 /* SavedMeal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMeal.swift; sourceTree = "<group>"; };
+		24C7AB2338D8E1B4675D8767 /* CalClone-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CalClone-Free.entitlements"; sourceTree = "<group>"; };
 		26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScanFlowView.swift; sourceTree = "<group>"; };
 		27F169B11435F3004FCDB51B /* CalCloneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalCloneApp.swift; sourceTree = "<group>"; };
 		29150FED90D3C029F2605DB7 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		32F0F88A784429709944D836 /* EditMealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMealView.swift; sourceTree = "<group>"; };
 		366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionAnalysisResult.swift; sourceTree = "<group>"; };
 		366AD4A53F4C2EEF474DC8B4 /* LogEntryHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryHubView.swift; sourceTree = "<group>"; };
 		3B74EE0F5F67DA1F25D5F404 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
@@ -82,10 +89,7 @@
 		5A31FB6E155EE90307643C7C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterEntry.swift; sourceTree = "<group>"; };
 		6FC3718973051613808BA54C /* DescribeMealFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribeMealFlowView.swift; sourceTree = "<group>"; };
-		EEADF03981AA58270300172C /* MealAnalysisFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAnalysisFlow.swift; sourceTree = "<group>"; };
-		32F0F88A784429709944D836 /* EditMealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMealView.swift; sourceTree = "<group>"; };
 		70F631071EE8D8F329402B57 /* CalClone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalClone.entitlements; sourceTree = "<group>"; };
-		24C7AB2338D8E1B4675D8767 /* CalClone-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CalClone-Free.entitlements"; sourceTree = "<group>"; };
 		87F08AC7F1F27DD95287A71B /* StreaksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksView.swift; sourceTree = "<group>"; };
 		ACE4F96C664C3F7493DACF28 /* WeightEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightEntry.swift; sourceTree = "<group>"; };
 		B73C2B66660B0C8AFA14A937 /* AIProviderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderSettingsView.swift; sourceTree = "<group>"; };
@@ -101,9 +105,17 @@
 		D9CFE8D248D0D6B350396203 /* AIProviderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderConfig.swift; sourceTree = "<group>"; };
 		DF2E5315FC0864D62E3BAC21 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E6F60ACAF71E8ED6FED4D0DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		EEADF03981AA58270300172C /* MealAnalysisFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAnalysisFlow.swift; sourceTree = "<group>"; };
 		EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
 		F3F2F9B4C9B1F43B27F75065 /* PhotoCaptureFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureFlowView.swift; sourceTree = "<group>"; };
 		F8D53B8ABBE92D9722C4B260 /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEntryView.swift; sourceTree = "<group>"; };
+		FA0000000000000000000001 /* ServingNutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServingNutrition.swift; sourceTree = "<group>"; };
+		FA0000000000000000000011 /* RetailBarcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetailBarcode.swift; sourceTree = "<group>"; };
+		FB0000000000000000000001 /* CalClone/Services/LibraryTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalClone/Services/LibraryTransfer.swift; sourceTree = SOURCE_ROOT; };
+		FB0000000000000000000011 /* CalClone/Views/Logging/MealBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalClone/Views/Logging/MealBuilderView.swift; sourceTree = SOURCE_ROOT; };
+		FB0000000000000000000021 /* CalClone/Views/Logging/ReceiptImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalClone/Views/Logging/ReceiptImportView.swift; sourceTree = SOURCE_ROOT; };
+FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalClone/Models/FueliSchema.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -258,6 +270,12 @@
 				F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */,
 				EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */,
 				366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */,
+FC0000000000000000000011,
+				FB0000000000000000000021 /* CalClone/Views/Logging/ReceiptImportView.swift */,
+				FB0000000000000000000011 /* CalClone/Views/Logging/MealBuilderView.swift */,
+				FB0000000000000000000001 /* CalClone/Services/LibraryTransfer.swift */,
+				FA0000000000000000000011 /* RetailBarcode.swift */,
+				FA0000000000000000000001 /* ServingNutrition.swift */,
 				C62894909AD6AE6BD055E158 /* PedometerService.swift */,
 			);
 			path = Services;
@@ -416,6 +434,12 @@
 				B1B117456C59FFD2564E50CD /* MainTabView.swift in Sources */,
 				F2772DB30C44A90257D3C305 /* ManualEntryView.swift in Sources */,
 				5D0AAE0D81CB5BB491909A8A /* NutritionAnalysisResult.swift in Sources */,
+FC0000000000000000000012,
+				FB0000000000000000000022 /* CalClone/Views/Logging/ReceiptImportView.swift in Sources */,
+				FB0000000000000000000012 /* CalClone/Views/Logging/MealBuilderView.swift in Sources */,
+				FB0000000000000000000002 /* CalClone/Services/LibraryTransfer.swift in Sources */,
+				FA0000000000000000000012 /* RetailBarcode.swift in Sources */,
+				FA0000000000000000000002 /* ServingNutrition.swift in Sources */,
 				476809C78A725AA761A5A573 /* NutritionConfirmView.swift in Sources */,
 				C7ABBC9010E600D658246AC5 /* OnboardingFlowView.swift in Sources */,
 				ED6E8864DE6D435E8EF3E177 /* PedometerService.swift in Sources */,
@@ -462,7 +486,7 @@
 					"$(inherited)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.welford.CalCloneTests;
@@ -490,7 +514,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.welford.CalCloneTests;
@@ -505,6 +529,13 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		1BB4E8D93094FC09002FF792 /* Free */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = CalCloneTests;
+			};
+			name = Free;
 		};
 		1CB8705B02CEA9AF35679E63 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -561,7 +592,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -573,6 +604,118 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
+		};
+		23393CDB95958843FC4213CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CalClone/Resources/CalClone.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 8RBLV22YJJ;
+				INFOPLIST_FILE = CalClone/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.12;
+				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		46E909D1456C781FB778DE50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		704648AD6EB3D0F64FA50DC2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CalClone/Resources/CalClone.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 8RBLV22YJJ;
+				INFOPLIST_FILE = CalClone/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.12;
+				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+				USDA_API_KEY = "";
+			};
+			name = Release;
 		};
 		B7B7F706EA674BDCE8787E99 /* Free */ = {
 			isa = XCBuildConfiguration;
@@ -629,7 +772,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -642,43 +785,12 @@
 			};
 			name = Free;
 		};
-		23393CDB95958843FC4213CA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CalClone/Resources/CalClone.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 8RBLV22YJJ;
-				INFOPLIST_FILE = CalClone/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0.11;
-				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
 		D909C2BF19312B71EE93A92E /* Free */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				// No HealthKit entitlement here — a free/personal-team signing identity
-				// cannot include com.apple.developer.healthkit at all, so this
-				// configuration points at an entitlements file without it. The app code
-				// already checks HKHealthStore.isHealthDataAvailable() and falls back to
-				// CoreMotion step data, so this configuration just builds and runs with
-				// Health features disabled instead of failing to sign.
 				CODE_SIGN_ENTITLEMENTS = "CalClone/Resources/CalClone-Free.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -691,99 +803,15 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.11;
+				MARKETING_VERSION = 1.0.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) HEALTHKIT_DISABLED";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
+				USDA_API_KEY = "";
 			};
 			name = Free;
-		};
-		46E909D1456C781FB778DE50 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_PREVIEWS = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0.1;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		704648AD6EB3D0F64FA50DC2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CalClone/Resources/CalClone.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 8RBLV22YJJ;
-				INFOPLIST_FILE = CalClone/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0.11;
-				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -793,6 +821,7 @@
 			buildConfigurations = (
 				1B9EC4E5301D40450087CD9F /* Debug */,
 				1B9EC4E6301D40450087CD9F /* Release */,
+				1BB4E8D93094FC09002FF792 /* Free */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

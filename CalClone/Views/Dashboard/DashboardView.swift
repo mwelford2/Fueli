@@ -6,7 +6,12 @@ struct DashboardView: View {
 
     @Environment(\.modelContext) private var modelContext
     @State private var selectedDate = Calendar.current.startOfDay(for: Date())
-    @State private var pedometer = PedometerService.shared
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var activeCalories: Double?
+    @State private var activityError: String?
+    @State private var isRefreshingActivity = false
+    @State private var activityRefreshID = UUID()
+    @State private var observedToday = Calendar.current.startOfDay(for: Date())
     @State private var healthKit = HealthKitService.shared
     @State private var confettiTrigger = 0
 
@@ -37,10 +42,6 @@ struct DashboardView: View {
             .sorted { $0.startedAt > $1.startedAt }
     }
 
-    private var workoutCaloriesForDay: Int {
-        workoutsForDay.reduce(0) { $0 + $1.caloriesBurned }
-    }
-
     private var currentWeight: Double {
         allWeights.sorted { $0.recordedAt > $1.recordedAt }.first?.weightKg ?? profile?.startingWeightKg ?? 75
     }
@@ -59,60 +60,40 @@ struct DashboardView: View {
         allWater.filter { Calendar.current.isDateInToday($0.recordedAt) }.reduce(0) { $0 + $1.amountOz }
     }
 
-    private var caloriesConsumed: Int { logsForDay.reduce(0) { $0 + $1.calories } }
+    private var caloriesConsumed: Int { Int(logsForDay.reduce(0.0) { $0 + $1.caloriesValue }.rounded()) }
     private var proteinConsumed: Double { logsForDay.reduce(0) { $0 + $1.proteinG } }
     private var carbsConsumed: Double { logsForDay.reduce(0) { $0 + $1.carbsG } }
     private var fatConsumed: Double { logsForDay.reduce(0) { $0 + $1.fatG } }
     private var fiberConsumed: Double { logsForDay.reduce(0) { $0 + $1.fiberG } }
-
-    /// Live step count for the selected day. Prefers HealthKit (aggregates all sources —
-    /// Apple Watch, other apps, etc.) when it's available and authorized, falling back to
-    /// the device pedometer (CoreMotion) otherwise — e.g. on a free-team build without the
-    /// HealthKit entitlement, or if the user denied Health access.
-    private var liveStepsToday: Int? {
-        guard Calendar.current.isDateInToday(selectedDate) else { return nil }
-        if healthKit.isAvailable, healthKit.isAuthorized, healthKit.todaySteps > 0 {
-            return healthKit.todaySteps
-        }
-        return pedometer.todaySteps > 0 ? pedometer.todaySteps : nil
-    }
-
-    /// Active energy burned today from HealthKit (e.g. Apple Watch workouts, other apps),
-    /// on top of calories logged from in-app workouts. Nil when HealthKit has no data.
-    private var healthKitActiveCalories: Int? {
-        guard Calendar.current.isDateInToday(selectedDate), healthKit.isAvailable, healthKit.isAuthorized,
-              healthKit.todayActiveEnergy > 0 else { return nil }
-        return healthKit.todayActiveEnergy
-    }
 
     private var yesterdayOvershoot: Int {
         guard let profile else { return 0 }
         let calendar = Calendar.current
         guard let yesterday = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: Date())) else { return 0 }
         let consumed = allLogs.filter { calendar.isDate($0.loggedAt, inSameDayAs: yesterday) }
-            .reduce(0) { $0 + $1.calories }
-        return max(0, consumed - profile.calorieTarget(currentWeightKg: currentWeight))
+            .reduce(0.0) { $0 + $1.caloriesValue }
+        return max(0, Int(consumed.rounded()) - profile.calorieTarget(currentWeightKg: currentWeight))
     }
 
     private var rolloverAdjustment: Int {
         guard let profile, profile.rolloverExcessCalories, Calendar.current.isDateInToday(selectedDate) else { return 0 }
-        let base = profile.calorieTarget(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday)
+        let base = profile.calorieTarget(currentWeightKg: currentWeight)
         return min(yesterdayOvershoot, Int(Double(base) * UserProfile.rolloverCapFraction))
     }
 
     private var calorieTarget: Int {
         guard let profile else { return 0 }
-        return profile.calorieTarget(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday) - rolloverAdjustment
+        return profile.calorieTarget(currentWeightKg: currentWeight) - rolloverAdjustment
     }
 
     private var macroTargets: (protein: Int, carbs: Int, fat: Int) {
         guard let profile else { return (0, 0, 0) }
-        return profile.macroTargets(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday)
+        return profile.macroTargets(currentWeightKg: currentWeight)
     }
 
     private var fiberTarget: Int {
         guard let profile else { return 0 }
-        return profile.fiberTarget(currentWeightKg: currentWeight, liveStepsToday: liveStepsToday)
+        return profile.fiberTarget(currentWeightKg: currentWeight)
     }
 
     var body: some View {
@@ -125,19 +106,31 @@ struct DashboardView: View {
                         CalorieRingCard(
                             consumed: caloriesConsumed,
                             target: calorieTarget,
-                            workoutCalories: workoutCaloriesForDay,
-                            steps: liveStepsToday ?? 0,
-                            showSteps: liveStepsToday != nil,
+                            activeCalories: activeCalories,
                             rolloverAdjustment: rolloverAdjustment
                         )
 
-                        if !workoutsForDay.isEmpty || liveStepsToday != nil {
-                            ActivityCard(
-                                steps: liveStepsToday ?? 0,
-                                showSteps: liveStepsToday != nil,
-                                workouts: workoutsForDay
-                            )
+                        if let average = profile.maintenanceAverageCalories {
+                            Text("Budget uses \(profile.maintenanceSourceLabel.lowercased()): \(Int(average.rounded())) kcal/day (including resting and activity).")
+                                .font(.caption).foregroundStyle(.secondary)
                         }
+                        ActivityCard(activeCalories: activeCalories, workouts: workoutsForDay)
+                        if isRefreshingActivity { ProgressView("Reading Apple Health…") }
+                        if let activityError { Text(activityError).font(.caption).foregroundStyle(.red) }
+                        if activeCalories == nil {
+                            Text(profile.hasMaintenanceAverage
+                                 ? "No readable Active Energy data for this day. Your saved average total burn still determines your calorie plan."
+                                 : "No readable Active Energy data for this day. Your configured activity estimate is used. Allow Active Energy access in Health and ensure your device records it.")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                        Button(healthKit.hasRequestedActiveEnergy ? "Retry Apple Health Connection" : "Connect Apple Health") {
+                            Task {
+                                do {
+                                    try await healthKit.connectActiveEnergy()
+                                    await refreshActivity()
+                                } catch { activityError = error.localizedDescription }
+                            }
+                        }.disabled(isRefreshingActivity || !healthKit.isAvailable)
 
                         MacroRingsCard(
                             protein: (proteinConsumed, macroTargets.protein),
@@ -179,8 +172,16 @@ struct DashboardView: View {
                         }
                     }
                 }
-                .task {
-                    pedometer.startDayTracking()
+                .task(id: selectedDate) {
+                    activeCalories = nil
+                    while !Task.isCancelled {
+                        if scenePhase == .active { await refreshActivity() }
+                        do { try await Task.sleep(for: .seconds(60)) } catch { break }
+                    }
+                }
+                .refreshable { await refreshActivity() }
+                .onChange(of: scenePhase) { _, phase in
+                    if phase == .active { Task { await refreshActivity() } }
                 }
             }
             .confettiCelebration(trigger: confettiTrigger)
@@ -193,6 +194,31 @@ struct DashboardView: View {
             .onChange(of: todayFiber) { old, new in
                 celebrateIfCrossed(old: old, new: new, target: Double(fiberTarget))
             }
+        }
+    }
+
+    @MainActor
+    private func refreshActivity() async {
+        let today = Calendar.current.startOfDay(for: Date())
+        if today != observedToday {
+            if selectedDate == observedToday { selectedDate = today }
+            observedToday = today
+        }
+        guard healthKit.hasRequestedActiveEnergy else { return }
+        let requestID = UUID()
+        activityRefreshID = requestID
+        let date = selectedDate
+        isRefreshingActivity = true
+        defer { if requestID == activityRefreshID { isRefreshingActivity = false } }
+        do {
+            let value = try await healthKit.activeEnergy(on: date)
+            guard !Task.isCancelled, date == selectedDate, requestID == activityRefreshID else { return }
+            activeCalories = value
+            activityError = nil
+        } catch {
+            guard !Task.isCancelled, date == selectedDate, requestID == activityRefreshID else { return }
+            activeCalories = nil
+            activityError = "Couldn’t read Apple Health. Pull down to retry. \(error.localizedDescription)"
         }
     }
 
@@ -227,13 +253,11 @@ private struct DateNavigator: View {
 private struct CalorieRingCard: View {
     let consumed: Int
     let target: Int
-    let workoutCalories: Int
-    let steps: Int
-    let showSteps: Bool
+    let activeCalories: Double?
     let rolloverAdjustment: Int
 
-    /// Workout calories earned expand the effective daily budget.
-    private var effectiveTarget: Int { target + workoutCalories }
+    /// HealthKit activity is already included in the target; never add workouts again.
+    private var effectiveTarget: Int { target }
     private var overshoot: Int { max(0, consumed - effectiveTarget) }
     private var remaining: Int { max(0, effectiveTarget - consumed) }
     private var progress: Double { effectiveTarget > 0 ? min(1.0, Double(consumed) / Double(effectiveTarget)) : 0 }
@@ -268,22 +292,16 @@ private struct CalorieRingCard: View {
             HStack {
                 Label("\(consumed) eaten", systemImage: "fork.knife")
                 Spacer()
-                if workoutCalories > 0 {
-                    Label("+\(workoutCalories) earned", systemImage: "flame.fill")
-                        .foregroundStyle(Color.themeFiber)
-                }
+
             }
             .font(.caption)
             .foregroundStyle(.secondary)
 
-            if showSteps {
-                HStack {
-                    Label("\(steps) steps today", systemImage: "figure.walk")
-                    Spacer()
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            if let activeCalories {
+                Label("\(Int(activeCalories.rounded())) active kcal · Apple Health", systemImage: "flame.fill")
+                    .font(.caption).foregroundStyle(.secondary)
             }
+
         }
         .padding()
         .background(Color.themeCard)
@@ -292,11 +310,9 @@ private struct CalorieRingCard: View {
 }
 
 private struct ActivityCard: View {
-    let steps: Int
-    let showSteps: Bool
+    let activeCalories: Double?
     let workouts: [WorkoutLog]
 
-    private var totalCaloriesBurned: Int { workouts.reduce(0) { $0 + $1.caloriesBurned } }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -304,28 +320,12 @@ private struct ActivityCard: View {
                 .font(.headline)
                 .foregroundStyle(Color.accentColor)
 
-            HStack(spacing: 24) {
-                if showSteps {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("\(steps)")
-                            .font(.title2.bold())
-                        Text("steps")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                if totalCaloriesBurned > 0 {
-                    if showSteps { Divider().frame(height: 36) }
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("\(totalCaloriesBurned)")
-                            .font(.title2.bold())
-                            .foregroundStyle(Color.themeFiber)
-                        Text("kcal burned")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                Spacer()
+            VStack(alignment: .leading, spacing: 2) {
+                Text(activeCalories.map { "\(Int($0.rounded()))" } ?? "—")
+                    .font(.title2.bold()).foregroundStyle(Color.themeFiber)
+                Text("active kcal burned so far · Apple Health").font(.caption).foregroundStyle(.secondary)
+                Text("Excludes resting energy. Includes activity recorded by Health; workouts below are not added again.")
+                    .font(.caption2).foregroundStyle(.secondary)
             }
 
             if !workouts.isEmpty {
@@ -386,7 +386,7 @@ private struct MacroRing: View {
                     .trim(from: 0, to: progress)
                     .stroke(color, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                Text("\(Int(consumed))g").font(.caption.bold())
+                Text("\(consumed.formatted(.number.precision(.fractionLength(0...1))))g").font(.caption.bold())
             }
             .frame(width: 64, height: 64)
             Text(label).font(.caption2).foregroundStyle(.secondary)
@@ -496,13 +496,13 @@ struct FoodLogRow: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(log.name).font(.themeSubheadline.bold())
-                Text("\(log.mealType.label) · \(log.servingDescription)")
+                Text("\(log.mealType.label) · \(log.servings.formatted()) × \(log.servingDescription)")
                     .font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
                 Text("\(log.calories) kcal").font(.themeSubheadline.bold())
-                Text("P\(Int(log.proteinG)) C\(Int(log.carbsG)) F\(Int(log.fatG)) Fb\(Int(log.fiberG))")
+                Text("P\(log.proteinG.formatted(.number.precision(.fractionLength(0...1)))) C\(log.carbsG.formatted(.number.precision(.fractionLength(0...1)))) F\(log.fatG.formatted(.number.precision(.fractionLength(0...1)))) Fb\(log.fiberG.formatted(.number.precision(.fractionLength(0...1))))")
                     .font(.caption2).foregroundStyle(.secondary)
             }
         }

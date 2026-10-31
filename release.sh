@@ -40,7 +40,15 @@ UNZIP_DIR=$(mktemp -d)
 unzip -q "$IPA_PATH" -d "$UNZIP_DIR"
 APP_PATH=$(find "$UNZIP_DIR/Payload" -maxdepth 1 -name "*.app" | head -1)
 VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP_PATH/Info.plist")
+BUNDLED_USDA_KEY=$(/usr/libexec/PlistBuddy -c "Print :USDA_API_KEY" "$APP_PATH/Info.plist" 2>/dev/null || true)
+if [[ -n "$BUNDLED_USDA_KEY" ]]; then
+  rm -rf "$UNZIP_DIR"
+  echo "error: refusing to publish an IPA containing a bundled USDA key. Rebuild Release with USDA_API_KEY empty."
+  exit 1
+fi
+unset BUNDLED_USDA_KEY
 rm -rf "$UNZIP_DIR"
+SOURCE_COMMIT=$(git -C "$(dirname "$0")" rev-parse HEAD)
 
 if [[ -z "$VERSION" ]]; then
   echo "error: could not read CFBundleShortVersionString from $IPA_PATH" && exit 1
@@ -64,6 +72,7 @@ echo "==> Creating GitHub release $TAG..."
 gh release create "$TAG" "$IPA_PATH" \
   --repo "$REPO" \
   --title "Fueli $TAG" \
+  --target "$SOURCE_COMMIT" \
   --notes "$NOTES"
 
 # ── Update apps.json ──────────────────────────────────────────────────────────

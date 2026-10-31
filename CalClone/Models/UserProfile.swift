@@ -235,6 +235,48 @@ final class UserProfile {
     var manualFatTarget: Int?
     var manualFiberTarget: Int?
 
+    /// Optional additions permit lightweight migration of the existing store.
+    var manualMaintenanceCalories: Double?
+    var healthMaintenanceCalories: Double?
+    var healthEnergyDayCount: Int?
+    var healthEnergyWindowStart: Date?
+    var healthEnergyWindowEnd: Date?
+
+    var hasHealthMaintenance: Bool {
+        guard let value = healthMaintenanceCalories else { return false }
+        return value.isFinite && value > 0
+    }
+
+    /// An entered full-day total is independent of a manually overridden intake target.
+    /// Bounds reject entry mistakes; they are not clinical eligibility thresholds.
+    static func isValidManualBurn(_ value: Double) -> Bool {
+        value.isFinite && (500...15000).contains(value)
+    }
+
+    var hasManualMaintenance: Bool {
+        manualMaintenanceCalories.map(Self.isValidManualBurn) ?? false
+    }
+
+    var maintenanceAverageCalories: Double? {
+        if hasManualMaintenance { return manualMaintenanceCalories }
+        return hasHealthMaintenance ? healthMaintenanceCalories : nil
+    }
+
+    var hasMaintenanceAverage: Bool { maintenanceAverageCalories != nil }
+
+    var maintenanceSourceLabel: String {
+        if hasManualMaintenance { return "Manually entered average total burn" }
+        return hasHealthMaintenance ? "Apple Health average total burn" : "Body and activity estimate"
+    }
+
+    func useActivityEstimates() {
+        manualMaintenanceCalories = nil
+        healthMaintenanceCalories = nil
+        healthEnergyDayCount = nil
+        healthEnergyWindowStart = nil
+        healthEnergyWindowEnd = nil
+    }
+
     var dailyWaterTargetOz: Int
 
     /// When enabled, yesterday's calorie overshoot trims today's budget (capped at
@@ -350,40 +392,60 @@ final class UserProfile {
         (workoutHoursTier.representativeHours * Self.kcalPerWorkoutHour) / 7
     }
 
-    /// TDEE = BMR + NEAT (steps) + EAT (workouts), rather than one blended multiplier —
-    /// this avoids overestimating calories for people who work out a lot but are otherwise
-    /// sedentary, and underestimating for people who are on their feet all day but train less.
-    func tdee(currentWeightKg: Double, liveStepsToday: Int? = nil) -> Double {
-        bmr(currentWeightKg: currentWeightKg) + neatCalories(liveStepsToday: liveStepsToday) + eatCalories
+    /// Readable HealthKit active energy replaces BOTH estimated NEAT and exercise.
+    /// Until Health data is available, retain the configured activity estimate.
+    /// BMR remains a full-day estimate while active energy is recorded so far.
+    func tdee(currentWeightKg: Double, liveStepsToday: Int? = nil, activeEnergyCalories: Double? = nil) -> Double {
+        if let average = maintenanceAverageCalories { return average }
+        if let activeEnergyCalories, activeEnergyCalories.isFinite, activeEnergyCalories >= 0 {
+            return bmr(currentWeightKg: currentWeightKg) + activeEnergyCalories
+        }
+        return bmr(currentWeightKg: currentWeightKg) + neatCalories(liveStepsToday: liveStepsToday) + eatCalories
     }
 
-    /// Effective daily kcal delta from maintenance, derived from goal + (for recomp) focus.
-    private func dailyCalorieDelta() -> Double {
+    /// Starting adjustments informed by adult clinical/sport studies; not a prediction
+    /// of weekly weight change. See CALORIE_EVIDENCE.md for population limits.
+    func dailyCalorieDelta(maintenance: Double, weightKg: Double) -> Double {
+        guard ageYears >= 18, maintenance.isFinite, maintenance > 0,
+              weightKg.isFinite, weightKg > 0 else { return 0 }
         switch trainingGoal {
-        case .cut, .bulk:
-            return (weeklyRateKg * 7700) / 7
+        case .cut:
+            // The requested rate selects a starting dose; cap at 25%, 750 kcal,
+            // and the energy equivalent of 0.7% body mass/week.
+            let requested = abs(weeklyRateKg.isFinite ? weeklyRateKg : 0) * 7700 / 7
+            return -min(requested, maintenance * 0.25, 750, weightKg * 0.007 * 7700 / 7)
+        case .bulk:
+            let requested = abs(weeklyRateKg.isFinite ? weeklyRateKg : 0) * 7700 / 7
+            return min(requested, maintenance * 0.10)
         case .recomp:
             switch recompFocus {
-            case .leanGain: return 200
+            case .leanGain: return maintenance * 0.05
             case .maintenance: return 0
-            case .fatLoss: return -300
+            case .fatLoss: return -min(maintenance * 0.10, 500)
             }
         }
     }
 
-    /// Daily calorie target factoring in the training goal (cut/bulk/recomp). Pass today's
-    /// live step count when available to refine the NEAT contribution.
-    func calorieTarget(currentWeightKg: Double, liveStepsToday: Int? = nil) -> Int {
+    func calorieTarget(currentWeightKg: Double, liveStepsToday: Int? = nil, activeEnergyCalories: Double? = nil) -> Int {
         if let manual = manualCalorieTarget { return manual }
-        let target = tdee(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday) + dailyCalorieDelta()
-        return max(1200, Int(target.rounded()))
+        let maintenance = tdee(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday, activeEnergyCalories: activeEnergyCalories)
+        return goalCalorieTarget(maintenance: maintenance, weightKg: currentWeightKg)
     }
 
-    func macroTargets(currentWeightKg: Double, liveStepsToday: Int? = nil) -> (protein: Int, carbs: Int, fat: Int) {
+    /// Shared by the actual target and the draft manual-burn preview.
+    /// Explicit food-intake overrides are handled by calorieTarget(), not this preview.
+    func goalCalorieTarget(maintenance: Double, weightKg: Double) -> Int {
+        let target = maintenance + dailyCalorieDelta(maintenance: maintenance, weightKg: weightKg)
+        guard target.isFinite else { return 0 }
+        let floor = sex == .male ? 1500 : 1200
+        return max(floor, Int(target.rounded()))
+    }
+
+    func macroTargets(currentWeightKg: Double, liveStepsToday: Int? = nil, activeEnergyCalories: Double? = nil) -> (protein: Int, carbs: Int, fat: Int) {
         if let p = manualProteinTarget, let c = manualCarbTarget, let f = manualFatTarget {
             return (p, c, f)
         }
-        let calories = Double(calorieTarget(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday))
+        let calories = Double(calorieTarget(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday, activeEnergyCalories: activeEnergyCalories))
 
         // Bulk/recomp lean up protein relative to bodyweight (~1g/lb), matching
         // physique-calculator conventions, then split the remainder by diet preference.
@@ -407,9 +469,9 @@ final class UserProfile {
     /// personalized to this user's calorie target.
     private static let fiberGramsPer1000Kcal = 14.0
 
-    func fiberTarget(currentWeightKg: Double, liveStepsToday: Int? = nil) -> Int {
+    func fiberTarget(currentWeightKg: Double, liveStepsToday: Int? = nil, activeEnergyCalories: Double? = nil) -> Int {
         if let manual = manualFiberTarget { return manual }
-        let calories = Double(calorieTarget(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday))
+        let calories = Double(calorieTarget(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday, activeEnergyCalories: activeEnergyCalories))
         return Int((calories * Self.fiberGramsPer1000Kcal / 1000).rounded())
     }
 }

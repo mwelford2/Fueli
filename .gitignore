@@ -15,3 +15,6 @@ build/
 
 # IPA files
 *.ipa
+
+# Local simulator review images may include personal profile-derived values
+ReviewArtifacts/

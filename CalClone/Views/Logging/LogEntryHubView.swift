@@ -7,13 +7,16 @@ struct LogEntryHubView: View {
     @State private var route: Route?
 
     private enum Route: Identifiable {
-        case camera, barcode, describe, manual, saved, workout
+        case camera, barcode, describe, manual, saved, workout, receipt, builder
         var id: Self { self }
     }
 
     var body: some View {
         NavigationStack {
+            ScrollView {
             VStack(spacing: 12) {
+                HubOption(icon: "doc.text.viewfinder", title: "Scan Receipt", subtitle: "Review grocery items with on-device OCR") { route = .receipt }
+                HubOption(icon: "list.bullet", title: "Create Meal", subtitle: "Combine saved foods with calculated nutrition") { route = .builder }
                 HubOption(icon: "camera.fill", title: "Take a Photo", subtitle: "Let AI identify your food and estimate nutrition") {
                     route = .camera
                 }
@@ -23,7 +26,7 @@ struct LogEntryHubView: View {
                 HubOption(icon: "text.bubble.fill", title: "Describe a Meal", subtitle: "Type what you ate and let AI estimate it") {
                     route = .describe
                 }
-                HubOption(icon: "star.fill", title: "Saved Meals", subtitle: "Quickly re-log a favorite") {
+                HubOption(icon: "star.fill", title: "My Foods", subtitle: "Search saved foods and legacy favorite meals") {
                     route = .saved
                 }
                 HubOption(icon: "square.and.pencil", title: "Enter Manually", subtitle: "Type in exact calories and macros") {
@@ -35,6 +38,7 @@ struct LogEntryHubView: View {
                 Spacer()
             }
             .padding()
+            }
             .background(Color.themeBackground.ignoresSafeArea())
             .navigationTitle("Log")
             .navigationBarTitleDisplayMode(.inline)
@@ -45,6 +49,8 @@ struct LogEntryHubView: View {
             }
             .fullScreenCover(item: $route) { r in
                 switch r {
+                case .receipt: ReceiptImportView(onFinished: { dismiss() })
+                case .builder: MealBuilderView(onFinished: { dismiss() })
                 case .camera:
                     PhotoCaptureFlowView(onFinished: { dismiss() })
                 case .barcode:

@@ -81,17 +81,20 @@ struct BarcodeScannerView: UIViewControllerRepresentable {
 
         private func deliver(from items: [RecognizedItem]) {
             guard !delivered else { return }
+            let barcodes = items.filter { if case .barcode = $0 { return true }; return false }
+            guard barcodes.count == 1 else { sightingCounts.removeAll(); return }
             var payloadsInFrame: Set<String> = []
 
             for item in items {
                 guard case let .barcode(barcode) = item, let payload = barcode.payloadStringValue else { continue }
+                guard let validated = try? RetailBarcode(payload, format: barcode.observation.symbology == .upce ? .upce : nil) else { continue }
                 payloadsInFrame.insert(payload)
                 let count = (sightingCounts[payload] ?? 0) + 1
                 sightingCounts[payload] = count
 
                 if count >= Self.requiredSightings {
                     delivered = true
-                    onDetect(payload)
+                    onDetect(validated.canonical)
                     return
                 }
             }

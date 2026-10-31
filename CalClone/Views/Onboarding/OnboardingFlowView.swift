@@ -19,6 +19,8 @@ struct OnboardingFlowView: View {
     @State private var goalWeightText: String = ""
     @State private var bodyFatText: String = ""
     @State private var trackBodyFat = false
+    @State private var isLoadingEnergy = false
+    @State private var energyMessage: String?
     init(profile: UserProfile, startStep: Int = 0) {
         self.profile = profile
         _step = State(initialValue: startStep)
@@ -131,10 +133,11 @@ struct OnboardingFlowView: View {
         case .goal: goalStep
         case .recompFocus: recompFocusStep
         case .rate: rateStep
+        case .energy: ScrollView { energyStep }
         case .steps: stepsStep
         case .workoutHours: workoutHoursStep
         case .diet: dietStep
-        case .summary: summaryStep
+        case .summary: ScrollView { summaryStep }
         case .aiSetup: aiSetupStep
         }
     }
@@ -142,7 +145,7 @@ struct OnboardingFlowView: View {
     // MARK: - Step sequencing
 
     private enum Step {
-        case sex, birthDate, heightWeight, bodyFat, goal, recompFocus, rate, steps, workoutHours, diet, summary, aiSetup
+        case sex, birthDate, heightWeight, bodyFat, goal, recompFocus, rate, energy, steps, workoutHours, diet, summary, aiSetup
     }
 
     /// Recomp inserts an extra "focus" step and skips the rate slider (recomp's calorie
@@ -154,7 +157,9 @@ struct OnboardingFlowView: View {
         } else {
             sequence.append(.rate)
         }
-        sequence.append(contentsOf: [.steps, .workoutHours, .diet, .summary, .aiSetup])
+        sequence.append(.energy)
+        if !profile.hasMaintenanceAverage { sequence.append(contentsOf: [.steps, .workoutHours]) }
+        sequence.append(contentsOf: [.diet, .summary, .aiSetup])
         return sequence
     }
 
@@ -334,6 +339,52 @@ struct OnboardingFlowView: View {
         }
     }
 
+    private var energyStep: some View {
+        VStack(spacing: 14) {
+            Text("Your total daily burn").font(.title2.bold())
+            Text("Enter an average total daily burn, import Apple Health history, or continue with questionnaire estimates. Include resting calories plus all activity.")
+                .font(.subheadline).multilineTextAlignment(.center)
+            ManualBurnInput(profile: profile, weightKg: profile.startingWeightKg)
+            if let average = profile.maintenanceAverageCalories {
+                Text("\(Int(average.rounded())) kcal/day").font(.title.bold())
+                Text(profile.maintenanceSourceLabel).font(.caption)
+                if !profile.hasManualMaintenance { Text("Average of \(profile.healthEnergyDayCount ?? 0) eligible days, including resting energy.").font(.caption) }
+                Button("Use questionnaire estimates instead") {
+                    profile.useActivityEstimates()
+                }
+            }
+            if profile.hasManualMaintenance {
+                Text("Importing a valid Health average replaces the manual burn. If Health data is insufficient, the manual burn stays selected.").font(.caption)
+            }
+            NavigationLink("Connect Garmin, Google Health & Fitness Apps") {
+                HealthConnectionsView(profile: profile)
+            }
+            if isLoadingEnergy { ProgressView("Reading Health history…") }
+            Button(profile.hasHealthMaintenance ? "Refresh Health average" : "Use Apple Health history") {
+                Task {
+                    isLoadingEnergy = true
+                    defer { isLoadingEnergy = false }
+                    do {
+                        try await HealthKitService.shared.connectTotalEnergy()
+                        if let average = try await HealthKitService.shared.averageTotalEnergy() {
+                            profile.manualMaintenanceCalories = nil
+                            profile.healthMaintenanceCalories = average.calories
+                            profile.healthEnergyDayCount = average.days
+                            profile.healthEnergyWindowStart = average.start
+                            profile.healthEnergyWindowEnd = average.end
+                            energyMessage = nil
+                        } else {
+                            energyMessage = HealthKitService.shared.historySummary
+                        }
+                    } catch { energyMessage = "Health history couldn’t be read. You can retry or continue with estimates. " + error.localizedDescription }
+                }
+            }.buttonStyle(.borderedProminent).disabled(isLoadingEnergy)
+            if let energyMessage { Text(energyMessage).font(.caption).foregroundStyle(.secondary) }
+            Text("Wearable calories are estimates. Review your weight trend after 2–4 weeks; this is a starting plan, not a guaranteed rate of change.")
+                .font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
     private var stepsStep: some View {
         VStack(spacing: 16) {
             Text("How many steps do you average each day?").font(.title2.bold())
@@ -345,8 +396,7 @@ struct OnboardingFlowView: View {
                     profile.stepsTier = tier
                 }
             }
-            var daysAvgOver = 28
-            Text("Average steps over the past \(daysAvgOver) days: ")
+
         }
     }
 
@@ -386,6 +436,11 @@ struct OnboardingFlowView: View {
                 Text("\(calories)").font(.system(size: 48, weight: .bold, design: .rounded))
                 Text("calories / day").foregroundStyle(.secondary)
             }
+            Text("Based on: " + profile.maintenanceSourceLabel + ".")
+                .font(.caption).foregroundStyle(.secondary)
+            Text("Starting adjustment: \(Int(profile.dailyCalorieDelta(maintenance: profile.tdee(currentWeightKg: profile.startingWeightKg), weightKg: profile.startingWeightKg))) kcal/day before minimum-intake limits.")
+                .font(.caption)
+            CalorieEvidenceLinks()
             HStack(spacing: 24) {
                 MacroSummaryPill(label: "Protein", value: macros.protein, color: .themeProtein)
                 MacroSummaryPill(label: "Carbs", value: macros.carbs, color: .themeCarbs)
@@ -413,7 +468,7 @@ struct OnboardingFlowView: View {
         case .goal:
             return profile.trainingGoal == .recomp || Double(goalWeightText) != nil
         default:
-            return true
+            return !isLoadingEnergy
         }
     }
 
@@ -548,3 +603,86 @@ private struct MacroSummaryPill: View {
         .modelContainer(container)
 }
 
+
+struct CalorieEvidenceLinks: View {
+    var body: some View {
+        DisclosureGroup("How targets are chosen") {
+            Text("Weight-loss adjustments are capped at 25% of maintenance and 750 kcal/day; gain adjustments at 10%. Recomp uses −10% (at most 500 kcal/day), maintenance, or +5%. These are conservative app starting rules informed by adult studies, not a clinically validated personalized prescription. Faster requested rates may be limited. Fixed kcal-to-weight conversion cannot predict long-term results.")
+                .font(.caption)
+            Text("Fat loss: clinical guidance supports moderate energy restriction in adults with overweight/obesity; athlete trials support gradual loss when preserving lean mass matters.").font(.caption)
+            Text("Muscle gain: a small resistance-training trial supports conservative surpluses to limit fat gain. The 10% cap and 5% lean-gain setting are app starting choices, not proven optimal doses.").font(.caption)
+            Text("Recomp: resistance training and adequate protein matter alongside energy balance. Larger prolonged deficits can impair lean-mass gains. No clinical trial validates the exact recomp percentages used here.").font(.caption)
+            Link("Energy balance and maintenance (Hall 2011)", destination: URL(string: "https://pubmed.ncbi.nlm.nih.gov/21872751/")!)
+            Link("Clinical weight-management guideline", destination: URL(string: "https://pmc.ncbi.nlm.nih.gov/articles/PMC5819889/")!)
+            Link("Weight-loss rate trial (Garthe 2011)", destination: URL(string: "https://pubmed.ncbi.nlm.nih.gov/21558571/")!)
+            Link("Recomp and energy-deficit meta-analysis (Murphy 2022)", destination: URL(string: "https://pubmed.ncbi.nlm.nih.gov/34623696/")!)
+            Link("Protein and recomp trial (Longland 2016)", destination: URL(string: "https://pubmed.ncbi.nlm.nih.gov/26817506/")!)
+            Link("Energy-surplus trial (Helms 2023)", destination: URL(string: "https://doi.org/10.1186/s40798-023-00651-y")!)
+            Text("These rules are for adults. For pregnancy, breastfeeding, medical conditions, eating-disorder history, or adolescent nutrition, use a clinician-guided plan. Wearable estimates need checking against observed trends.").font(.caption)
+        }
+    }
+}
+
+
+/// Shared draft editor for a full-day expenditure baseline; it never treats this as
+/// food intake and never adds resting energy, steps or workouts a second time.
+struct ManualBurnInput: View {
+    @Bindable var profile: UserProfile
+    let weightKg: Double
+    var onApplied: () -> Void = {}
+    @State private var burnText = ""
+    @State private var applied = false
+    @FocusState private var burnFocused: Bool
+
+    private var draft: Double? {
+        guard let value = Double(burnText.trimmingCharacters(in: .whitespacesAndNewlines)),
+              UserProfile.isValidManualBurn(value) else { return nil }
+        return value
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Enter Average Daily Burn").font(.headline)
+            Text("Total kcal burned per day, including resting energy and all activity. Enter an average across representative complete days, not just workout calories.").font(.caption).foregroundStyle(.secondary)
+            HStack {
+                TextField("e.g. 2500", text: $burnText)
+                    .keyboardType(.decimalPad)
+                    .focused($burnFocused)
+                    .accessibilityLabel("Average total calories burned per day")
+                Text("kcal/day").foregroundStyle(.secondary)
+            }
+            if let draft {
+                let adjustment = profile.dailyCalorieDelta(maintenance: draft, weightKg: weightKg)
+                Text("Goal adjustment: \(adjustment.formatted(.number.precision(.fractionLength(0...1)))) kcal/day")
+                    .font(.caption)
+                Text("Goal-based intake: \(profile.goalCalorieTarget(maintenance: draft, weightKg: weightKg)) kcal/day")
+                    .font(.subheadline.bold())
+                Text("Includes goal limits and minimum-intake planning rules. Requested weekly change is not guaranteed.").font(.caption).foregroundStyle(.secondary)
+            } else if !burnText.isEmpty {
+                Text("Enter a number from 500 to 15,000 kcal/day. This is a total daily burn, not an intake target.").font(.caption).foregroundStyle(.red)
+            }
+            Button("Use This Daily Burn") {
+                guard let draft else { return }
+                profile.manualMaintenanceCalories = draft
+                burnFocused = false
+                applied = true
+                onApplied()
+            }.disabled(draft == nil)
+            if applied { Label("Manual daily burn selected", systemImage: "checkmark.circle").font(.caption) }
+            if profile.manualCalorieTarget != nil {
+                Text("A manual food-intake override is active and still takes priority. Turn off Override targets manually in Goals & Profile to use this goal-based intake.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                if burnFocused { Spacer(); Button("Done") { burnFocused = false } }
+            }
+        }
+        .onAppear { burnText = profile.manualMaintenanceCalories.map { String($0) } ?? "" }
+        .onChange(of: burnText) { _, _ in applied = false }
+        .onChange(of: profile.manualMaintenanceCalories) { _, value in
+            if value != Double(burnText) { burnText = value.map { String($0) } ?? "" }
+        }
+    }
+}

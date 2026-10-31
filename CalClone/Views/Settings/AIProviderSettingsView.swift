@@ -13,10 +13,11 @@ struct AISetupFormView: View {
     @State private var discoveredModels: [AINutritionService.DiscoveredModel] = []
     @State private var isLoadingModels = false
     @State private var modelLoadError: String?
+    @State private var isLookingUpCapabilities = false
 
     private enum TestResult: Identifiable {
-        case success, failure(String)
-        var id: Int { switch self { case .success: return 0; case .failure: return 1 } }
+        case success, failure(String), useAnyway
+        var id: Int { switch self { case .success: return 0; case .failure: return 1; case .useAnyway: return 2 } }
     }
 
     private var canLoadModels: Bool {
@@ -35,14 +36,8 @@ struct AISetupFormView: View {
     /// Whether models have been loaded at all this session.
     private var hasLoadedModels: Bool { !discoveredModels.isEmpty }
 
-    /// Fueli needs a model that positively supports BOTH text and image input. We
-    /// only allow completing setup once we can confirm that — an unknown-capability
-    /// model does not pass (we don't assume).
+    /// Published capability checks inform setup; Use Anyway explicitly bypasses them.
     private var selectedModelSupportsVision: Bool {
-        // Before the user has loaded any models, don't block the button on this — the
-        // other disabled conditions (empty key/url) already gate it, and the footer
-        // tells them to load models. Once a list is loaded, the selection must verify.
-        guard hasLoadedModels else { return true }
         return selectedDiscoveredModel?.supportsTextAndImage == true
     }
 
@@ -53,11 +48,11 @@ struct AISetupFormView: View {
         }
         switch m.capabilities {
         case .none:
-            return "Couldn’t determine whether “\(m.id)” supports images — from the provider or models.dev. Pick a model with a confirmed Vision capability."
+            return "Couldn’t determine whether “\(m.id)” supports images — from provider metadata, official model cards, or models.dev. Pick a model with a confirmed Vision capability."
         case .some(let caps) where !caps.contains(.image):
-            return "“\(m.id)” doesn’t support image input. Fueli needs a vision-capable model to analyze food photos."
+            return "Image input is not confirmed for “\(m.id)”. Fueli needs a vision-capable model to analyze food photos."
         case .some(let caps) where !caps.contains(.text):
-            return "“\(m.id)” doesn’t support text input, which Fueli needs."
+            return "Text input is not confirmed for “\(m.id)”, which Fueli needs."
         default:
             return nil
         }
@@ -158,6 +153,10 @@ struct AISetupFormView: View {
                     .pickerStyle(.navigationLink)
                 }
 
+                if isLookingUpCapabilities { ProgressView("Looking up published model capabilities…") }
+                if let source = selectedDiscoveredModel?.capabilitySource {
+                    Text("Capability source: " + source).font(.caption).foregroundStyle(.secondary)
+                }
                 if let visionWarning {
                     Label(visionWarning, systemImage: "exclamationmark.triangle.fill")
                         .font(.caption)
@@ -171,7 +170,7 @@ struct AISetupFormView: View {
                 } else if discoveredModels.isEmpty {
                     Text("Enter your key (and base URL for a custom endpoint), then tap ↻ to load the models this provider offers. Fueli needs a model that supports both text and image input.")
                 } else {
-                    Text("\(discoveredModels.count) models loaded. ✓ marks models confirmed to support text + images (from the provider or models.dev); ⚠︎ marks the rest. Capabilities are never guessed from the name.")
+                    Text("\(discoveredModels.count) models loaded. ✓ marks models confirmed to support text + images (from provider metadata, official model cards, or models.dev); ⚠︎ marks the rest. Published model capabilities may differ from what your gateway enables.")
                 }
             }
 
@@ -181,7 +180,7 @@ struct AISetupFormView: View {
                         Text(level.label).tag(level)
                     }
                 }
-                .onChange(of: assumptionLevel) { _, _ in save() }
+
             } header: {
                 Text("Follow-up questions")
             } footer: {
@@ -199,16 +198,14 @@ struct AISetupFormView: View {
                         Text("Save & Test Connection")
                     }
                 }
-                .disabled(
-                    apiKey.isEmpty
-                    || model.isEmpty
-                    || (preset == .custom && baseURL.isEmpty)
-                    || isTesting
-                    || !selectedModelSupportsVision
-                )
+                .disabled(!canSave || !selectedModelSupportsVision)
+                if !selectedModelSupportsVision {
+                    Button("Use Anyway") { testResult = .useAnyway }
+                        .disabled(!canLoadModels || model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isTesting)
+                }
             } footer: {
                 if !selectedModelSupportsVision {
-                    Text("Choose a model that supports image input before continuing.")
+                    Text("Vision support is unconfirmed. You can choose another model or use this model anyway.")
                         .foregroundStyle(.red)
                 } else {
                     Text("Your API key is stored securely in the iOS Keychain and is only sent to the configured provider.")
@@ -218,15 +215,37 @@ struct AISetupFormView: View {
         .themedScreenBackground()
         .navigationTitle("AI Provider")
         .navigationBarTitleDisplayMode(.inline)
-        .onDisappear { save() }
+        .task(id: model) {
+            let requestedID = model
+            guard !requestedID.isEmpty else { return }
+            isLookingUpCapabilities = true
+            defer { if model == requestedID { isLookingUpCapabilities = false } }
+            do { try await Task.sleep(for: .milliseconds(400)) } catch { return }
+            let current = selectedDiscoveredModel ?? .init(id: requestedID, capabilities: nil)
+            let published = await AINutritionService.lookupPublishedCapabilities(for: current)
+            guard !Task.isCancelled, requestedID == model else { return }
+            discoveredModels.removeAll { $0.id == requestedID }
+            discoveredModels.append(published)
+            discoveredModels.sort { $0.id < $1.id }
+        }
         .alert(item: $testResult) { result in
             switch result {
+            case .useAnyway:
+                return Alert(title: Text("Use this model anyway?"),
+                    message: Text("Text and vision support could not be confirmed for this endpoint. AI features may not work properly, including photo analysis. Continue with this model?"),
+                    primaryButton: .default(Text("Use Anyway")) { save(); testConnection() },
+                    secondaryButton: .cancel())
             case .success:
-                return Alert(title: Text("Connected"), message: Text("Successfully reached the AI provider."), dismissButton: .default(Text("OK")))
+                return Alert(title: Text("Connected"), message: Text("A text request succeeded. Photo support still depends on your endpoint."), dismissButton: .default(Text("OK")))
             case .failure(let message):
                 return Alert(title: Text("Connection Failed"), message: Text(message), dismissButton: .default(Text("OK")))
             }
         }
+    }
+
+    private var canSave: Bool {
+        !apiKey.isEmpty && !model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        (preset != .custom || !baseURL.isEmpty) && !isTesting && !isLoadingModels && !isLookingUpCapabilities
     }
 
     private func save() {
@@ -246,18 +265,24 @@ struct AISetupFormView: View {
             do {
                 let models = try await AINutritionService.shared.fetchModels(baseURL: base, apiKey: key, preset: p)
                 await MainActor.run {
+                    guard preset == p, effectiveBaseURL == base, apiKey == key else {
+                        isLoadingModels = false
+                        return
+                    }
                     isLoadingModels = false
                     discoveredModels = models
                     if models.isEmpty {
                         modelLoadError = "The provider returned no models."
-                    } else if models.first(where: { $0.id == model })?.supportsTextAndImage != true {
-                        // Current selection is missing / not vision-capable — jump to
-                        // the first model we've confirmed handles text + images.
-                        if let firstVision = models.first(where: { $0.supportsTextAndImage }) {
-                            model = firstVision.id
-                        } else if !models.contains(where: { $0.id == model }) {
-                            model = models[0].id
-                        }
+                    }
+                    // Refresh the selected model independently of possibly stale gateway metadata.
+                    let selectedID = model
+                    Task {
+                        let current = models.first(where: { $0.id == selectedID }) ?? .init(id: selectedID, capabilities: nil)
+                        let published = await AINutritionService.lookupPublishedCapabilities(for: current)
+                        guard model == selectedID else { return }
+                        discoveredModels.removeAll { $0.id == selectedID }
+                        discoveredModels.append(published)
+                        discoveredModels.sort { $0.id < $1.id }
                     }
                 }
             } catch {

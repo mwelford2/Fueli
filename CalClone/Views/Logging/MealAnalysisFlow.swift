@@ -19,6 +19,8 @@ final class MealAnalysisCoordinator {
         case idle
         case analyzing
         case asking(question: String)
+        case reviewing
+        case choosingMatch(Component, [USDAapiCaller.FDCFood])
         case resolving
         case done(NutritionFacts)
         case failed(message: String, stage: FailedStage)
@@ -32,6 +34,8 @@ final class MealAnalysisCoordinator {
     private var input: AINutritionService.AnalysisInput?
     /// The most recent decomposition — retained across a USDA failure so retrying
     /// the lookup doesn't re-run the model or lose any clarifying answers.
+    var reviewedDecomposition: NutritionAnalysisResult?
+    private var selectedMatches: [String: USDAapiCaller.FDCFood] = [:]
     private var lastDecomposition: NutritionAnalysisResult?
     /// Safety cap so a model that keeps asking can't loop forever.
     private let maxRounds = 6
@@ -49,6 +53,7 @@ final class MealAnalysisCoordinator {
         self.clarifications = []
         self.round = 0
         self.lastDecomposition = nil
+        self.selectedMatches = [:]
         runDecomposition()
     }
 
@@ -67,7 +72,8 @@ final class MealAnalysisCoordinator {
             runDecomposition(forceResolve: true)
             return
         }
-        resolve(decomposition)
+        reviewedDecomposition = decomposition
+        phase = .reviewing
     }
 
     func retry() {
@@ -104,7 +110,8 @@ final class MealAnalysisCoordinator {
                     self.pendingQuestion = question
                     self.phase = .asking(question: question)
                 } else {
-                    self.resolve(decomposition)
+                    self.reviewedDecomposition = decomposition
+                    self.phase = .reviewing
                 }
             } catch {
                 self.phase = .failed(message: error.localizedDescription, stage: .decomposition)
@@ -112,15 +119,57 @@ final class MealAnalysisCoordinator {
         }
     }
 
+    func reviewedComponent(at index: Int) -> Component? {
+        guard let review = reviewedDecomposition, review.components.indices.contains(index) else { return nil }
+        return review.components[index]
+    }
+
+    func editComponent(at index: Int, _ edit: (inout Component) -> Void) {
+        guard var review = reviewedDecomposition, review.components.indices.contains(index) else { return }
+        edit(&review.components[index]); reviewedDecomposition = review
+    }
+
+    func removeComponent(at index: Int) {
+        guard var review = reviewedDecomposition, review.components.indices.contains(index) else { return }
+        review.components.remove(at: index); reviewedDecomposition = review
+    }
+
+    func addComponent() {
+        reviewedDecomposition?.components.append(Component(label: "", fdcQuery: "", fallbackQueries: [],
+            preferredDataTypes: ["Foundation", "SR Legacy", "Survey (FNDDS)"], brand: nil,
+            quantity: Quantity(amount: 0, unit: "g"), estimatedGrams: 0, preparation: "", measureBasis: .as_packaged,
+            negligible: false, confidence: 0))
+    }
+
+    var canContinueLookup: Bool {
+        guard let review = reviewedDecomposition, !review.components.isEmpty, review.components.count <= 50 else { return false }
+        return review.components.allSatisfy { !$0.label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && $0.estimatedGrams.isFinite && $0.estimatedGrams > 0 && $0.estimatedGrams <= 100000 }
+    }
+
+    func continueLookup() {
+        guard canContinueLookup, let corrected = reviewedDecomposition else { return }
+        lastDecomposition = corrected
+        resolve(corrected)
+    }
+
+    func chooseFood(_ food: USDAapiCaller.FDCFood, for component: Component) {
+        selectedMatches[USDAapiCaller.identity(for: component)] = food
+        if let decomposition = lastDecomposition { resolve(decomposition) }
+    }
+
+    func returnToIngredientReview() { phase = .reviewing }
+
     private func resolve(_ decomposition: NutritionAnalysisResult) {
         phase = .resolving
         Task {
             do {
                 let facts = try await AINutritionService.shared.resolveNutrition(
                     from: decomposition,
-                    imageBase64: input?.imageBase64
+                    imageBase64: nil, selections: selectedMatches
                 )
                 self.phase = .done(facts)
+            } catch AIServiceError.ambiguousFood(let component, let candidates) {
+                self.phase = .choosingMatch(component, candidates)
             } catch {
                 self.phase = .failed(message: error.localizedDescription, stage: .usdaLookup)
             }
@@ -185,6 +234,52 @@ struct MealAnalysisProgressView: View {
                 .background(Color.themeCard)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
                 .onAppear { answerFocused = true }
+
+            case .choosingMatch(let component, let candidates):
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Choose USDA match: " + component.label).font(.headline)
+                    Text("Several records match. Compare identity and preparation; none is selected automatically.").font(.caption)
+                    ForEach(candidates, id: \.fdcId) { candidate in
+                        Button(candidate.description + " · " + (candidate.dataType ?? "USDA") + " · \(candidate.fdcId)") {
+                            coordinator.chooseFood(candidate, for: component)
+                        }.buttonStyle(.bordered)
+                    }
+                    Button("No suitable match — edit ingredients") { coordinator.returnToIngredientReview() }
+                }.padding()
+
+            case .reviewing:
+                if coordinator.reviewedDecomposition != nil {
+                    VStack(alignment: .leading) {
+                        Text("Review estimated ingredients").font(.headline)
+                        Text("Weights are estimates, not measurements. Correct them before lookup.").font(.caption)
+                        ForEach(coordinator.reviewedDecomposition!.assumptions, id: \.self) { Text($0).font(.caption).foregroundStyle(.secondary) }
+                        ForEach(Array(coordinator.reviewedDecomposition!.components.indices), id: \.self) { index in
+                            TextField("Ingredient", text: Binding(
+                                get: { coordinator.reviewedComponent(at: index)?.label ?? "" },
+                                set: { value in coordinator.editComponent(at: index) { $0.label = value; $0.fdcQuery = value } }))
+                            TextField("Preparation", text: Binding(
+                                get: { coordinator.reviewedComponent(at: index)?.preparation ?? "" },
+                                set: { value in coordinator.editComponent(at: index) { $0.preparation = value } }))
+                            Picker("Nutrition basis", selection: Binding(
+                                get: { coordinator.reviewedComponent(at: index)?.measureBasis ?? .as_packaged },
+                                set: { value in coordinator.editComponent(at: index) { $0.measureBasis = value } })) {
+                                Text("Raw").tag(MeasureBasis.raw)
+                                Text("Cooked").tag(MeasureBasis.cooked)
+                                Text("As packaged").tag(MeasureBasis.as_packaged)
+                            }
+                            TextField("Estimated grams", value: Binding(
+                                get: { coordinator.reviewedComponent(at: index)?.estimatedGrams ?? 0 },
+                                set: { value in coordinator.editComponent(at: index) {
+                                    $0.estimatedGrams = value; $0.quantity = Quantity(amount: value, unit: "g")
+                                } }), format: .number).keyboardType(.decimalPad)
+                            Button("Remove ingredient", role: .destructive) { coordinator.removeComponent(at: index) }
+                            Divider()
+                        }
+                        Button("Add missing ingredient") { coordinator.addComponent() }
+                        Button("Continue to USDA Lookup") { coordinator.continueLookup() }
+                            .buttonStyle(.borderedProminent).disabled(!coordinator.canContinueLookup)
+                    }.padding()
+                }
 
             case .done:
                 RotatingStatusView(messages: ["Done!"])

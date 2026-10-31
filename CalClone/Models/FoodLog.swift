@@ -36,6 +36,8 @@ final class FoodLog {
     var id: UUID
     var name: String
     var calories: Int
+    var caloriesExact: Double?
+    var caloriesValue: Double { caloriesExact ?? Double(calories) }
     var proteinG: Double
     var carbsG: Double
     var fatG: Double
@@ -48,6 +50,8 @@ final class FoodLog {
     /// JPEG data for photo-sourced logs, shown as a thumbnail in history.
     @Attribute(.externalStorage) var photoData: Data?
     var notes: String?
+    var savedFoodID: UUID?
+    var recipeIngredientsData: Data?
 
     init(
         id: UUID = UUID(),

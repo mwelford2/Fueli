@@ -2,15 +2,20 @@ name: CalClone
 options:
   bundleIdPrefix: com.matteowelford.calclone
   deploymentTarget:
-    iOS: "26.0"
+    iOS: "18.0"
   createIntermediateGroups: true
+
+configs:
+  Debug: debug
+  Release: release
+  Free: debug
 
 settings:
   base:
     SWIFT_VERSION: "5.0"
     DEVELOPMENT_TEAM: ""
     CODE_SIGN_STYLE: Automatic
-    MARKETING_VERSION: "1.0.0"
+    MARKETING_VERSION: "1.0.12"
     CURRENT_PROJECT_VERSION: "1"
     ENABLE_PREVIEWS: YES
 
@@ -22,20 +27,32 @@ targets:
       - path: CalClone
         excludes:
           - "**/.DS_Store"
-    resources:
-      - path: CalClone/Resources/Assets.xcassets
+          - "**/*.md"
+      - path: CalClone/Services/fdc_ingredient_prompt.md
+        buildPhase: resources
+    configFiles:
+      Debug: CalClone/Secrets.xcconfig
+      Release: CalClone/Secrets.xcconfig
+      Free: CalClone/Secrets.xcconfig
     info:
       path: CalClone/Resources/Info.plist
       properties:
+        CFBundleDisplayName: Fueli
+        USDA_API_KEY: "$(USDA_API_KEY)"
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         NSCameraUsageDescription: "CalClone uses your camera to identify food and estimate its nutrition."
         NSPhotoLibraryUsageDescription: "CalClone lets you pick photos of meals to log their nutrition."
         ITSAppUsesNonExemptEncryption: false
+        NSHealthShareUsageDescription: "Fueli reads active and resting calories from Apple Health to estimate total daily energy needs."
+        NSHealthUpdateUsageDescription: "Fueli can save workouts and weight entries you log back to Health."
+        NSMotionUsageDescription: "Fueli tracks workout steps and distance using the motion sensor."
     entitlements:
       path: CalClone/Resources/CalClone.entitlements
-      properties: {}
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.matteowelford.calclone
@@ -43,11 +60,33 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         TARGETED_DEVICE_FAMILY: "1"
         SWIFT_EMIT_LOC_STRINGS: YES
+      configs:
+        Release:
+          USDA_API_KEY: ""
+        Free:
+          USDA_API_KEY: ""
+          CODE_SIGN_ENTITLEMENTS: CalClone/Resources/CalClone-Free.entitlements
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) HEALTHKIT_DISABLED"
+  CalCloneTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: CalCloneTests
+    dependencies:
+      - target: CalClone
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.matteowelford.calclone.tests
 schemes:
   CalClone:
     build:
       targets:
         CalClone: all
+    test:
+      config: Debug
+      targets:
+        - CalCloneTests
     run:
       config: Debug
     archive:

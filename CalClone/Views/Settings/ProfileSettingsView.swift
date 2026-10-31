@@ -19,6 +19,9 @@ struct ProfileSettingsView: View {
 
     private var currentWeight: Double { weightEntries.first?.weightKg ?? profile.startingWeightKg }
 
+    @State private var isReadingHealth = false
+    @State private var healthImportMessage: String?
+
     var body: some View {
         Form {
             Section("About You") {
@@ -69,10 +72,12 @@ struct ProfileSettingsView: View {
                         .focused($weightFieldFocused)
                         .toolbar {
                             ToolbarItemGroup(placement: .keyboard) {
-                                Spacer()
-                                Button("Done") {
-                                    logCurrentWeight()
-                                    weightFieldFocused = false
+                                if weightFieldFocused {
+                                    Spacer()
+                                    Button("Done") {
+                                        logCurrentWeight()
+                                        weightFieldFocused = false
+                                    }
                                 }
                             }
                         }
@@ -125,11 +130,51 @@ struct ProfileSettingsView: View {
                         Text(profile.unitSystem.weightUnit).foregroundStyle(.secondary)
                     }
                 }
+                ManualBurnInput(profile: profile, weightKg: currentWeight, onApplied: { hasChanges = true })
+                if let average = profile.maintenanceAverageCalories {
+                    LabeledContent(profile.maintenanceSourceLabel, value: "\(Int(average.rounded())) kcal/day")
+                    Text("This full-day total replaces resting, step and workout estimates. Your goal adjustment determines intake.").font(.caption)
+                }
+                if profile.hasManualMaintenance {
+                    Text("Importing a valid Health average switches from manual burn to Health. Insufficient history keeps the manual burn.").font(.caption)
+                }
+                Button(profile.hasHealthMaintenance ? "Refresh Health total-energy average" : "Use Health total-energy average") {
+                    Task {
+                        isReadingHealth = true
+                        defer { isReadingHealth = false }
+                        do {
+                            try await HealthKitService.shared.connectTotalEnergy()
+                            if let average = try await HealthKitService.shared.averageTotalEnergy() {
+                                profile.manualMaintenanceCalories = nil
+                                profile.healthMaintenanceCalories = average.calories
+                                profile.healthEnergyDayCount = average.days
+                                profile.healthEnergyWindowStart = average.start
+                                profile.healthEnergyWindowEnd = average.end
+                                try modelContext.save()
+                                healthImportMessage = "Updated from completed days of resting + active energy."
+                            } else { healthImportMessage = HealthKitService.shared.historySummary + " Previous settings are retained." }
+                        } catch { healthImportMessage = "Couldn’t update Health history: " + error.localizedDescription }
+                    }
+                }.disabled(isReadingHealth)
+                if isReadingHealth { ProgressView() }
+                if let healthImportMessage { Text(healthImportMessage).font(.caption) }
+                if profile.hasMaintenanceAverage {
+                    Button("Use activity estimates instead") {
+                        profile.useActivityEstimates()
+                        hasChanges = true
+                    }
+                    if let end = profile.healthEnergyWindowEnd {
+                        Text("History window ends \(end.formatted(date: .abbreviated, time: .omitted)) (exclusive). Refresh when activity changes.").font(.caption)
+                    }
+                }
                 Picker("Daily Steps", selection: $profile.stepsTier) {
                     ForEach(StepsTier.allCases) { Text($0.label).tag($0) }
                 }
                 Picker("Weekly Workout Hours", selection: $profile.workoutHoursTier) {
                     ForEach(WorkoutHoursTier.allCases) { Text($0.label).tag($0) }
+                }
+                if profile.hasMaintenanceAverage {
+                    Text("Step and workout estimates are ignored while an average daily burn is selected.").font(.caption).foregroundStyle(.secondary)
                 }
                 Picker("Diet Preference", selection: $profile.dietPreference) {
                     ForEach(DietPreference.allCases) { Text($0.label).tag($0) }
@@ -137,9 +182,12 @@ struct ProfileSettingsView: View {
             }
 
             Section("Computed Targets") {
+                CalorieEvidenceLinks()
                 let calories = profile.calorieTarget(currentWeightKg: currentWeight)
                 let macros = profile.macroTargets(currentWeightKg: currentWeight)
-                LabeledContent("Calories", value: "\(calories) kcal")
+                LabeledContent("Maintenance burn", value: "\(Int(profile.tdee(currentWeightKg: currentWeight).rounded())) kcal/day")
+                LabeledContent("Goal adjustment", value: "\(Int(profile.dailyCalorieDelta(maintenance: profile.tdee(currentWeightKg: currentWeight), weightKg: currentWeight).rounded())) kcal/day")
+                LabeledContent("Calories to eat", value: "\(calories) kcal/day")
                 LabeledContent("Protein", value: "\(macros.protein) g")
                 LabeledContent("Carbs", value: "\(macros.carbs) g")
                 LabeledContent("Fat", value: "\(macros.fat) g")
@@ -271,6 +319,7 @@ private struct ProfileChangeObserver: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .onChange(of: profile.manualMaintenanceCalories) { _, _ in hasChanges = true }
             .onChange(of: profile.sex) { _, _ in hasChanges = true }
             .onChange(of: profile.birthDate) { _, _ in hasChanges = true }
             .onChange(of: profile.heightCm) { _, _ in hasChanges = true }
