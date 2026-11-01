@@ -5,17 +5,17 @@
   "apps": [
     {
       "name": "Fueli",
-      "bundleIdentifier": "com.matteowelford.calclone",
+      "bundleIdentifier": "com.welford.fueli",
       "developerName": "Matteo Welford",
       "subtitle": "AI-powered calorie tracking",
-      "version": "1.0.12",
-      "versionDate": "2026-10-31",
-      "versionDescription": "# Fueli 1.0.12\n\n- Enter average total daily calorie burn in setup or Goals & Profile, including resting energy and all activity. Preview calories to eat for your goal; a manual average skips step/workout questions.\n- Read active/resting energy from Apple Health, with clearer empty-history feedback and safer total-energy averaging. Fitness-app setup guides use Apple Health sharing.\n- Correct Gemma vision capability discovery using publisher metadata, with a Use Anyway warning for unconfirmed models.\n- Add My Foods search, favorites/recent/frequent browsing, fractional serving selection, separate Log Food and Save actions, and reusable meals with deterministic ingredient calculations.\n- Improve barcode validation, exact database matching, carbohydrate/energy normalization, source conflict handling, caching and rate-limit behavior.\n- Split photo description/review from USDA query planning. Receipt capture and OCR run on-device; reviewed imports save foods without logging consumption.\n- Add versioned local nutrition JSON export/restore and non-destructive SwiftData migrations preserving existing history and favorites.\n\n## Setup and compatibility\n\n- iOS 18 or later. Structured document OCR is available on iOS 26, with accurate text OCR fallback.\n- Add your own USDA FoodData Central key under Settings \u2192 Food Database. It is saved in Keychain; the public IPA does not embed the developer's personal key. Configure your AI provider separately.\n- This is a signed sideloading IPA, not an App Store installation. Re-sign/install with the appropriate developer capabilities; HealthKit requires a HealthKit-enabled provisioning profile.\n- Existing history is retained on upgrade. Nutrition backups cover foods, recipes and meal history; they do not include profile, weight, water or workouts.\n\n## Verification and limits\n\nRelease archive succeeded. The simulator suite passed 67 tests (68 passing executions including parameterized cases), with one optional live AI test skipped and zero failures. Simulator builds/tests cover calculations, populated migrations, backup round trips, model metadata, local OCR and mocked product-service failures. Manual simulator checks covered setup/settings burn entry, separate save/log behavior, recipes, receipt review and Files export/import. Physical camera/Watch/vendor sync and live AI-provider responses still need device checks. Receipt overlap handling, exhaustive household portions and explicit unknown optional-nutrient presentation remain limited; see Fueli/OVERHAUL_STATUS.md.",
-      "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.12/Fueli.ipa",
+      "version": "1.0.13",
+      "versionDate": "2026-11-01",
+      "versionDescription": "First Fueli release using com.welford.fueli. The Release build includes HealthKit support. This IPA is unsigned; users must sign it with an explicit HealthKit-enabled App ID and a compatible provisioning profile. Changing the bundle ID makes this a separate app from the prior com.matteowelford.calclone releases.",
+      "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.13/Fueli-1.0.13-unsigned.ipa",
       "localizedDescription": "Fueli uses AI to identify food from photos and estimate nutrition, making calorie tracking effortless.",
       "iconURL": "https://raw.githubusercontent.com/mwelford2/Fueli/main/Fueli/Resources/Assets.xcassets/AppIcon.appiconset/Gemini_Generated_Image_a4y40ga4y40ga4y4(1).png",
       "tintColor": "F97316",
-      "size": 2472337,
+      "size": 3027840,
       "permissions": [
         {
           "type": "camera",
@@ -28,95 +28,11 @@
       ],
       "versions": [
         {
-          "version": "1.0.12",
-          "date": "2026-10-31",
-          "localizedDescription": "# Fueli 1.0.12\n\n- Enter average total daily calorie burn in setup or Goals & Profile, including resting energy and all activity. Preview calories to eat for your goal; a manual average skips step/workout questions.\n- Read active/resting energy from Apple Health, with clearer empty-history feedback and safer total-energy averaging. Fitness-app setup guides use Apple Health sharing.\n- Correct Gemma vision capability discovery using publisher metadata, with a Use Anyway warning for unconfirmed models.\n- Add My Foods search, favorites/recent/frequent browsing, fractional serving selection, separate Log Food and Save actions, and reusable meals with deterministic ingredient calculations.\n- Improve barcode validation, exact database matching, carbohydrate/energy normalization, source conflict handling, caching and rate-limit behavior.\n- Split photo description/review from USDA query planning. Receipt capture and OCR run on-device; reviewed imports save foods without logging consumption.\n- Add versioned local nutrition JSON export/restore and non-destructive SwiftData migrations preserving existing history and favorites.\n\n## Setup and compatibility\n\n- iOS 18 or later. Structured document OCR is available on iOS 26, with accurate text OCR fallback.\n- Add your own USDA FoodData Central key under Settings \u2192 Food Database. It is saved in Keychain; the public IPA does not embed the developer's personal key. Configure your AI provider separately.\n- This is a signed sideloading IPA, not an App Store installation. Re-sign/install with the appropriate developer capabilities; HealthKit requires a HealthKit-enabled provisioning profile.\n- Existing history is retained on upgrade. Nutrition backups cover foods, recipes and meal history; they do not include profile, weight, water or workouts.\n\n## Verification and limits\n\nRelease archive succeeded. The simulator suite passed 67 tests (68 passing executions including parameterized cases), with one optional live AI test skipped and zero failures. Simulator builds/tests cover calculations, populated migrations, backup round trips, model metadata, local OCR and mocked product-service failures. Manual simulator checks covered setup/settings burn entry, separate save/log behavior, recipes, receipt review and Files export/import. Physical camera/Watch/vendor sync and live AI-provider responses still need device checks. Receipt overlap handling, exhaustive household portions and explicit unknown optional-nutrient presentation remain limited; see Fueli/OVERHAUL_STATUS.md.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.12/Fueli.ipa",
-          "size": 2472337
-        },
-        {
-          "version": "1.0.11",
-          "date": "2026-09-08",
-          "localizedDescription": "Fix fiber (and carbs/fat) under-reporting for whole fruit like Cuties/tangerines. The food-matching step could land on juice/canned nutrition data instead of whole raw fruit, which silently under-reports fiber far more than other macros.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.11/Fueli.ipa",
-          "size": 1999584
-        },
-        {
-          "version": "1.0.10",
-          "date": "2026-09-08",
-          "localizedDescription": "Multi-round clarifying questions with an assumption-level setting; edit logged meals; model dropdown with capability detection (models.dev) and a text+image requirement; fix nutrition scaling (portion-aware, was per-100g); much more consistent repeat analyses.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.10/Fueli.ipa",
-          "size": 1998799
-        },
-        {
-          "version": "1.0.9",
-          "date": "2026-09-08",
-          "localizedDescription": "Handle USDA connectivity failures: opt out of HTTP/3 for USDA requests (fixes -1011 behind some VPNs/proxies) and show a clear error instead of a raw NSURLError code.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.9/Fueli.ipa",
-          "size": 1929341
-        },
-        {
-          "version": "1.0.8",
-          "date": "2026-09-08",
-          "localizedDescription": "Fix NSURLErrorDomain -1011 when analyzing meals: retry transient USDA FDC search failures. Add rotating status text during AI analysis.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.8/Fueli.ipa",
-          "size": 1927632
-        },
-        {
-          "version": "1.0.7",
-          "date": "2026-09-08",
-          "localizedDescription": "Update USDA API key; bump to 1.0.7.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.7/Fueli.ipa",
-          "size": 1923415
-        },
-        {
-          "version": "1.0.6",
-          "date": "2026-09-08",
-          "localizedDescription": "Version 1.0.6.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.6/Fueli.ipa",
-          "size": 1923413
-        },
-        {
-          "version": "1.0.5",
-          "date": "2026-07-31",
-          "localizedDescription": "Version 1.0.5.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.5/Fueli.ipa",
-          "size": 1912252
-        },
-        {
-          "version": "1.0.4",
-          "date": "2026-07-31",
-          "localizedDescription": "Version 1.0.4.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.4/Fueli.ipa",
-          "size": 1912284
-        },
-        {
-          "version": "1.0.3",
-          "date": "2026-07-27",
-          "localizedDescription": "Version 1.0.3.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.3/Fueli.ipa",
-          "size": 1877591
-        },
-        {
-          "version": "1.0.2",
-          "date": "2026-07-27",
-          "localizedDescription": "Version 1.0.2.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.2/Fueli.ipa",
-          "size": 1864076
-        },
-        {
-          "version": "1.0.1",
-          "date": "2026-07-27",
-          "localizedDescription": "Version 1.0.1.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.1/Fueli.ipa",
-          "size": 1861144
-        },
-        {
-          "version": "1.0.0",
-          "date": "2026-07-27",
-          "localizedDescription": "Version 1.0.0.",
-          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.0/Fueli.ipa",
-          "size": 1857854
+          "version": "1.0.13",
+          "date": "2026-11-01",
+          "localizedDescription": "First Fueli release using com.welford.fueli. The Release build includes HealthKit support. This IPA is unsigned; users must sign it with an explicit HealthKit-enabled App ID and a compatible provisioning profile. Changing the bundle ID makes this a separate app from the prior com.matteowelford.calclone releases.",
+          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.13/Fueli-1.0.13-unsigned.ipa",
+          "size": 3027840
         }
       ]
     }
