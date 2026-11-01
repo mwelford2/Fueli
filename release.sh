@@ -94,6 +94,9 @@ jq \
   --argjson size "$IPA_SIZE" \
   --argjson newEntry "$NEW_VERSION_ENTRY" \
   '
+  .apps[0].versions = (if .apps[0].bundleIdentifier == "com.welford.fueli" then .apps[0].versions else [] end) |
+  .apps[0].bundleIdentifier = "com.welford.fueli" |
+  .apps[0].iconURL |= gsub("/CalClone/"; "/Fueli/") |
   .apps[0].version = $version |
   .apps[0].versionDate = $date |
   .apps[0].versionDescription = $notes |

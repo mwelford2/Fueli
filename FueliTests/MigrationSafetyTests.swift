@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 import SwiftData
-@testable import CalClone
+@testable import Fueli
 
 @MainActor struct MigrationSafetyTests {
     @Test func populatedOriginalUnversionedStoreMigratesWithoutReset() throws {

@@ -3,7 +3,7 @@ import Testing
 import SwiftData
 import HealthKit
 import UIKit
-@testable import CalClone
+@testable import Fueli
 
 @MainActor
 struct OverhaulExpansionTests {

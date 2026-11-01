@@ -1,30 +1,30 @@
 ---
 name: build-release
-description: Build and publish a new Fueli (CalClone) release from this repo — archive the app, package the IPA, create the GitHub release, and commit. Use when the user asks to "cut a release", "build a new release", "ship a new version", or bump + release Fueli.
+description: Build and publish a new Fueli (Fueli) release from this repo — archive the app, package the IPA, create the GitHub release, and commit. Use when the user asks to "cut a release", "build a new release", "ship a new version", or bump + release Fueli.
 ---
 
 # Build a Fueli release
 
-Only for the CalClone / Fueli project at `/Users/matteowelford/Documents/CalAIClone`. Perform the steps in order.
+Only for the Fueli / Fueli project at `/Users/matteowelford/Documents/CalAIClone`. Perform the steps in order.
 
 ## Prerequisites
 
 - `gh` and `jq` installed and authenticated (`release.sh` checks this).
-- `CalClone/Secrets.xcconfig` present with a valid `USDA_API_KEY` (untracked, gitignored — never commit it).
+- `Fueli/Secrets.xcconfig` present with a valid `USDA_API_KEY` (untracked, gitignored — never commit it).
 - A clean-ish working tree; know what version you're shipping.
 
 ## Steps
 
-1. **Bump the version.** Edit `MARKETING_VERSION` in `CalClone.xcodeproj/project.pbxproj`. There are three app-target configs (Debug, Free, Release) — bump all three to the same value. Confirm the target version with the user if unclear; default to a patch bump from the current value.
+1. **Bump the version.** Edit `MARKETING_VERSION` in `Fueli.xcodeproj/project.pbxproj`. There are three app-target configs (Debug, Free, Release) — bump all three to the same value. Confirm the target version with the user if unclear; default to a patch bump from the current value.
 
 2. **Archive the app** with xcodebuild (do not rely on a stale Xcode archive):
    ```
    xcodebuild archive \
-     -project CalClone.xcodeproj \
-     -scheme CalClone \
+     -project Fueli.xcodeproj \
+     -scheme Fueli \
      -configuration Release \
      -destination 'generic/platform=iOS' \
-     -archivePath ~/Library/Developer/Xcode/Archives/$(date +%Y-%m-%d)/CalClone-<version>.xcarchive \
+     -archivePath ~/Library/Developer/Xcode/Archives/$(date +%Y-%m-%d)/Fueli-<version>.xcarchive \
      -allowProvisioningUpdates
    ```
    Wait for `** ARCHIVE SUCCEEDED **`.
@@ -32,7 +32,7 @@ Only for the CalClone / Fueli project at `/Users/matteowelford/Documents/CalAICl
 3. **Verify the archive** before packaging:
    ```
    ARCHIVE=$(ls -td ~/Library/Developer/Xcode/Archives/*/*.xcarchive | head -1)
-   APP="$ARCHIVE/Products/Applications/CalClone.app"
+   APP="$ARCHIVE/Products/Applications/Fueli.app"
    /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP/Info.plist"   # == <version>
    /usr/libexec/PlistBuddy -c "Print :USDA_API_KEY" "$APP/Info.plist"                 # == expected key
    ```
@@ -43,11 +43,11 @@ Only for the CalClone / Fueli project at `/Users/matteowelford/Documents/CalAICl
 
 6. **Commit remaining changes.** `release.sh` only commits `apps.json`. Commit the version bump separately:
    ```
-   git add CalClone.xcodeproj/project.pbxproj
+   git add Fueli.xcodeproj/project.pbxproj
    git commit -m "Bump MARKETING_VERSION to <version>"
    git push
    ```
-   Do **not** stage `CalClone/Secrets.xcconfig` — it is gitignored and holds live keys.
+   Do **not** stage `Fueli/Secrets.xcconfig` — it is gitignored and holds live keys.
 
 ## Notes
 

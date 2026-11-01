@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import CalClone
+@testable import Fueli
 
 struct ModelCapabilityTests {
     private func models(_ json: String) -> [AINutritionService.DiscoveredModel] {

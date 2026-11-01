@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import CalClone
+@testable import Fueli
 
 @MainActor
 struct HealthActivityTests {

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3233CEDD6AD0BD5A7992E510"
-               BuildableName = "CalClone.app"
-               BlueprintName = "CalClone"
-               ReferencedContainer = "container:CalClone.xcodeproj">
+               BuildableName = "Fueli.app"
+               BlueprintName = "Fueli"
+               ReferencedContainer = "container:Fueli.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -31,9 +31,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3233CEDD6AD0BD5A7992E510"
-            BuildableName = "CalClone.app"
-            BlueprintName = "CalClone"
-            ReferencedContainer = "container:CalClone.xcodeproj">
+            BuildableName = "Fueli.app"
+            BlueprintName = "Fueli"
+            ReferencedContainer = "container:Fueli.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1B9EC4DD301D40450087CD9F"
-               BuildableName = "CalCloneTests.xctest"
-               BlueprintName = "CalCloneTests"
-               ReferencedContainer = "container:CalClone.xcodeproj">
+               BuildableName = "FueliTests.xctest"
+               BlueprintName = "FueliTests"
+               ReferencedContainer = "container:Fueli.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -65,9 +65,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3233CEDD6AD0BD5A7992E510"
-            BuildableName = "CalClone.app"
-            BlueprintName = "CalClone"
-            ReferencedContainer = "container:CalClone.xcodeproj">
+            BuildableName = "Fueli.app"
+            BlueprintName = "Fueli"
+            ReferencedContainer = "container:Fueli.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -82,9 +82,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3233CEDD6AD0BD5A7992E510"
-            BuildableName = "CalClone.app"
-            BlueprintName = "CalClone"
-            ReferencedContainer = "container:CalClone.xcodeproj">
+            BuildableName = "Fueli.app"
+            BlueprintName = "Fueli"
+            ReferencedContainer = "container:Fueli.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -1,6 +1,6 @@
-name: CalClone
+name: Fueli
 options:
-  bundleIdPrefix: com.matteowelford.calclone
+  bundleIdPrefix: com.welford.fueli
   deploymentTarget:
     iOS: "18.0"
   createIntermediateGroups: true
@@ -20,42 +20,42 @@ settings:
     ENABLE_PREVIEWS: YES
 
 targets:
-  CalClone:
+  Fueli:
     type: application
     platform: iOS
     sources:
-      - path: CalClone
+      - path: Fueli
         excludes:
           - "**/.DS_Store"
           - "**/*.md"
-      - path: CalClone/Services/fdc_ingredient_prompt.md
+      - path: Fueli/Services/fdc_ingredient_prompt.md
         buildPhase: resources
     configFiles:
-      Debug: CalClone/Secrets.xcconfig
-      Release: CalClone/Secrets.xcconfig
-      Free: CalClone/Secrets.xcconfig
+      Debug: Fueli/Secrets.xcconfig
+      Release: Fueli/Secrets.xcconfig
+      Free: Fueli/Secrets.xcconfig
     info:
-      path: CalClone/Resources/Info.plist
+      path: Fueli/Resources/Info.plist
       properties:
         CFBundleDisplayName: Fueli
         USDA_API_KEY: "$(USDA_API_KEY)"
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-        NSCameraUsageDescription: "CalClone uses your camera to identify food and estimate its nutrition."
-        NSPhotoLibraryUsageDescription: "CalClone lets you pick photos of meals to log their nutrition."
+        NSCameraUsageDescription: "Fueli uses your camera to identify food and estimate its nutrition."
+        NSPhotoLibraryUsageDescription: "Fueli lets you pick photos of meals to log their nutrition."
         ITSAppUsesNonExemptEncryption: false
         NSHealthShareUsageDescription: "Fueli reads active and resting calories from Apple Health to estimate total daily energy needs."
         NSHealthUpdateUsageDescription: "Fueli can save workouts and weight entries you log back to Health."
         NSMotionUsageDescription: "Fueli tracks workout steps and distance using the motion sensor."
     entitlements:
-      path: CalClone/Resources/CalClone.entitlements
+      path: Fueli/Resources/Fueli.entitlements
       properties:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.matteowelford.calclone
+        PRODUCT_BUNDLE_IDENTIFIER: com.welford.fueli
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         TARGETED_DEVICE_FAMILY: "1"
@@ -65,28 +65,28 @@ targets:
           USDA_API_KEY: ""
         Free:
           USDA_API_KEY: ""
-          CODE_SIGN_ENTITLEMENTS: CalClone/Resources/CalClone-Free.entitlements
+          CODE_SIGN_ENTITLEMENTS: Fueli/Resources/Fueli-Free.entitlements
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) HEALTHKIT_DISABLED"
-  CalCloneTests:
+  FueliTests:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: CalCloneTests
+      - path: FueliTests
     dependencies:
-      - target: CalClone
+      - target: Fueli
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: com.matteowelford.calclone.tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.welford.fueli.tests
 schemes:
-  CalClone:
+  Fueli:
     build:
       targets:
-        CalClone: all
+        Fueli: all
     test:
       config: Debug
       targets:
-        - CalCloneTests
+        - FueliTests
     run:
       config: Debug
     archive:

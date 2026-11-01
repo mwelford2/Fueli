@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import CalClone
+@testable import Fueli
 
 struct NutritionSafetyTests {
     @Test func gtinEquivalence() throws {

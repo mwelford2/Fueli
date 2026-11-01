@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct CalCloneApp: App {
+struct FueliApp: App {
     let modelContainer: ModelContainer?
 
     init() {

@@ -28,11 +28,11 @@ Frozen schemas cover the original unversioned repository, the intermediate Healt
 Newest installed runtime: iOS 26.5. Device: iPhone 17 Pro, 9EDE4995-25DA-4E2F-9C4A-67E57E644D0F.
 
 ```
-xcodebuild -project ../CalClone.xcodeproj -scheme CalClone -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-health-repro test
-xcodebuild -project ../CalClone.xcodeproj -scheme CalClone -configuration Debug -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-ui-review CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES build
+xcodebuild -project ../Fueli.xcodeproj -scheme Fueli -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-health-repro test
+xcodebuild -project ../Fueli.xcodeproj -scheme Fueli -configuration Debug -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-ui-review CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES build
 ```
 
-Test result: 60 passed tests (61 passing executions including parameterized migration cases), one optional credential-dependent live AI test skipped, no failures. Result bundle: /private/tmp/fueli-health-repro/Logs/Test/Test-CalClone-2026.10.31_12-53-07--0400.xcresult. Both actual Vision OCR paths ran against SyntheticReceipt.png inside the simulator test suite. No accuracy percentage is asserted from this small fixture set. URLProtocol fixtures verify rate-limit cooldown and malformed product responses. Migration fixtures include a populated version 2 library upgraded to version 3. Precision and backup tests retain fractional calories, macros, quantities, and volume definitions.
+Test result: 60 passed tests (61 passing executions including parameterized migration cases), one optional credential-dependent live AI test skipped, no failures. Result bundle: /private/tmp/fueli-health-repro/Logs/Test/Test-Fueli-2026.10.31_12-53-07--0400.xcresult. Both actual Vision OCR paths ran against SyntheticReceipt.png inside the simulator test suite. No accuracy percentage is asserted from this small fixture set. URLProtocol fixtures verify rate-limit cooldown and malformed product responses. Migration fixtures include a populated version 2 library upgraded to version 3. Precision and backup tests retain fractional calories, macros, quantities, and volume definitions.
 
 Manual simulator checks opened the dashboard, expanded logging hub, receipt entry, system photo picker, and OCR review. A synthetic receipt produced unresolved review rows and no automatic imports. A 150-kcal standard serving selected at 2.5 servings showed 375 kcal and saved only 150 kcal to My Foods without adding a log. Reopening the food and logging 0.5 servings produced 75 kcal. A two-ingredient recipe (2 + 0.5 standard servings) showed 375 kcal and saved independently of the daily log. After installing the latest version 3 build over this populated simulator, the dashboard retained the 75-kcal log, profile and fractional macros. Screenshots in ../ReviewArtifacts document these states. They do not prove every flow works. Files export created Fueli-nutrition-backup.json; importing it back reported Added 0 records, confirming duplicate skipping in the UI. Reopening the retained recipe and selecting 0.5 portions showed 187.5 kcal rounded to 188 for display and 12.5 g protein. Updating a saved 150-kcal food with three servings selected displayed a one-standard-serving save confirmation and left today’s log empty. The model settings showed gemma-4-31b-it as Text + Vision using the exact Hugging Face publisher repository. Typing an unconfirmed model exposed Use Anyway and its warning; canceling, leaving and reopening preserved the saved Gemma configuration. The native Simulator window controller intermittently fails with cgWindowNotFound; direct simctl screenshots remain available. Source and test builds use separate output directories to avoid installing a bundle being rewritten by tests. git diff --check passed.
 
@@ -62,15 +62,15 @@ Sources: https://fdc.nal.usda.gov/Foundation_Foods_Documentation/ ; https://deve
 
 ## Affected files
 
-Persistence: App/CalCloneApp.swift, Models/FoodLog.swift, Models/SavedMeal.swift, Models/UserProfile.swift; new Models/FueliSchema.swift.
+Persistence: App/FueliApp.swift, Models/FoodLog.swift, Models/SavedMeal.swift, Models/UserProfile.swift; new Models/FueliSchema.swift.
 
 Domain/services: Services/AINutritionService.swift, BarcodeLookupService.swift, HealthKitService.swift, NutritionAnalysisResult.swift; new ServingNutrition.swift, RetailBarcode.swift and LibraryTransfer.swift. Existing fdc_ingredient_prompt.md remains the query-plan contract.
 
 UI: logging hub, barcode/photo analysis coordination, nutrition confirmation, manual/edit entry, My Foods, dashboard/history, onboarding, provider/profile/settings; new MealBuilderView.swift and ReceiptImportView.swift.
 
-Tests: CalCloneTests.swift optional live-test gate; new HealthActivityTests, HealthConnectionTests, HealthEnergyPlanTests, ModelCapabilityTests, NutritionSafetyTests, MigrationSafetyTests, OverhaulExpansionTests and SyntheticReceipt.png. NutritionRegression contains the earlier standalone assertion harness.
+Tests: FueliTests.swift optional live-test gate; new HealthActivityTests, HealthConnectionTests, HealthEnergyPlanTests, ModelCapabilityTests, NutritionSafetyTests, MigrationSafetyTests, OverhaulExpansionTests and SyntheticReceipt.png. NutritionRegression contains the earlier standalone assertion harness.
 
-Build/documentation: CalClone.xcodeproj/project.pbxproj, project.yml, README.md, Secrets.example.xcconfig, CALORIE_EVIDENCE.md, HEALTH_CONNECTIONS.md, MODEL_CAPABILITIES.md, IMPLEMENTATION.md and this report. ReviewArtifacts contains synthetic simulator screenshots. Unrelated untracked .agents content was preserved.
+Build/documentation: Fueli.xcodeproj/project.pbxproj, project.yml, README.md, Secrets.example.xcconfig, CALORIE_EVIDENCE.md, HEALTH_CONNECTIONS.md, MODEL_CAPABILITIES.md, IMPLEMENTATION.md and this report. ReviewArtifacts contains synthetic simulator screenshots. Unrelated untracked .agents content was preserved.
 
 ## Project regeneration check
 
@@ -80,7 +80,7 @@ To preserve the loaded signing team and existing project state, generation was v
 
 ```
 xcodegen generate --spec /private/tmp/fueli-project-spec-check/project.yml --project-root /private/tmp/fueli-project-spec-check --project /private/tmp/fueli-project-spec-check
-xcodebuild -project /private/tmp/fueli-project-spec-check/CalClone.xcodeproj -scheme CalClone -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-generated-project-check CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES build-for-testing
+xcodebuild -project /private/tmp/fueli-project-spec-check/Fueli.xcodeproj -scheme Fueli -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-generated-project-check CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES build-for-testing
 ```
 
 Result: generation succeeded; TEST BUILD SUCCEEDED. This compiles the regenerated application and test bundle; it is not an additional test execution. The checked-in project retains the existing signing settings. The personal Secrets.xcconfig is ignored; Secrets.example.xcconfig contains no key.
@@ -99,15 +99,15 @@ Setup and Goals & Profile now share ManualBurnInput: a validated full-day total 
 
 The clinical/sport evidence was rechecked using primary sources. Existing cut/bulk dose limits remain. Recomp fat loss now caps its 10% adjustment at 500 kcal/day, informed by the Murphy/Koehler resistance-training meta-analysis; this is an app guardrail, not a universal biological threshold. Added in-app research explanations/links for maintenance, cutting, muscle gain and recomp. Exact percentages are labeled starting policies rather than clinically validated personalized doses; CALORIE_EVIDENCE.md records populations and limitations.
 
-Frozen PrecisionFueliSchema preserves version 3, and a lightweight migration adds manualMaintenanceCalories in version 4. Tests populate and migrate version 3 food/history/profile/weight/water/workout records without resetting them. Added manual-baseline priority, all-goal calculations, invalid/nonfinite entry and persistence tests. Final follow-up run: 65 passed tests (66 passing executions), 1 optional live AI test skipped, 0 failures. Result: /private/tmp/fueli-health-repro/Logs/Test/Test-CalClone-2026.10.31_13-25-51--0400.xcresult.
+Frozen PrecisionFueliSchema preserves version 3, and a lightweight migration adds manualMaintenanceCalories in version 4. Tests populate and migrate version 3 food/history/profile/weight/water/workout records without resetting them. Added manual-baseline priority, all-goal calculations, invalid/nonfinite entry and persistence tests. Final follow-up run: 65 passed tests (66 passing executions), 1 optional live AI test skipped, 0 failures. Result: /private/tmp/fueli-health-repro/Logs/Test/Test-Fueli-2026.10.31_13-25-51--0400.xcresult.
 
 Commands:
 ```
-xcodebuild -project ../CalClone.xcodeproj -scheme CalClone -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-health-repro test
-xcodebuild -project ../CalClone.xcodeproj -scheme CalClone -configuration Debug -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-ui-review CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES build
+xcodebuild -project ../Fueli.xcodeproj -scheme Fueli -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-health-repro test
+xcodebuild -project ../Fueli.xcodeproj -scheme Fueli -configuration Debug -destination 'platform=iOS Simulator,id=9EDE4995-25DA-4E2F-9C4A-67E57E644D0F' -derivedDataPath /private/tmp/fueli-ui-review CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES build
 ```
 
-Build passed. Manual settings check: 2500 total burn → maintenance-focused recomp intake 2500; fat-loss recomp → adjustment -250, intake 2250. Saving and reopening retained the value. Existing simulator preferences were restored after testing. Screenshot: ../ReviewArtifacts/18-manual-burn-settings-targets.png. A separate simulator-only bundle ID com.matteowelford.calclone.manualburnreview is used for fresh-onboarding checks, avoiding any reset of the existing app's data. Its build used the same project/source with PRODUCT_BUNDLE_IDENTIFIER overridden, in /private/tmp/fueli-manual-burn-onboarding.
+Build passed. Manual settings check: 2500 total burn → maintenance-focused recomp intake 2500; fat-loss recomp → adjustment -250, intake 2250. Saving and reopening retained the value. Existing simulator preferences were restored after testing. Screenshot: ../ReviewArtifacts/18-manual-burn-settings-targets.png. A separate simulator-only bundle ID com.welford.fueli.manualburnreview is used for fresh-onboarding checks, avoiding any reset of the existing app's data. Its build used the same project/source with PRODUCT_BUNDLE_IDENTIFIER overridden, in /private/tmp/fueli-manual-burn-onboarding.
 
 Fresh setup was tested in the isolated review app with synthetic measurements and a cut goal. Entering 2500 kcal/day previewed -550 kcal/day and 1950 kcal/day intake. Applying it skipped both steps/workout questions and advanced directly to diet preference. The summary retained the manual-burn source and 1950-kcal target. Screenshots: 19-manual-burn-setup.png and 20-manual-burn-setup-summary.png. Numeric entry has an explicit Done control; applying a burn dismisses its keyboard, and the weight-entry Done action is scoped to the weight field.
 
@@ -115,8 +115,8 @@ The isolated setup-review app was removed after verification. The original Fueli
 
 ## Release 1.0.12 preparation
 
-Fresh signed Release archive succeeded at /Users/matteowelford/Library/Developer/Xcode/Archives/2026-10-31/CalClone-1.0.12.xcarchive. App version 1.0.12, iOS minimum 18.0, signing team 8RBLV22YJJ; signature verification passed and both app/profile enable HealthKit. The public archive/IPA contains an empty bundled USDA_API_KEY. Personal USDA keys can now be entered in Settings → Food Database and stored in device-only Keychain, with checked update/delete results; request-time resolution avoids restart. Debug's optional local bundle configuration remains a fallback. Release/Free configurations explicitly exclude it. The actual Keychain fixture uses a unique disposable account and does not alter personal credentials.
+Fresh signed Release archive succeeded at /Users/matteowelford/Library/Developer/Xcode/Archives/2026-10-31/Fueli-1.0.12.xcarchive. App version 1.0.12, iOS minimum 18.0, signing team 8RBLV22YJJ; signature verification passed and both app/profile enable HealthKit. The public archive/IPA contains an empty bundled USDA_API_KEY. Personal USDA keys can now be entered in Settings → Food Database and stored in device-only Keychain, with checked update/delete results; request-time resolution avoids restart. Debug's optional local bundle configuration remains a fallback. Release/Free configurations explicitly exclude it. The actual Keychain fixture uses a unique disposable account and does not alter personal credentials.
 
-Final release suite: 67 tests passed (68 passing executions), one optional live AI test skipped, zero failures. Result: /private/tmp/fueli-health-repro/Logs/Test/Test-CalClone-2026.10.31_15-32-31--0400.xcresult. Archive command: xcodebuild archive -project ../CalClone.xcodeproj -scheme CalClone -configuration Release -destination 'generic/platform=iOS' -archivePath /Users/matteowelford/Library/Developer/Xcode/Archives/2026-10-31/CalClone-1.0.12.xcarchive -allowProvisioningUpdates USDA_API_KEY=
+Final release suite: 67 tests passed (68 passing executions), one optional live AI test skipped, zero failures. Result: /private/tmp/fueli-health-repro/Logs/Test/Test-Fueli-2026.10.31_15-32-31--0400.xcresult. Archive command: xcodebuild archive -project ../Fueli.xcodeproj -scheme Fueli -configuration Release -destination 'generic/platform=iOS' -archivePath /Users/matteowelford/Library/Developer/Xcode/Archives/2026-10-31/Fueli-1.0.12.xcarchive -allowProvisioningUpdates USDA_API_KEY=
 
 Packaging used /Users/matteowelford/bin/make-ipa.sh from the repository root. Packaged version, empty bundled key and executable hash were checked against the fresh archive. Local ReviewArtifacts screenshots are review-only and excluded from the public commit; no personal API key or simulator store is published.

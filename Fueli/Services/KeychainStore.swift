@@ -3,7 +3,7 @@ import Security
 
 /// Minimal Keychain wrapper for storing the user's AI provider API key on-device.
 enum KeychainStore {
-    private static let service = "com.matteowelford.calclone.apikey"
+    private static let service = "com.welford.fueli.apikey"
 
     static func save(_ value: String, account: String) {
         let data = Data(value.utf8)

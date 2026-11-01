@@ -32,7 +32,7 @@
 		9486ED200D17DA4D1ADDD896 /* PhotoCaptureFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F2F9B4C9B1F43B27F75065 /* PhotoCaptureFlowView.swift */; };
 		97EACDC77BC025823BBE0F7B /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */; };
 		98D57F8B7436E5A51D67AC37 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC09CE55217B52933D57210 /* RootView.swift */; };
-		9D59D347DD924D225DEB9E85 /* CalCloneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F169B11435F3004FCDB51B /* CalCloneApp.swift */; };
+		9D59D347DD924D225DEB9E85 /* FueliApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F169B11435F3004FCDB51B /* FueliApp.swift */; };
 		A78268AD53A5171C0B8B81B6 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB30415FBAD9D92423D7E8 /* UserProfile.swift */; };
 		B1B117456C59FFD2564E50CD /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86F96721DCB01DF0F7BA11A /* MainTabView.swift */; };
 		BA5FD6C6E252D8A94CF36DB5 /* SavedMeal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F2AF3433A4DD690EFE9066 /* SavedMeal.swift */; };
@@ -48,9 +48,9 @@
 		F57919F470DC03CFCDF14A3E /* BarcodeLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */; };
 		FA0000000000000000000002 /* ServingNutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0000000000000000000001 /* ServingNutrition.swift */; };
 		FA0000000000000000000012 /* RetailBarcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0000000000000000000011 /* RetailBarcode.swift */; };
-		FB0000000000000000000002 /* CalClone/Services/LibraryTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000001 /* CalClone/Services/LibraryTransfer.swift */; };
-		FB0000000000000000000012 /* CalClone/Views/Logging/MealBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000011 /* CalClone/Views/Logging/MealBuilderView.swift */; };
-		FB0000000000000000000022 /* CalClone/Views/Logging/ReceiptImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000021 /* CalClone/Views/Logging/ReceiptImportView.swift */; };
+		FB0000000000000000000002 /* Fueli/Services/LibraryTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000001 /* Fueli/Services/LibraryTransfer.swift */; };
+		FB0000000000000000000012 /* Fueli/Views/Logging/MealBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000011 /* Fueli/Views/Logging/MealBuilderView.swift */; };
+		FB0000000000000000000022 /* Fueli/Views/Logging/ReceiptImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000021 /* Fueli/Views/Logging/ReceiptImportView.swift */; };
 FC0000000000000000000012 = {isa = PBXBuildFile; fileRef = FC0000000000000000000011; };
 /* End PBXBuildFile section */
 
@@ -60,23 +60,23 @@ FC0000000000000000000012 = {isa = PBXBuildFile; fileRef = FC00000000000000000000
 			containerPortal = E2BDA7183732E36C25FAC561 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3233CEDD6AD0BD5A7992E510;
-			remoteInfo = CalClone;
+			remoteInfo = Fueli;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeLookupService.swift; sourceTree = "<group>"; };
 		1169260177948F799435AFDD /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
-		12A1B6CD5AAECAB6DC60C8E7 /* CalClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		12A1B6CD5AAECAB6DC60C8E7 /* Fueli.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fueli.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16EB30415FBAD9D92423D7E8 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		19A549B046393372304364C2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		1B9EC4DE301D40450087CD9F /* CalCloneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalCloneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B9EC4DE301D40450087CD9F /* FueliTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FueliTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = fdc_ingredient_prompt.md; sourceTree = "<group>"; };
 		21F2AF3433A4DD690EFE9066 /* SavedMeal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMeal.swift; sourceTree = "<group>"; };
-		24C7AB2338D8E1B4675D8767 /* CalClone-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CalClone-Free.entitlements"; sourceTree = "<group>"; };
+		24C7AB2338D8E1B4675D8767 /* Fueli-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Fueli-Free.entitlements"; sourceTree = "<group>"; };
 		26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScanFlowView.swift; sourceTree = "<group>"; };
-		27F169B11435F3004FCDB51B /* CalCloneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalCloneApp.swift; sourceTree = "<group>"; };
+		27F169B11435F3004FCDB51B /* FueliApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FueliApp.swift; sourceTree = "<group>"; };
 		29150FED90D3C029F2605DB7 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		32F0F88A784429709944D836 /* EditMealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMealView.swift; sourceTree = "<group>"; };
 		366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionAnalysisResult.swift; sourceTree = "<group>"; };
@@ -89,7 +89,7 @@ FC0000000000000000000012 = {isa = PBXBuildFile; fileRef = FC00000000000000000000
 		5A31FB6E155EE90307643C7C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterEntry.swift; sourceTree = "<group>"; };
 		6FC3718973051613808BA54C /* DescribeMealFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribeMealFlowView.swift; sourceTree = "<group>"; };
-		70F631071EE8D8F329402B57 /* CalClone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalClone.entitlements; sourceTree = "<group>"; };
+		70F631071EE8D8F329402B57 /* Fueli.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fueli.entitlements; sourceTree = "<group>"; };
 		87F08AC7F1F27DD95287A71B /* StreaksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksView.swift; sourceTree = "<group>"; };
 		ACE4F96C664C3F7493DACF28 /* WeightEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightEntry.swift; sourceTree = "<group>"; };
 		B73C2B66660B0C8AFA14A937 /* AIProviderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderSettingsView.swift; sourceTree = "<group>"; };
@@ -112,16 +112,16 @@ FC0000000000000000000012 = {isa = PBXBuildFile; fileRef = FC00000000000000000000
 		F8D53B8ABBE92D9722C4B260 /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEntryView.swift; sourceTree = "<group>"; };
 		FA0000000000000000000001 /* ServingNutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServingNutrition.swift; sourceTree = "<group>"; };
 		FA0000000000000000000011 /* RetailBarcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetailBarcode.swift; sourceTree = "<group>"; };
-		FB0000000000000000000001 /* CalClone/Services/LibraryTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalClone/Services/LibraryTransfer.swift; sourceTree = SOURCE_ROOT; };
-		FB0000000000000000000011 /* CalClone/Views/Logging/MealBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalClone/Views/Logging/MealBuilderView.swift; sourceTree = SOURCE_ROOT; };
-		FB0000000000000000000021 /* CalClone/Views/Logging/ReceiptImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalClone/Views/Logging/ReceiptImportView.swift; sourceTree = SOURCE_ROOT; };
-FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalClone/Models/FueliSchema.swift; sourceTree = SOURCE_ROOT; };
+		FB0000000000000000000001 /* Fueli/Services/LibraryTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fueli/Services/LibraryTransfer.swift; sourceTree = SOURCE_ROOT; };
+		FB0000000000000000000011 /* Fueli/Views/Logging/MealBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fueli/Views/Logging/MealBuilderView.swift; sourceTree = SOURCE_ROOT; };
+		FB0000000000000000000021 /* Fueli/Views/Logging/ReceiptImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fueli/Views/Logging/ReceiptImportView.swift; sourceTree = SOURCE_ROOT; };
+FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fueli/Models/FueliSchema.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		1B9EC4DF301D40450087CD9F /* CalCloneTests */ = {
+		1B9EC4DF301D40450087CD9F /* FueliTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CalCloneTests;
+			path = FueliTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -180,7 +180,7 @@ FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourceco
 			path = History;
 			sourceTree = "<group>";
 		};
-		56D3A14404DE76C6C219DADB /* CalClone */ = {
+		56D3A14404DE76C6C219DADB /* Fueli */ = {
 			isa = PBXGroup;
 			children = (
 				1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */,
@@ -190,7 +190,7 @@ FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourceco
 				A2B663DEA8F8BBDB539F735F /* Services */,
 				99EDAF7BFC99721F90F89F1A /* Views */,
 			);
-			path = CalClone;
+			path = Fueli;
 			sourceTree = "<group>";
 		};
 		57054D619D948BBBD65FF136 /* Shared */ = {
@@ -209,8 +209,8 @@ FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourceco
 			isa = PBXGroup;
 			children = (
 				5A31FB6E155EE90307643C7C /* Assets.xcassets */,
-				70F631071EE8D8F329402B57 /* CalClone.entitlements */,
-				24C7AB2338D8E1B4675D8767 /* CalClone-Free.entitlements */,
+				70F631071EE8D8F329402B57 /* Fueli.entitlements */,
+				24C7AB2338D8E1B4675D8767 /* Fueli-Free.entitlements */,
 				E6F60ACAF71E8ED6FED4D0DE /* Info.plist */,
 			);
 			path = Resources;
@@ -232,7 +232,7 @@ FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourceco
 		7FE366FD89C3B7E27A716F29 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				27F169B11435F3004FCDB51B /* CalCloneApp.swift */,
+				27F169B11435F3004FCDB51B /* FueliApp.swift */,
 				BDC09CE55217B52933D57210 /* RootView.swift */,
 			);
 			path = App;
@@ -241,8 +241,8 @@ FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourceco
 		85FBA45C11E5117777EB70FB = {
 			isa = PBXGroup;
 			children = (
-				56D3A14404DE76C6C219DADB /* CalClone */,
-				1B9EC4DF301D40450087CD9F /* CalCloneTests */,
+				56D3A14404DE76C6C219DADB /* Fueli */,
+				1B9EC4DF301D40450087CD9F /* FueliTests */,
 				FCACD0F620743B5F9780B88A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -271,9 +271,9 @@ FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourceco
 				EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */,
 				366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */,
 FC0000000000000000000011,
-				FB0000000000000000000021 /* CalClone/Views/Logging/ReceiptImportView.swift */,
-				FB0000000000000000000011 /* CalClone/Views/Logging/MealBuilderView.swift */,
-				FB0000000000000000000001 /* CalClone/Services/LibraryTransfer.swift */,
+				FB0000000000000000000021 /* Fueli/Views/Logging/ReceiptImportView.swift */,
+				FB0000000000000000000011 /* Fueli/Views/Logging/MealBuilderView.swift */,
+				FB0000000000000000000001 /* Fueli/Services/LibraryTransfer.swift */,
 				FA0000000000000000000011 /* RetailBarcode.swift */,
 				FA0000000000000000000001 /* ServingNutrition.swift */,
 				C62894909AD6AE6BD055E158 /* PedometerService.swift */,
@@ -293,8 +293,8 @@ FC0000000000000000000011,
 		FCACD0F620743B5F9780B88A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				12A1B6CD5AAECAB6DC60C8E7 /* CalClone.app */,
-				1B9EC4DE301D40450087CD9F /* CalCloneTests.xctest */,
+				12A1B6CD5AAECAB6DC60C8E7 /* Fueli.app */,
+				1B9EC4DE301D40450087CD9F /* FueliTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -302,9 +302,9 @@ FC0000000000000000000011,
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1B9EC4DD301D40450087CD9F /* CalCloneTests */ = {
+		1B9EC4DD301D40450087CD9F /* FueliTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1B9EC4E4301D40450087CD9F /* Build configuration list for PBXNativeTarget "CalCloneTests" */;
+			buildConfigurationList = 1B9EC4E4301D40450087CD9F /* Build configuration list for PBXNativeTarget "FueliTests" */;
 			buildPhases = (
 				1B9EC4DA301D40450087CD9F /* Sources */,
 				1B9EC4DB301D40450087CD9F /* Frameworks */,
@@ -316,18 +316,18 @@ FC0000000000000000000011,
 				1B9EC4E3301D40450087CD9F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				1B9EC4DF301D40450087CD9F /* CalCloneTests */,
+				1B9EC4DF301D40450087CD9F /* FueliTests */,
 			);
-			name = CalCloneTests;
+			name = FueliTests;
 			packageProductDependencies = (
 			);
-			productName = CalCloneTests;
-			productReference = 1B9EC4DE301D40450087CD9F /* CalCloneTests.xctest */;
+			productName = FueliTests;
+			productReference = 1B9EC4DE301D40450087CD9F /* FueliTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		3233CEDD6AD0BD5A7992E510 /* CalClone */ = {
+		3233CEDD6AD0BD5A7992E510 /* Fueli */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BBADC42C1D79F46D2FC2D19F /* Build configuration list for PBXNativeTarget "CalClone" */;
+			buildConfigurationList = BBADC42C1D79F46D2FC2D19F /* Build configuration list for PBXNativeTarget "Fueli" */;
 			buildPhases = (
 				994866A6160D95868DA1BDE5 /* Sources */,
 				72A7B17F81852116BA30A984 /* Resources */,
@@ -336,11 +336,11 @@ FC0000000000000000000011,
 			);
 			dependencies = (
 			);
-			name = CalClone;
+			name = Fueli;
 			packageProductDependencies = (
 			);
-			productName = CalClone;
-			productReference = 12A1B6CD5AAECAB6DC60C8E7 /* CalClone.app */;
+			productName = Fueli;
+			productReference = 12A1B6CD5AAECAB6DC60C8E7 /* Fueli.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -362,7 +362,7 @@ FC0000000000000000000011,
 					};
 				};
 			};
-			buildConfigurationList = 9934216C2C2C4C3BDA773FAC /* Build configuration list for PBXProject "CalClone" */;
+			buildConfigurationList = 9934216C2C2C4C3BDA773FAC /* Build configuration list for PBXProject "Fueli" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -376,8 +376,8 @@ FC0000000000000000000011,
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3233CEDD6AD0BD5A7992E510 /* CalClone */,
-				1B9EC4DD301D40450087CD9F /* CalCloneTests */,
+				3233CEDD6AD0BD5A7992E510 /* Fueli */,
+				1B9EC4DD301D40450087CD9F /* FueliTests */,
 			);
 		};
 /* End PBXProject section */
@@ -419,7 +419,7 @@ FC0000000000000000000011,
 				F57919F470DC03CFCDF14A3E /* BarcodeLookupService.swift in Sources */,
 				800C804C19F850D13B5DAA17 /* BarcodeScanFlowView.swift in Sources */,
 				F02D866BDF25D217D6DBB68B /* BarcodeScannerView.swift in Sources */,
-				9D59D347DD924D225DEB9E85 /* CalCloneApp.swift in Sources */,
+				9D59D347DD924D225DEB9E85 /* FueliApp.swift in Sources */,
 				8565975DD9052CE2CD3CC4AA /* CameraPicker.swift in Sources */,
 				CD33B0362A92FA59E75028C5 /* ConfettiView.swift in Sources */,
 				4FD3061E64C2888158C4A470 /* DashboardView.swift in Sources */,
@@ -435,9 +435,9 @@ FC0000000000000000000011,
 				F2772DB30C44A90257D3C305 /* ManualEntryView.swift in Sources */,
 				5D0AAE0D81CB5BB491909A8A /* NutritionAnalysisResult.swift in Sources */,
 FC0000000000000000000012,
-				FB0000000000000000000022 /* CalClone/Views/Logging/ReceiptImportView.swift in Sources */,
-				FB0000000000000000000012 /* CalClone/Views/Logging/MealBuilderView.swift in Sources */,
-				FB0000000000000000000002 /* CalClone/Services/LibraryTransfer.swift in Sources */,
+				FB0000000000000000000022 /* Fueli/Views/Logging/ReceiptImportView.swift in Sources */,
+				FB0000000000000000000012 /* Fueli/Views/Logging/MealBuilderView.swift in Sources */,
+				FB0000000000000000000002 /* Fueli/Services/LibraryTransfer.swift in Sources */,
 				FA0000000000000000000012 /* RetailBarcode.swift in Sources */,
 				FA0000000000000000000002 /* ServingNutrition.swift in Sources */,
 				476809C78A725AA761A5A573 /* NutritionConfirmView.swift in Sources */,
@@ -464,7 +464,7 @@ FC0000000000000000000012,
 /* Begin PBXTargetDependency section */
 		1B9EC4E3301D40450087CD9F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3233CEDD6AD0BD5A7992E510 /* CalClone */;
+			target = 3233CEDD6AD0BD5A7992E510 /* Fueli */;
 			targetProxy = 1B9EC4E2301D40450087CD9F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -489,7 +489,7 @@ FC0000000000000000000012,
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.welford.CalCloneTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -498,7 +498,7 @@ FC0000000000000000000012,
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CalClone.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CalClone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fueli.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Fueli";
 			};
 			name = Debug;
 		};
@@ -517,7 +517,7 @@ FC0000000000000000000012,
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.welford.CalCloneTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -525,7 +525,7 @@ FC0000000000000000000012,
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CalClone.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CalClone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fueli.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Fueli";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -533,7 +533,7 @@ FC0000000000000000000012,
 		1BB4E8D93094FC09002FF792 /* Free */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = CalCloneTests;
+				PRODUCT_NAME = FueliTests;
 			};
 			name = Free;
 		};
@@ -611,10 +611,10 @@ FC0000000000000000000012,
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CalClone/Resources/CalClone.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Fueli/Resources/Fueli.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 8RBLV22YJJ;
-				INFOPLIST_FILE = CalClone/Resources/Info.plist;
+				INFOPLIST_FILE = Fueli/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -623,7 +623,7 @@ FC0000000000000000000012,
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -697,10 +697,10 @@ FC0000000000000000000012,
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CalClone/Resources/CalClone.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Fueli/Resources/Fueli.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 8RBLV22YJJ;
-				INFOPLIST_FILE = CalClone/Resources/Info.plist;
+				INFOPLIST_FILE = Fueli/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -709,7 +709,7 @@ FC0000000000000000000012,
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -791,11 +791,11 @@ FC0000000000000000000012,
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "CalClone/Resources/CalClone-Free.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Fueli/Resources/Fueli-Free.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = CalClone/Resources/Info.plist;
+				INFOPLIST_FILE = Fueli/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -804,7 +804,7 @@ FC0000000000000000000012,
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.matteowelford.calclone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) HEALTHKIT_DISABLED";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -816,7 +816,7 @@ FC0000000000000000000012,
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1B9EC4E4301D40450087CD9F /* Build configuration list for PBXNativeTarget "CalCloneTests" */ = {
+		1B9EC4E4301D40450087CD9F /* Build configuration list for PBXNativeTarget "FueliTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B9EC4E5301D40450087CD9F /* Debug */,
@@ -826,7 +826,7 @@ FC0000000000000000000012,
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9934216C2C2C4C3BDA773FAC /* Build configuration list for PBXProject "CalClone" */ = {
+		9934216C2C2C4C3BDA773FAC /* Build configuration list for PBXProject "Fueli" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CB8705B02CEA9AF35679E63 /* Debug */,
@@ -836,7 +836,7 @@ FC0000000000000000000012,
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		BBADC42C1D79F46D2FC2D19F /* Build configuration list for PBXNativeTarget "CalClone" */ = {
+		BBADC42C1D79F46D2FC2D19F /* Build configuration list for PBXNativeTarget "Fueli" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				23393CDB95958843FC4213CA /* Debug */,

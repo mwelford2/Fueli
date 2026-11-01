@@ -23,15 +23,15 @@ Setup and Settings → Goals & Profile let you enter **Average Daily Burn** manu
 
 Connect Active Energy for the dashboard. Setup/Goals can import a maintenance baseline from active + resting energy over the previous 14 completed days, requiring at least seven paired days. A successful import replaces estimated maintenance and skips step/workout setup questions. Today's activity is not added to this baseline again. Manual targets remain fixed.
 
-Empty results are distinct from failed queries; the app reports active/resting/paired-day counts. HealthKit intentionally does not reveal whether read permission was denied. Review permissions for **both Active Energy and Resting Energy** in Health if history is incomplete. Wearable energy remains an estimate; review weight trends after 2–4 weeks. See [clinical evidence and goal rules](CalClone/CALORIE_EVIDENCE.md).
+Empty results are distinct from failed queries; the app reports active/resting/paired-day counts. HealthKit intentionally does not reveal whether read permission was denied. Review permissions for **both Active Energy and Resting Energy** in Health if history is incomplete. Wearable energy remains an estimate; review weight trends after 2–4 weeks. See [clinical evidence and goal rules](Fueli/CALORIE_EVIDENCE.md).
 
-Settings → Health Connections includes Garmin Connect, Google Health/Fitbit, Oura, WHOOP, Strava and other Health-compatible apps through their Apple Health sharing. This is a local HealthKit bridge; direct vendor OAuth is not implemented. Available metrics/history depend on each provider. See [provider setup and official references](CalClone/HEALTH_CONNECTIONS.md).
+Settings → Health Connections includes Garmin Connect, Google Health/Fitbit, Oura, WHOOP, Strava and other Health-compatible apps through their Apple Health sharing. This is a local HealthKit bridge; direct vendor OAuth is not implemented. Available metrics/history depend on each provider. See [provider setup and official references](Fueli/HEALTH_CONNECTIONS.md).
 
 The selected local team's Fueli provisioning profile enables HealthKit. Use Debug/Release with an appropriate developer team and HealthKit-enabled App ID/profile on iPhone. The **Free** configuration explicitly disables HealthKit. Real permissions and vendor/Watch sync still require device verification.
 
 ## AI configuration
 
-Configure an OpenAI-compatible or Anthropic endpoint, model and personal API key in Settings → AI Provider. Credentials remain in Keychain. Model capability discovery checks exact Hugging Face publisher metadata with documented Google/model-catalog fallbacks. **Use Anyway** presents a warning before saving an unconfirmed model. Published model support does not guarantee a gateway enables image inputs. See [model discovery](CalClone/MODEL_CAPABILITIES.md).
+Configure an OpenAI-compatible or Anthropic endpoint, model and personal API key in Settings → AI Provider. Credentials remain in Keychain. Model capability discovery checks exact Hugging Face publisher metadata with documented Google/model-catalog fallbacks. **Use Anyway** presents a warning before saving an unconfirmed model. Published model support does not guarantee a gateway enables image inputs. See [model discovery](Fueli/MODEL_CAPABILITIES.md).
 
 Provider requests use documented JSON Schema output settings, with a bounded fallback only for explicit unsupported-feature responses. Local decoding and quantity checks remain mandatory. Live provider tests are opt-in; ordinary tests use fixtures.
 
@@ -45,7 +45,7 @@ Nutrition JSON backups include diet history, dates and notes; store them private
 
 Use Xcode 26 or newer for the current source, deploying to iOS 18+. Structured document recognition is gated to iOS 26; iOS 18 uses accurate Vision text recognition. Only an iOS 26.5 runtime was available for execution testing.
 
-Open the checked-in CalClone.xcodeproj. Preserve/select your signing team. For USDA lookup in published releases, add your own free key in Settings → Food Database; it is stored in Keychain on your device. Public Release/Free builds exclude the developer’s bundled key. For local Debug builds, the ignored CalClone/Secrets.xcconfig remains an optional fallback; copy CalClone/Secrets.example.xcconfig and enter your own key. Do not commit credentials. An embedded client key is extractable; distributed production builds need an appropriately protected proxy/key-management strategy.
+Open the checked-in Fueli.xcodeproj. Preserve/select your signing team. For USDA lookup in published releases, add your own free key in Settings → Food Database; it is stored in Keychain on your device. Public Release/Free builds exclude the developer’s bundled key. For local Debug builds, the ignored Fueli/Secrets.xcconfig remains an optional fallback; copy Fueli/Secrets.example.xcconfig and enter your own key. Do not commit credentials. An embedded client key is extractable; distributed production builds need an appropriately protected proxy/key-management strategy.
 
 Optional project regeneration (requires XcodeGen):
 
@@ -58,10 +58,10 @@ The spec includes the application, unit-test target, OCR fixture, AI prompt, Hea
 From the repository root, choose an installed simulator:
 
 ```sh
-xcodebuild -project CalClone.xcodeproj -scheme CalClone -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
+xcodebuild -project Fueli.xcodeproj -scheme Fueli -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
 ```
 
-The latest checked-in-source verification passed 67 tests (68 executions including parameterized cases), one optional live AI test skipped, zero failures. A separate signed simulator build passed. Populated-store migrations, corrupt-store preservation, nutrition precision, backup round trips, model metadata, both OCR paths and mocked product-service errors are covered. Exact executed commands, result path, manual simulator checks, and remaining acceptance gaps are recorded in [OVERHAUL_STATUS.md](CalClone/OVERHAUL_STATUS.md). Local ReviewArtifacts contains the simulator screenshot bundle; it is excluded from public commits to avoid publishing profile-derived information.
+The latest checked-in-source verification passed 67 tests (68 executions including parameterized cases), one optional live AI test skipped, zero failures. A separate signed simulator build passed. Populated-store migrations, corrupt-store preservation, nutrition precision, backup round trips, model metadata, both OCR paths and mocked product-service errors are covered. Exact executed commands, result path, manual simulator checks, and remaining acceptance gaps are recorded in [OVERHAUL_STATUS.md](Fueli/OVERHAUL_STATUS.md). Local ReviewArtifacts contains the simulator screenshot bundle; it is excluded from public commits to avoid publishing profile-derived information.
 
 Set FUELI_LIVE_AI_TESTS=1 only when intentionally running the credential-dependent provider test; it may send its test input to your configured provider.
 

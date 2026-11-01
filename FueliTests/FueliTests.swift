@@ -1,15 +1,15 @@
 //
-//  CalCloneTests.swift
-//  CalCloneTests
+//  FueliTests.swift
+//  FueliTests
 //
 //  Created by Matteo Welford on 7/31/26.
 //
 
 import Testing
 import UIKit
-@testable import CalClone
+@testable import Fueli
 
-struct CalCloneTests {
+struct FueliTests {
 
     @Test(.enabled(if: ProcessInfo.processInfo.environment["FUELI_LIVE_AI_TESTS"] == "1")) func example() async throws {
         let userText = "Medium banana"
