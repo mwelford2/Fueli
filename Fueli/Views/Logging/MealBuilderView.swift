@@ -10,6 +10,7 @@ struct MealBuilderView: View {
     @State private var ingredients: [LibraryIngredient] = []
     @State private var search = ""
     @State private var error: String?
+    @State private var committed = false
     @State private var mealType = MealType.suggested()
     private var total: ServingNutrition? {
         do {
@@ -76,7 +77,7 @@ struct MealBuilderView: View {
                     Button("Save Recipe to My Foods") { commit(save: true) }.disabled(!valid)
                     if let error { Text(error).foregroundStyle(.red) }
                 }
-            }.themedScreenBackground().navigationTitle("Create Meal")
+            }.scrollDismissesKeyboard(.interactively).themedScreenBackground().navigationTitle("Create Meal")
                 .toolbar { Button("Close", action: onFinished) }
                 .onAppear {
                     if let recipe = initialRecipe, let data = recipe.ingredientData,
@@ -88,7 +89,7 @@ struct MealBuilderView: View {
     }
     private var valid: Bool { !ingredients.isEmpty && total != nil && !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     private func commit(save: Bool) {
-        guard valid, let n = total else { return }
+        guard !committed, valid, let n = total else { return }
         do {
             if save {
                 let recipe = initialRecipe ?? SavedMeal(name: name, calories: Int(n.calories.rounded()), proteinG: n.protein,
@@ -110,7 +111,7 @@ struct MealBuilderView: View {
                 log.recipeIngredientsData = try JSONEncoder().encode(ingredients)
                 context.insert(log)
             }
-            try context.save(); onFinished()
+            try context.save(); committed = true; onFinished()
         } catch { context.rollback(); self.error = error.localizedDescription }
     }
 }

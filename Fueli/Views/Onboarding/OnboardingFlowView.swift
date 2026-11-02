@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 enum WhereFocus {
-    case heightFeet, heightIn, heightCm, weight
+    case heightFeet, heightIn, heightCm, weight, goalWeight, bodyFat
 }
 
 struct OnboardingFlowView: View {
@@ -42,8 +42,9 @@ struct OnboardingFlowView: View {
 
                 Spacer()
 
-                currentStepView
-                    .padding(.horizontal)
+                ScrollView {
+                    currentStepView.padding(.horizontal)
+                }.scrollDismissesKeyboard(.interactively)
 
                 Spacer()
 
@@ -66,6 +67,9 @@ struct OnboardingFlowView: View {
             .navigationTitle("Set Up Your Plan")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    if focus != nil { Spacer(); Button("Done Editing") { focus = nil } }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Picker("Units", selection: unitSystemBinding) {
@@ -133,11 +137,11 @@ struct OnboardingFlowView: View {
         case .goal: goalStep
         case .recompFocus: recompFocusStep
         case .rate: rateStep
-        case .energy: ScrollView { energyStep }
+        case .energy: energyStep
         case .steps: stepsStep
         case .workoutHours: workoutHoursStep
         case .diet: dietStep
-        case .summary: ScrollView { summaryStep }
+        case .summary: summaryStep
         case .aiSetup: aiSetupStep
         }
     }
@@ -216,19 +220,19 @@ struct OnboardingFlowView: View {
             Text("Height")
             Spacer()
             if profile.unitSystem == .metric {
-                TextField("175", text: $heightCmText)
+                TextField("175", text: $heightCmText).focused($focus, equals: .heightCm)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 56)
                 Text("cm").foregroundStyle(.secondary)
             } else {
-                TextField("5", text: $heightFeetText)
+                TextField("5", text: $heightFeetText).accessibilityIdentifier("onboarding.feet").focused($focus, equals: .heightFeet)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 36)
                     .contentShape(Rectangle())
                 Text("ft").foregroundStyle(.secondary)
-                TextField("9", text: $heightInchesText)
+                TextField("9", text: $heightInchesText).accessibilityIdentifier("onboarding.inches").focused($focus, equals: .heightIn)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 36)
@@ -242,7 +246,7 @@ struct OnboardingFlowView: View {
         HStack {
             Text("Weight")
             Spacer()
-            TextField("0", text: $weightText, selection: $selection)
+            TextField("0", text: $weightText, selection: $selection).accessibilityIdentifier("onboarding.weight")
                 .focused($focus, equals: .weight)
                 .onChange(of: focus) {
                     if focus == .weight {
@@ -292,7 +296,7 @@ struct OnboardingFlowView: View {
                 HStack {
                     Text("Goal weight")
                     Spacer()
-                    TextField("0", text: $goalWeightText)
+                    TextField("0", text: $goalWeightText).accessibilityIdentifier("onboarding.goalWeight").focused($focus, equals: .goalWeight)
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .frame(width: 70)
@@ -459,20 +463,28 @@ struct OnboardingFlowView: View {
     private var canAdvance: Bool {
         switch resolvedStep {
         case .heightWeight:
-            let heightValid = profile.unitSystem == .metric
-                ? Double(heightCmText) != nil
-                : Int(heightFeetText) != nil && Int(heightInchesText) != nil
-            return heightValid && Double(weightText) != nil
+            let cm: Double
+            if profile.unitSystem == .metric { cm = Double(heightCmText) ?? .nan }
+            else {
+                guard let feet = Double(heightFeetText), let inches = Double(heightInchesText),
+                      feet.isFinite, inches.isFinite, feet >= 0, (0..<12).contains(inches) else { return false }
+                cm = UnitConversion.inchesToCm(feet * 12 + inches)
+            }
+            guard let weight = Double(weightText) else { return false }
+            return EntryValidation.heightCm(cm) && EntryValidation.weightKg(profile.weightKg(fromDisplay: weight))
         case .bodyFat:
-            return !trackBodyFat || Double(bodyFatText) != nil
+            return !trackBodyFat || Double(bodyFatText).map(EntryValidation.bodyFat) == true
         case .goal:
-            return profile.trainingGoal == .recomp || Double(goalWeightText) != nil
+            return profile.trainingGoal == .recomp || Double(goalWeightText).map { EntryValidation.weightKg(profile.weightKg(fromDisplay: $0)) } == true
+        case .birthDate:
+            return profile.birthDate <= Date() && (0...130).contains(age)
         default:
             return !isLoadingEnergy
         }
     }
 
     private func advance() {
+        guard canAdvance else { return }
         switch resolvedStep {
         case .heightWeight:
             if profile.unitSystem == .metric {
@@ -645,7 +657,7 @@ struct ManualBurnInput: View {
             Text("Enter Average Daily Burn").font(.headline)
             Text("Total kcal burned per day, including resting energy and all activity. Enter an average across representative complete days, not just workout calories.").font(.caption).foregroundStyle(.secondary)
             HStack {
-                TextField("e.g. 2500", text: $burnText)
+                TextField("e.g. 2500", text: $burnText).accessibilityIdentifier("maintenance.burn")
                     .keyboardType(.decimalPad)
                     .focused($burnFocused)
                     .accessibilityLabel("Average total calories burned per day")
@@ -676,7 +688,7 @@ struct ManualBurnInput: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
-                if burnFocused { Spacer(); Button("Done") { burnFocused = false } }
+                if burnFocused { Spacer(); Button("Done Editing") { burnFocused = false } }
             }
         }
         .onAppear { burnText = profile.manualMaintenanceCalories.map { String($0) } ?? "" }

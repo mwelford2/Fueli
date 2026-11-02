@@ -38,7 +38,7 @@ struct ProfileSettingsView: View {
                             .multilineTextAlignment(.trailing)
                             .frame(width: 60)
                             .onChange(of: heightCmText) { _, newValue in
-                                if let cm = Double(newValue), abs(cm - profile.heightCm) > 0.01 {
+                                if let cm = Double(newValue), EntryValidation.heightCm(cm), abs(cm - profile.heightCm) > 0.01 {
                                     profile.heightCm = cm
                                 }
                             }
@@ -96,7 +96,8 @@ struct ProfileSettingsView: View {
                             .multilineTextAlignment(.trailing)
                             .frame(width: 60)
                             .onChange(of: bodyFatText) { _, newValue in
-                                profile.bodyFatPercent = Double(newValue)
+                                if newValue.isEmpty { profile.bodyFatPercent = nil }
+                                else if let value = Double(newValue), EntryValidation.bodyFat(value) { profile.bodyFatPercent = value }
                             }
                         Text("%").foregroundStyle(.secondary)
                     }
@@ -122,7 +123,7 @@ struct ProfileSettingsView: View {
                             .onChange(of: goalWeightText) { _, newValue in
                                 if let value = Double(newValue) {
                                     let newKg = profile.weightKg(fromDisplay: value)
-                                    if abs(newKg - profile.goalWeightKg) > 0.01 {
+                                    if EntryValidation.weightKg(newKg), abs(newKg - profile.goalWeightKg) > 0.01 {
                                         profile.goalWeightKg = newKg
                                     }
                                 }
@@ -302,12 +303,14 @@ struct ProfileSettingsView: View {
     private func logCurrentWeight() {
         guard let value = Double(currentWeightText) else { return }
         let kg = profile.weightKg(fromDisplay: value)
+        guard EntryValidation.weightKg(kg) else { return }
         modelContext.insert(WeightEntry(weightKg: kg))
     }
 
     private func saveHeight() {
         guard let feet = Double(heightFeetText), let inches = Double(heightInchesText) else { return }
         let newCm = UnitConversion.inchesToCm(feet * 12 + inches)
+        guard EntryValidation.heightCm(newCm), (0..<12).contains(inches), feet >= 0 else { return }
         guard abs(newCm - profile.heightCm) > 0.01 else { return }
         profile.heightCm = newCm
     }

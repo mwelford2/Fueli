@@ -1,0 +1,293 @@
+{
+  "fdcId": 2346385,
+  "description": "Cream cheese, full fat, block",
+  "foodNutrients": [
+    {
+      "nutrient": {
+        "id": 2045,
+        "unitName": "g"
+      },
+      "amount": null
+    },
+    {
+      "nutrient": {
+        "id": 1051,
+        "unitName": "g"
+      },
+      "amount": 54.72
+    },
+    {
+      "nutrient": {
+        "id": 2047,
+        "unitName": "kcal"
+      },
+      "amount": 342.794
+    },
+    {
+      "nutrient": {
+        "id": 2048,
+        "unitName": "kcal"
+      },
+      "amount": 336.73206
+    },
+    {
+      "nutrient": {
+        "id": 1002,
+        "unitName": "g"
+      },
+      "amount": 0.9075
+    },
+    {
+      "nutrient": {
+        "id": 1003,
+        "unitName": "g"
+      },
+      "amount": 5.78985
+    },
+    {
+      "nutrient": {
+        "id": 1004,
+        "unitName": "g"
+      },
+      "amount": 33.49
+    },
+    {
+      "nutrient": {
+        "id": 1007,
+        "unitName": "g"
+      },
+      "amount": 1.444
+    },
+    {
+      "nutrient": {
+        "id": 2039,
+        "unitName": "g"
+      },
+      "amount": null
+    },
+    {
+      "nutrient": {
+        "id": 1005,
+        "unitName": "g"
+      },
+      "amount": 4.55615
+    },
+    {
+      "nutrient": {
+        "id": 2043,
+        "unitName": "mg"
+      },
+      "amount": null
+    },
+    {
+      "nutrient": {
+        "id": 1087,
+        "unitName": "mg"
+      },
+      "amount": 97.11
+    },
+    {
+      "nutrient": {
+        "id": 1089,
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1090,
+        "unitName": "mg"
+      },
+      "amount": 8.914
+    },
+    {
+      "nutrient": {
+        "id": 1091,
+        "unitName": "mg"
+      },
+      "amount": 107.7
+    },
+    {
+      "nutrient": {
+        "id": 1092,
+        "unitName": "mg"
+      },
+      "amount": 124.8
+    },
+    {
+      "nutrient": {
+        "id": 1093,
+        "unitName": "mg"
+      },
+      "amount": 367.8
+    },
+    {
+      "nutrient": {
+        "id": 1095,
+        "unitName": "mg"
+      },
+      "amount": 0.5891
+    },
+    {
+      "nutrient": {
+        "id": 1098,
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1101,
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1100,
+        "unitName": "\u00b5g"
+      },
+      "amount": 34.93
+    },
+    {
+      "nutrient": {
+        "id": 2046,
+        "unitName": "g"
+      },
+      "amount": null
+    },
+    {
+      "nutrient": {
+        "id": 1165,
+        "unitName": "mg"
+      },
+      "amount": 0.03813
+    },
+    {
+      "nutrient": {
+        "id": 1167,
+        "unitName": "mg"
+      },
+      "amount": 0.0925
+    },
+    {
+      "nutrient": {
+        "id": 1175,
+        "unitName": "mg"
+      },
+      "amount": 0.03925
+    },
+    {
+      "nutrient": {
+        "id": 1176,
+        "unitName": "\u00b5g"
+      },
+      "amount": 1.738
+    },
+    {
+      "nutrient": {
+        "id": 1178,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 2066,
+        "unitName": "mg"
+      },
+      "amount": null
+    },
+    {
+      "nutrient": {
+        "id": 1105,
+        "unitName": "\u00b5g"
+      },
+      "amount": 274.1
+    },
+    {
+      "nutrient": {
+        "id": 1185,
+        "unitName": "\u00b5g"
+      },
+      "amount": 2.4
+    },
+    {
+      "nutrient": {
+        "id": 1184,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0
+    },
+    {
+      "nutrient": {
+        "id": 1183,
+        "unitName": "\u00b5g"
+      },
+      "amount": 9.9
+    },
+    {
+      "nutrient": {
+        "id": 2044,
+        "unitName": "g"
+      },
+      "amount": null
+    },
+    {
+      "nutrient": {
+        "id": 1258,
+        "unitName": "g"
+      },
+      "amount": 19.73
+    },
+    {
+      "nutrient": {
+        "id": 1263,
+        "unitName": "g"
+      },
+      "amount": 1.02
+    },
+    {
+      "nutrient": {
+        "id": 1264,
+        "unitName": "g"
+      },
+      "amount": 3.234
+    },
+    {
+      "nutrient": {
+        "id": 1265,
+        "unitName": "g"
+      },
+      "amount": 9.211
+    },
+    {
+      "nutrient": {
+        "id": 1266,
+        "unitName": "g"
+      },
+      "amount": 3.012
+    },
+    {
+      "nutrient": {
+        "id": 1292,
+        "unitName": "g"
+      },
+      "amount": 6.924
+    },
+    {
+      "nutrient": {
+        "id": 1316,
+        "unitName": "g"
+      },
+      "amount": 0.708
+    },
+    {
+      "nutrient": {
+        "id": 1253,
+        "unitName": "mg"
+      },
+      "amount": 101.0
+    }
+  ]
+}

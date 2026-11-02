@@ -16,22 +16,32 @@ struct ReceiptLine: Identifiable, Equatable {
 }
 enum ReceiptParser {
     static func parse(_ text: String, confidence: Float) -> ReceiptLine {
-        let upper = text.uppercased()
-        let metadata = ["SUBTOTAL", "SUB TOTAL", "TOTAL", "TAX", "VISA", "CASH", "CHANGE", "COUPON", "DISCOUNT", "SAVINGS", "BALANCE", "MASTERCARD"]
+        let upper = text.uppercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let metadata = ["SUBTOTAL", "SUB TOTAL", "SUB-TOTAL", "TOTAL", "TAX", "VISA", "CASH", "CHANGE", "COUPON", "DISCOUNT", "SAVINGS", "BALANCE", "MASTERCARD", "REGISTER", "CASHIER", "TRANSACTION", "PAYMENT", "THANK YOU"]
         var name = upper.replacingOccurrences(of: #"\s+\$?-?\d+[.,]\d{2}\s*[A-Z]?$"#, with: "", options: .regularExpression)
         for (short, full) in [("CHK", "CHICKEN"), ("BRST", "BREAST"), ("BNLS", "BONELESS"), ("ORG", "ORGANIC"), ("YGRT", "YOGURT")] {
             name = name.replacingOccurrences(of: "\\b" + short + "\\b", with: full, options: .regularExpression)
         }
+        name = name.replacingOccurrences(of: #"^\s*\d{5,14}\s+"#, with: "", options: .regularExpression)
         // Purchase weights are metadata; never become a food's nutrition serving.
-        name = name.replacingOccurrences(of: #"\b\d+(?:\.\d+)?\s*(?:LB|OZ|KG|G|EA)\b"#, with: "", options: .regularExpression)
+        name = name.replacingOccurrences(of: #"\b\d+(?:\.\d+)?\s*(?:LB|LBS|OZ|KG|G|ML|L|EA|CT)\b"#, with: "", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        var row = ReceiptLine(original: text, name: name.lowercased(), confidence: confidence,
-                           skip: metadata.contains { upper.hasPrefix($0) } || name.isEmpty)
-        let pattern = try? NSRegularExpression(pattern: #"\b(\d+(?:\.\d+)?)\s*(LB|OZ|KG|G|EA)\b"#)
+        let isMetadata = metadata.contains { token in
+            guard upper == token || upper.hasPrefix(token + " ") || upper.hasPrefix(token + "\t") || upper.hasPrefix(token + ":") else { return false }
+            if token == "TOTAL" {
+                return upper.range(of: #"^TOTAL(?::|\s)+(?:\$?-?\d|DUE\b|ITEMS\b|SAVINGS\b)"#, options: .regularExpression) != nil || upper == token
+            }
+            return true
+        }
+        var row = ReceiptLine(original: text, name: name.lowercased(), confidence: confidence.isFinite ? max(0, min(1, confidence)) : 0,
+                           skip: isMetadata || name.isEmpty)
+        let pattern = try? NSRegularExpression(pattern: #"\b(\d+(?:\.\d+)?)\s*(LB|LBS|OZ|KG|G|ML|L|EA|CT)\b"#)
         let range = NSRange(upper.startIndex..., in: upper)
         if let match = pattern?.firstMatch(in: upper, range: range),
            let quantity = Range(match.range(at: 1), in: upper), let unit = Range(match.range(at: 2), in: upper) {
-            row.purchaseQuantity = Double(upper[quantity]); row.purchaseUnit = String(upper[unit]).lowercased()
+            row.purchaseQuantity = Double(upper[quantity])
+            let normalizedUnit = String(upper[unit]).lowercased()
+            row.purchaseUnit = normalizedUnit == "lbs" ? "lb" : normalizedUnit
         }
         return row
     }
@@ -44,7 +54,8 @@ enum ReceiptParser {
     }
     static func reconstruct(_ fragments: [Fragment]) -> [ReceiptLine] {
         var groups: [[Fragment]] = []
-        for fragment in fragments.sorted(by: { $0.y > $1.y }) {
+        let valid = fragments.filter { $0.x.isFinite && $0.y.isFinite && $0.height.isFinite && (0...1).contains($0.x) && (0...1).contains($0.y) && $0.height > 0 && $0.height <= 1 }
+        for fragment in valid.sorted(by: { $0.y > $1.y }) {
             if let index = groups.firstIndex(where: { group in
                 guard let first = group.first else { return false }
                 return abs(first.y - fragment.y) < max(first.height, fragment.height) * 0.5
@@ -56,8 +67,11 @@ enum ReceiptParser {
             return parse(text, confidence: group.map(\.confidence).min() ?? 0)
         }
     }
-    static func recognize(_ image: UIImage, preferStructured: Bool = true) async throws -> [ReceiptLine] {
-        guard let cgImage = image.cgImage else { throw CocoaError(.fileReadCorruptFile) }
+    static func recognize(_ image: UIImage, preferStructured: Bool = false) async throws -> [ReceiptLine] {
+        let normalized = image.imageOrientation == .up ? image : UIGraphicsImageRenderer(size: image.size).image { _ in
+            image.draw(in: CGRect(origin: .zero, size: image.size))
+        }
+        guard let cgImage = normalized.cgImage else { throw CocoaError(.fileReadCorruptFile) }
         return try await Task.detached {
             if #available(iOS 26.0, *), preferStructured {
                 do {
@@ -120,10 +134,14 @@ struct ReceiptImportView: View {
     @State private var rows: [ReceiptLine] = []
     @State private var busy = false
     @State private var error: String?
+    @FocusState private var editedRow: UUID?
     @State private var selectedRow: UUID?
     @State private var existingRow: UUID?
     @State private var existingSearch = ""
     @State private var matches: [USDAapiCaller.FDCFood] = []
+    #if DEBUG
+    @State private var loadedTestReceipt = false
+    #endif
     var body: some View {
         NavigationStack {
             List {
@@ -133,7 +151,7 @@ struct ReceiptImportView: View {
                     PhotosPicker("Choose Receipt Photos", selection: $photos, maxSelectionCount: 20, matching: .images).disabled(busy)
                     if busy { ProgressView("Reading receipt…") }
                     if let error { Text(error).foregroundStyle(.red) }
-                    Text("\(rows.count) rows · \(rows.filter(\.imported).count) imported · \(rows.filter(\.skip).count) skipped · \(rows.filter { !$0.skip && !$0.imported }.count) unresolved")
+                    Text("\(rows.count) rows · \(rows.filter(\.imported).count) imported · \(rows.filter(\.skip).count) skipped · \(rows.filter { !$0.skip && !$0.imported }.count) unresolved").accessibilityIdentifier("receipt.summary")
                 }
                 if !pages.isEmpty {
                     Section("Original pages") {
@@ -146,7 +164,7 @@ struct ReceiptImportView: View {
                     Section {
                         Text(row.original).font(.caption).foregroundStyle(.secondary)
                         if row.confidence < 0.8 { Label("Low OCR confidence — review", systemImage: "exclamationmark.triangle") }
-                        TextField("Product name", text: $row.name)
+                        TextField("Product name", text: $row.name).accessibilityIdentifier("receipt.name").focused($editedRow, equals: row.id)
                         HStack {
                             TextField("Purchase quantity (optional)", value: $row.purchaseQuantity, format: .number).keyboardType(.decimalPad)
                             TextField("Unit", text: Binding(get: { row.purchaseUnit ?? "" }, set: { row.purchaseUnit = $0 }))
@@ -161,8 +179,13 @@ struct ReceiptImportView: View {
                         }
                     }
                 }
-            }.themedScreenBackground().navigationTitle("Scan Receipt")
-                .toolbar { Button("Done", action: onFinished) }
+            }.scrollDismissesKeyboard(.interactively).themedScreenBackground().navigationTitle("Scan Receipt")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) { Button("Done", action: onFinished) }
+                    ToolbarItemGroup(placement: .keyboard) {
+                        if editedRow != nil { Spacer(); Button("Done Editing") { editedRow = nil } }
+                    }
+                }
                 .sheet(isPresented: $camera) { ReceiptCamera { images in camera = false; if !images.isEmpty { process(images) } } }
                 .sheet(isPresented: Binding(get: { selectedRow != nil }, set: { if !$0 { selectedRow = nil } })) {
                     NavigationStack {
@@ -194,6 +217,13 @@ struct ReceiptImportView: View {
                         process(images)
                     }
                 }
+                #if DEBUG
+                .onAppear {
+                    if !loadedTestReceipt, let image = UITestBootstrap.image("FUELI_UI_RECEIPT_PATH") {
+                        loadedTestReceipt = true; process([image])
+                    }
+                }
+                #endif
         }
     }
     private func process(_ images: [UIImage]) {

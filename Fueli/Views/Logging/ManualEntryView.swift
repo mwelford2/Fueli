@@ -3,6 +3,7 @@ import SwiftUI
 struct ManualEntryView: View {
     let onFinished: () -> Void
 
+    @FocusState private var editingField: String?
     @State private var showConfirm = false
     @State private var name = ""
     @State private var servingDescription = "1 serving"
@@ -24,21 +25,25 @@ struct ManualEntryView: View {
         NavigationStack {
             Form {
                 Section("Food") {
-                    TextField("Name", text: $name)
+                    TextField("Name", text: $name).accessibilityIdentifier("manual.name").focused($editingField, equals: "name")
                     TextField("Serving", text: $servingDescription)
                 }
                 Section("Nutrition — enter 0 for a known zero") {
-                    HStack { Text("Calories"); Spacer(); TextField("0", text: $caloriesText).keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
-                    HStack { Text("Protein (g)"); Spacer(); TextField("0", text: $proteinText).keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
-                    HStack { Text("Carbs (g)"); Spacer(); TextField("0", text: $carbsText).keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
-                    HStack { Text("Fat (g)"); Spacer(); TextField("0", text: $fatText).keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
-                    HStack { Text("Fiber (g)"); Spacer(); TextField("0", text: $fiberText).keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
+                    HStack { Text("Calories"); Spacer(); TextField("0", text: $caloriesText).accessibilityIdentifier("manual.caloriesText").focused($editingField, equals: "caloriesText").keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
+                    HStack { Text("Protein (g)"); Spacer(); TextField("0", text: $proteinText).accessibilityIdentifier("manual.proteinText").focused($editingField, equals: "proteinText").keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
+                    HStack { Text("Carbs (g)"); Spacer(); TextField("0", text: $carbsText).accessibilityIdentifier("manual.carbsText").focused($editingField, equals: "carbsText").keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
+                    HStack { Text("Fat (g)"); Spacer(); TextField("0", text: $fatText).accessibilityIdentifier("manual.fatText").focused($editingField, equals: "fatText").keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
+                    HStack { Text("Fiber (g)"); Spacer(); TextField("0", text: $fiberText).accessibilityIdentifier("manual.fiberText").focused($editingField, equals: "fiberText").keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
                 }
             }
             .themedScreenBackground()
             .navigationTitle("Manual Entry")
             .navigationBarTitleDisplayMode(.inline)
+            .scrollDismissesKeyboard(.interactively)
             .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer(); Button("Done Editing") { editingField = nil }
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { onFinished() }
                 }

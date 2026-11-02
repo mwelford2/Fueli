@@ -1,5 +1,7 @@
 # Current implementation and verification
 
+For the 2026-11-01 USDA/Open Food Facts text/photo database-choice follow-up, current research, configuration and test results, see [DATABASE_LOOKUP_RESEARCH.md](DATABASE_LOOKUP_RESEARCH.md). Earlier results below describe their respective builds.
+
 This report supersedes the earlier incremental notes in IMPLEMENTATION.md. The full original acceptance matrix is not yet completely met; remaining gaps are listed below.
 
 ## Health data fix

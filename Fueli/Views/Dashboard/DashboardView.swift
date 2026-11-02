@@ -238,6 +238,7 @@ private struct DateNavigator: View {
             Button { date = Calendar.current.date(byAdding: .day, value: -1, to: date) ?? date } label: {
                 Image(systemName: "chevron.left")
             }
+            .accessibilityLabel("Previous day")
             Spacer()
             Text(date, format: .dateTime.weekday(.wide).month().day())
                 .font(.headline)
@@ -245,6 +246,7 @@ private struct DateNavigator: View {
             Button { date = Calendar.current.date(byAdding: .day, value: 1, to: date) ?? date } label: {
                 Image(systemName: "chevron.right")
             }
+            .accessibilityLabel("Next day")
             .disabled(Calendar.current.isDateInToday(date))
         }
     }
@@ -419,6 +421,7 @@ private struct WaterCard: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Undo last water entry")
                 }
                 Text("\(formatted(currentOz)) / \(formatted(targetOz))").font(.themeSubheadline).foregroundStyle(.secondary)
             }

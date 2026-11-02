@@ -244,7 +244,7 @@ final class UserProfile {
 
     var hasHealthMaintenance: Bool {
         guard let value = healthMaintenanceCalories else { return false }
-        return value.isFinite && value > 0
+        return Self.isValidManualBurn(value)
     }
 
     /// An entered full-day total is independent of a manually overridden intake target.
@@ -364,7 +364,9 @@ final class UserProfile {
     }
 
     func bmr(currentWeightKg: Double) -> Double {
-        if let bf = bodyFatPercent {
+        guard currentWeightKg.isFinite, (1...1000).contains(currentWeightKg), heightCm.isFinite,
+              (50...300).contains(heightCm) else { return 0 }
+        if let bf = bodyFatPercent, bf.isFinite, (0..<100).contains(bf) {
             return katchMcArdleBMR(currentWeightKg: currentWeightKg, bodyFatPercent: bf)
         }
         return mifflinStJeorBMR(currentWeightKg: currentWeightKg)
@@ -378,7 +380,7 @@ final class UserProfile {
     /// Live step count for today, when available, refines the NEAT estimate;
     /// otherwise falls back to the onboarding steps tier's representative value.
     func neatCalories(liveStepsToday: Int? = nil) -> Double {
-        let steps = liveStepsToday.map(Double.init) ?? stepsTier.representativeSteps
+        let steps = liveStepsToday.flatMap { (0...200000).contains($0) ? Double($0) : nil } ?? stepsTier.representativeSteps
         return steps * Self.kcalPerStep
     }
 
@@ -397,7 +399,7 @@ final class UserProfile {
     /// BMR remains a full-day estimate while active energy is recorded so far.
     func tdee(currentWeightKg: Double, liveStepsToday: Int? = nil, activeEnergyCalories: Double? = nil) -> Double {
         if let average = maintenanceAverageCalories { return average }
-        if let activeEnergyCalories, activeEnergyCalories.isFinite, activeEnergyCalories >= 0 {
+        if let activeEnergyCalories, activeEnergyCalories.isFinite, (0...15000).contains(activeEnergyCalories) {
             return bmr(currentWeightKg: currentWeightKg) + activeEnergyCalories
         }
         return bmr(currentWeightKg: currentWeightKg) + neatCalories(liveStepsToday: liveStepsToday) + eatCalories
@@ -427,7 +429,7 @@ final class UserProfile {
     }
 
     func calorieTarget(currentWeightKg: Double, liveStepsToday: Int? = nil, activeEnergyCalories: Double? = nil) -> Int {
-        if let manual = manualCalorieTarget { return manual }
+        if let manual = manualCalorieTarget, (1...1_000_000).contains(manual) { return manual }
         let maintenance = tdee(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday, activeEnergyCalories: activeEnergyCalories)
         return goalCalorieTarget(maintenance: maintenance, weightKg: currentWeightKg)
     }
@@ -436,15 +438,13 @@ final class UserProfile {
     /// Explicit food-intake overrides are handled by calorieTarget(), not this preview.
     func goalCalorieTarget(maintenance: Double, weightKg: Double) -> Int {
         let target = maintenance + dailyCalorieDelta(maintenance: maintenance, weightKg: weightKg)
-        guard target.isFinite else { return 0 }
+        guard maintenance.isFinite, maintenance > 0, target.isFinite, target <= 1_000_000 else { return 0 }
         let floor = sex == .male ? 1500 : 1200
         return max(floor, Int(target.rounded()))
     }
 
     func macroTargets(currentWeightKg: Double, liveStepsToday: Int? = nil, activeEnergyCalories: Double? = nil) -> (protein: Int, carbs: Int, fat: Int) {
-        if let p = manualProteinTarget, let c = manualCarbTarget, let f = manualFatTarget {
-            return (p, c, f)
-        }
+        guard currentWeightKg.isFinite, (1...1000).contains(currentWeightKg) else { return (0, 0, 0) }
         let calories = Double(calorieTarget(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday, activeEnergyCalories: activeEnergyCalories))
 
         // Bulk/recomp lean up protein relative to bodyweight (~1g/lb), matching
@@ -454,14 +454,20 @@ final class UserProfile {
 
         let split = dietPreference.macroSplit
         let splitProteinG = (calories * split.protein) / 4
-        let proteinG = max(proteinFloorG, splitProteinG)
+        // A computed protein floor cannot consume more energy than the entire
+        // selected budget. Explicit individual macro overrides remain explicit.
+        let proteinG = min(max(proteinFloorG, splitProteinG), calories / 4)
 
         let remainingCalories = max(0, calories - proteinG * 4)
         let carbFraction = split.carbs / (split.carbs + split.fat)
         let carbsG = (remainingCalories * carbFraction) / 4
         let fatG = (remainingCalories * (1 - carbFraction)) / 9
 
-        return (Int(proteinG.rounded()), Int(carbsG.rounded()), Int(fatG.rounded()))
+        func selected(_ override: Int?, _ computed: Double) -> Int {
+            if let override, (0...1_000_000).contains(override) { return override }
+            return Int(computed.rounded())
+        }
+        return (selected(manualProteinTarget, proteinG), selected(manualCarbTarget, carbsG), selected(manualFatTarget, fatG))
     }
 
     /// Institute of Medicine Adequate Intake: 14 g of fiber per 1,000 kcal consumed —
@@ -470,7 +476,7 @@ final class UserProfile {
     private static let fiberGramsPer1000Kcal = 14.0
 
     func fiberTarget(currentWeightKg: Double, liveStepsToday: Int? = nil, activeEnergyCalories: Double? = nil) -> Int {
-        if let manual = manualFiberTarget { return manual }
+        if let manual = manualFiberTarget, (0...1_000_000).contains(manual) { return manual }
         let calories = Double(calorieTarget(currentWeightKg: currentWeightKg, liveStepsToday: liveStepsToday, activeEnergyCalories: activeEnergyCalories))
         return Int((calories * Self.fiberGramsPer1000Kcal / 1000).rounded())
     }

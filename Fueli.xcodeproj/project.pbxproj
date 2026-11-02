@@ -7,330 +7,470 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		05252CF8C0071D1261B0301C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A549B046393372304364C2 /* Theme.swift */; };
-		14FB60B31DE1816FBFC0535D /* WorkoutLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C11D89532BB49AA08EEB13 /* WorkoutLog.swift */; };
-		1A90AB01143933FBD636507F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A31FB6E155EE90307643C7C /* Assets.xcassets */; };
-		1BEFEA51301BBDA6004FE014 /* fdc_ingredient_prompt.md in Resources */ = {isa = PBXBuildFile; fileRef = 1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */; };
-		27F784FE9F965A5456CC3728 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */; };
-		36379C3D27A4ACDC95D6321E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29150FED90D3C029F2605DB7 /* HistoryView.swift */; };
-		3CF2D59857CD9551D89A6D5E /* StreaksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F08AC7F1F27DD95287A71B /* StreaksView.swift */; };
-		476809C78A725AA761A5A573 /* NutritionConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8988A9E56CE2024300051C8 /* NutritionConfirmView.swift */; };
-		49ADA83CE10B9F83D377825B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2E5315FC0864D62E3BAC21 /* SettingsView.swift */; };
-		4FD3061E64C2888158C4A470 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B74EE0F5F67DA1F25D5F404 /* DashboardView.swift */; };
-		58B09BCF6B64B8EC62C1F8C5 /* EditMealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0F88A784429709944D836 /* EditMealView.swift */; };
-		5A0BD72BE10EF32E47D04B2C /* AIProviderSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73C2B66660B0C8AFA14A937 /* AIProviderSettingsView.swift */; };
-		5D0AAE0D81CB5BB491909A8A /* NutritionAnalysisResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */; };
-		726615D068D1A35BEDE25B97 /* FoodLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E41A8A3786B08ED166050BD /* FoodLog.swift */; };
-		7A16E03E11BB93F9F21EADCA /* LogEntryHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366AD4A53F4C2EEF474DC8B4 /* LogEntryHubView.swift */; };
-		7C5A398C025A42740BFB45A4 /* DescribeMealFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC3718973051613808BA54C /* DescribeMealFlowView.swift */; };
-		800C804C19F850D13B5DAA17 /* BarcodeScanFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */; };
-		8565975DD9052CE2CD3CC4AA /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406A0704776FFD2516ABFC2E /* CameraPicker.swift */; };
-		87AE6596F52D397E7E21A273 /* WaterEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */; };
-		8F4DB85FA35FE60DF8909A5B /* SavedMealsFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C299BB268C4DB9CCDE233187 /* SavedMealsFlowView.swift */; };
-		92C35504A8D1E6522DA81FA8 /* AINutritionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466CC25E396E30308222BB52 /* AINutritionService.swift */; };
-		939174EB99AA1E2A07BF7833 /* MealAnalysisFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEADF03981AA58270300172C /* MealAnalysisFlow.swift */; };
-		9486ED200D17DA4D1ADDD896 /* PhotoCaptureFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F2F9B4C9B1F43B27F75065 /* PhotoCaptureFlowView.swift */; };
-		97EACDC77BC025823BBE0F7B /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */; };
-		98D57F8B7436E5A51D67AC37 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC09CE55217B52933D57210 /* RootView.swift */; };
-		9D59D347DD924D225DEB9E85 /* FueliApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F169B11435F3004FCDB51B /* FueliApp.swift */; };
-		A78268AD53A5171C0B8B81B6 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB30415FBAD9D92423D7E8 /* UserProfile.swift */; };
-		B1B117456C59FFD2564E50CD /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86F96721DCB01DF0F7BA11A /* MainTabView.swift */; };
-		BA5FD6C6E252D8A94CF36DB5 /* SavedMeal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F2AF3433A4DD690EFE9066 /* SavedMeal.swift */; };
-		C7ABBC9010E600D658246AC5 /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508535C1EB9D294675592836 /* OnboardingFlowView.swift */; };
-		CD33B0362A92FA59E75028C5 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C262BB682D49776065FFE4 /* ConfettiView.swift */; };
-		CEEF691948C3A039709B8DF2 /* WeightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4F96C664C3F7493DACF28 /* WeightEntry.swift */; };
-		DE7B1C8145CEC0BE3773BD07 /* WorkoutLoggingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E2D363077959BE2596FEA2 /* WorkoutLoggingView.swift */; };
-		E6384D6884A3D3C89A9E7C35 /* AIProviderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CFE8D248D0D6B350396203 /* AIProviderConfig.swift */; };
-		ED6E8864DE6D435E8EF3E177 /* PedometerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62894909AD6AE6BD055E158 /* PedometerService.swift */; };
-		F02D866BDF25D217D6DBB68B /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB98D419F5E54FF1BC4763A8 /* BarcodeScannerView.swift */; };
-		F2772DB30C44A90257D3C305 /* ManualEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D53B8ABBE92D9722C4B260 /* ManualEntryView.swift */; };
-		F3BB892A8AD1AB9FEFC72F6C /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1169260177948F799435AFDD /* ProfileSettingsView.swift */; };
-		F57919F470DC03CFCDF14A3E /* BarcodeLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */; };
-		FA0000000000000000000002 /* ServingNutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0000000000000000000001 /* ServingNutrition.swift */; };
-		FA0000000000000000000012 /* RetailBarcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0000000000000000000011 /* RetailBarcode.swift */; };
-		FB0000000000000000000002 /* Fueli/Services/LibraryTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000001 /* Fueli/Services/LibraryTransfer.swift */; };
-		FB0000000000000000000012 /* Fueli/Views/Logging/MealBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000011 /* Fueli/Views/Logging/MealBuilderView.swift */; };
-		FB0000000000000000000022 /* Fueli/Views/Logging/ReceiptImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0000000000000000000021 /* Fueli/Views/Logging/ReceiptImportView.swift */; };
-FC0000000000000000000012 = {isa = PBXBuildFile; fileRef = FC0000000000000000000011; };
+		03569AA6DE7D3D4E497B5A77 /* WorkoutLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58413F172A634A8CB8C75384 /* WorkoutLog.swift */; };
+		0531E3B49F1F9977570EFFC0 /* AIWireContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 266EEF91A2104F54FF219069 /* AIWireContractTests.swift */; };
+		09D2B908A0575F2599A3735A /* cream-cheese-product.json in Resources */ = {isa = PBXBuildFile; fileRef = EA5B32DFAF921BB2B073D93C /* cream-cheese-product.json */; };
+		0B34775CC651443765CE71F7 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2844460E16A02CEB74B6F2 /* DashboardView.swift */; };
+		0D3666EA67D1F006771858D5 /* WorkoutLoggingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13F2BCEE116B89E5095367D4 /* WorkoutLoggingView.swift */; };
+		1008A7DACFFA665D944237A7 /* RetailBarcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A11D1E77EAD01E797319F66 /* RetailBarcode.swift */; };
+		13C48436DED34C55D0686BFD /* LibraryTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EE9C4928523D71FDE88896 /* LibraryTransfer.swift */; };
+		164417CDB8DDE8D17812B1FB /* IMAGE_PROVENANCE.md in Resources */ = {isa = PBXBuildFile; fileRef = F5DBBDFC0C32D4185EC2238E /* IMAGE_PROVENANCE.md */; };
+		16C97473D16054502E559CA8 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF383C431C52FC09A2C5919 /* ConfettiView.swift */; };
+		18248BDD28C79D2BABBE5851 /* bagel-detail.json in Resources */ = {isa = PBXBuildFile; fileRef = 7CFFA39E0678F1083E6CF236 /* bagel-detail.json */; };
+		190AE6E6B403C74AD560CAC4 /* OpenFoodFactsSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAFCAE1C58ED7A9C263E7133 /* OpenFoodFactsSearchService.swift */; };
+		19DB7A53BDCC988D3B12289B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 187EFE809B39D31A60E7291B /* README.md */; };
+		1B1F8FAB2DE40BE8A5584C79 /* ManualEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93D279EB26C554D1A3E9EF0 /* ManualEntryView.swift */; };
+		1CDE84CD8B50066DB191CABE /* bagel.json in Resources */ = {isa = PBXBuildFile; fileRef = E7840CE0BB6B30302C545B50 /* bagel.json */; };
+		1E90ABCE2FE6F93F9FA58626 /* BarcodeLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2425BE75DCD8C6C5FD3FABB6 /* BarcodeLookupService.swift */; };
+		1F5310C47201CFC5EDDDC6C3 /* AIProviderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6114C9779FD999D6D46E32E4 /* AIProviderConfig.swift */; };
+		20C6AFA00C438CF4EF9D76F3 /* PhotoCaptureFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D7BDF2673A2C23A7D1110C /* PhotoCaptureFlowView.swift */; };
+		287FB8998B03D4167D6EFA42 /* WeightEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE8640C64F9E767D20F469C /* WeightEntry.swift */; };
+		2F4C26D0D1CDC78F3285BBEF /* ModelCapabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE432EE16ADA420A11B77297 /* ModelCapabilityTests.swift */; };
+		367ADC08B0D5B08A9FF05B97 /* OFF_PROVENANCE.md in Resources */ = {isa = PBXBuildFile; fileRef = B950C03FF9801C60D81214B5 /* OFF_PROVENANCE.md */; };
+		3D69E123AACD4DF85ED5F173 /* NutritionAnalysisResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D48BFF361F4F7E47CA5B984 /* NutritionAnalysisResult.swift */; };
+		417B85D57997E3AAE79ECD62 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA143BA9F906E43D204DF0DE /* CameraPicker.swift */; };
+		44B41154FCA2186B06849D5B /* ReceiptLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8DB8A9DEA1FE1726052F62 /* ReceiptLayoutTests.swift */; };
+		46D7C9D5BFBA26EAE7E99A15 /* FueliApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77981EC8042C8E4D47D13893 /* FueliApp.swift */; };
+		4F9B409C8BEF68A0A5118D09 /* PedometerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88118A7FC5C4EF4E4B8FB8EE /* PedometerService.swift */; };
+		55410FD8A22239184EBAEE14 /* LogEntryHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58FA1EF067E1CBE959046DEB /* LogEntryHubView.swift */; };
+		55EDF72E4CCF8690AFD76EBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 154E33FBB858862FD0EDF906 /* Assets.xcassets */; };
+		58D0A57E86B51B644A78C3CC /* MigrationSafetyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB081C378D0EC6A6423572B9 /* MigrationSafetyTests.swift */; };
+		5AC57DD3E939A7870945B6A0 /* banana.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E60E9314F88D661AC95123A1 /* banana.jpg */; };
+		5B292DC1F5567CC54B3CB771 /* SyntheticReceipt.png in Resources */ = {isa = PBXBuildFile; fileRef = AB61952594E24E4BA1BEAAFB /* SyntheticReceipt.png */; };
+		6295F0B086871B3A3722A509 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EBB5069B46222DD83085BD /* MainTabView.swift */; };
+		68B6DAADDF4B929F26F2244E /* MealDatabaseChoiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBBD5D0BD9217B1B584B2A17 /* MealDatabaseChoiceTests.swift */; };
+		69EF49C04EA12F19A6D38B58 /* annotated-rows.json in Resources */ = {isa = PBXBuildFile; fileRef = 54D0EC7F37ACBE0AAC89F122 /* annotated-rows.json */; };
+		6F8366E793B0A5AA11709757 /* AINutritionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA12C987C4CFF941DDD7C77 /* AINutritionService.swift */; };
+		6FFC3A72BFFF39460DF2820B /* cream-cheese.json in Resources */ = {isa = PBXBuildFile; fileRef = 8808E22C30A888D1DCFA8ECC /* cream-cheese.json */; };
+		706BEF8DE8DB2F6094B87A91 /* SavedMealsFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA072AF2C212A09F03BD09CD /* SavedMealsFlowView.swift */; };
+		707571198C57C0E98EB84E40 /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4209456FB013E213D0A86597 /* BarcodeScannerView.swift */; };
+		71EA57E3AEEB437E8DC07475 /* StreaksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0F9C581C77F2801EB9BA03 /* StreaksView.swift */; };
+		71F3B641249C7827922DC122 /* SavedMeal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87434FB3417AD3F4F3D3546E /* SavedMeal.swift */; };
+		75AB763948FC4F9AE55BA4BE /* MealAnalysisFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F8A5463C7149497E2CFF3B /* MealAnalysisFlow.swift */; };
+		7BA2DEC85B877DD465E36978 /* MealReviewRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6E863C69A28CF8E348834F /* MealReviewRenderingTests.swift */; };
+		842785D3EC5AF09FE8D81F59 /* DescribeMealFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF7ABA9CE5FF866D6C67E02 /* DescribeMealFlowView.swift */; };
+		84D94240A7C12722241B86FD /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 132E148C4D1606CDC544DDDC /* Theme.swift */; };
+		8C7EE96E1E724049958972C3 /* HealthEnergyPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47718293E92C684515831605 /* HealthEnergyPlanTests.swift */; };
+		8CCCE0C79338DB9FA56F7C84 /* FoodLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3FBE210A24D9F4304776D3 /* FoodLog.swift */; };
+		8CF2D90DE6D6F41F179A353A /* cream-cheese-sr-detail.json in Resources */ = {isa = PBXBuildFile; fileRef = 9EB6010A1CF28A99C11CC0D2 /* cream-cheese-sr-detail.json */; };
+		8FE32E59E171CBE51138974B /* RigorousDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168712774E5DD453C2AC8B2E /* RigorousDomainTests.swift */; };
+		9350689AC35932D058A1701F /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1040250FC9ED5A1BA006718F /* ProfileSettingsView.swift */; };
+		93DA8C65B6AD9D3CA8B33E17 /* FueliTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2BC7F9A2075DDAD2659668 /* FueliTests.swift */; };
+		9BCC020E118DFD6F0AF5996E /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E9EFF4DC0CB28DF770735D9 /* KeychainStore.swift */; };
+		9EB5226BE9FC45EDC1466863 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946EDFE9B076DC99757AD2EF /* HealthKitService.swift */; };
+		9EB5B04CCEB7415A81498E5A /* WaterEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46EC1567A231C91B84661BE4 /* WaterEntry.swift */; };
+		A0A9BF53249C69173D9DF5FF /* NutritionSafetyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA5BD64DCE0C4E5392F4C4C /* NutritionSafetyTests.swift */; };
+		A21990216526E91B66EE4F81 /* ReceiptImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F3CD2E60BBAD9BF26B07D4 /* ReceiptImportView.swift */; };
+		A36B6BC33ECD1C1CC1E09C21 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786206ABFF393E813C6F82C9 /* HistoryView.swift */; };
+		A38E6699F61FF5644B7D9DA6 /* fdc_ingredient_prompt.md in Resources */ = {isa = PBXBuildFile; fileRef = 124E127369A3A30F2984DB0F /* fdc_ingredient_prompt.md */; };
+		A70144A7DB02756D437F2F00 /* OpenFoodFactsSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBE09C1CFF1AEB85953A767 /* OpenFoodFactsSearchTests.swift */; };
+		AB68665264F58096016AFB71 /* NutritionConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02AA2727AD7CB69A22775B5 /* NutritionConfirmView.swift */; };
+		ACA80B8A8906896C9CCEB744 /* HealthConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C64A5D3BD656606E7415B6 /* HealthConnectionTests.swift */; };
+		AE5616C00EA9E200AE7A50CC /* AppJourneyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9391DA94AA7264F513E6910 /* AppJourneyTests.swift */; };
+		B1DEB9A6EC6560185366CD3B /* ServingNutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3B9C391DD28409EA6A0D23 /* ServingNutrition.swift */; };
+		B5176E15F0499B796AFB6D50 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C447B6056A83B923B7A45622 /* SettingsView.swift */; };
+		BA515E0432A08ABB968332A4 /* PersistenceActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0973EE2FB4C42872E5950BAB /* PersistenceActionTests.swift */; };
+		C62E48EBC8F0F7F2726B1079 /* cream-cheese-detail.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8E3974A7E816866AA16AA7 /* cream-cheese-detail.json */; };
+		C72309F424A30F9036A4496D /* NutritionCommitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512A143EB0375020F610E852 /* NutritionCommitter.swift */; };
+		C84F75F38C4378FC7BCAAC76 /* MealFoodDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0223CF0BD48FCBB82D0E7DE /* MealFoodDatabase.swift */; };
+		C883D973802943D59AE1AD57 /* EditMealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838E6D049AC8F74F355D59A9 /* EditMealView.swift */; };
+		CA4074A2228582C1FB1B7C61 /* FueliSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324DB6A8ACD18C6B89C3BE1F /* FueliSchema.swift */; };
+		D8BBD835847797D5A1E6FF03 /* MealLookupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05255C40D0A0CA4088B5624 /* MealLookupTests.swift */; };
+		DF282DE610294FB309361C82 /* BarcodeScanFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3FD36C03C1C021FEF54717 /* BarcodeScanFlowView.swift */; };
+		DFC224FF3C1719C0BAE833B0 /* HealthActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3AD0B9149E4D214DA58793 /* HealthActivityTests.swift */; };
+		DFCFB2C0F8344F1B917B40A5 /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57E75D57E0D92DD44DAAA4 /* OnboardingFlowView.swift */; };
+		E47D2BF364C7F17663960C43 /* ReleaseLiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D1B7A477A80C416163B8246 /* ReleaseLiveTests.swift */; };
+		E7E9AADEDFEC596D80948F0F /* AIProviderSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64C50D50795D0FD9D369480 /* AIProviderSettingsView.swift */; };
+		F20A04682E32C2CEA72AE939 /* search.json in Resources */ = {isa = PBXBuildFile; fileRef = AAC20E19AF76B1A1C3C4625D /* search.json */; };
+		F61DADFE98BB6BB7DCCA3A80 /* MealBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BFDA70A145A49592641B64 /* MealBuilderView.swift */; };
+		FAF883B929A04D455F11DC78 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51AA5B9C613A1AB86AC908A /* UserProfile.swift */; };
+		FD40A097D1C6D67DEDACEBDA /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56F94EE4A59018A36C36BAEC /* RootView.swift */; };
+		FE6D0B4619F6F3D77F06F2B8 /* UITestBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E65913E85476FEEC5A0176 /* UITestBootstrap.swift */; };
+		FF5601982C3E9104D70B96F7 /* OverhaulExpansionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC7E0CC69081A7119F8566CA /* OverhaulExpansionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1B9EC4E2301D40450087CD9F /* PBXContainerItemProxy */ = {
+		021923580D64490BB88C8BA8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = E2BDA7183732E36C25FAC561 /* Project object */;
+			containerPortal = DAF7F11869C7B254DE06588B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 3233CEDD6AD0BD5A7992E510;
+			remoteGlobalIDString = 9938B89B9F85934BD69AAA32;
+			remoteInfo = Fueli;
+		};
+		2BDBEF68DFACE3B52216F9BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DAF7F11869C7B254DE06588B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9938B89B9F85934BD69AAA32;
 			remoteInfo = Fueli;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeLookupService.swift; sourceTree = "<group>"; };
-		1169260177948F799435AFDD /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
-		12A1B6CD5AAECAB6DC60C8E7 /* Fueli.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fueli.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		16EB30415FBAD9D92423D7E8 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
-		19A549B046393372304364C2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		1B9EC4DE301D40450087CD9F /* FueliTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FueliTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
-		1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = fdc_ingredient_prompt.md; sourceTree = "<group>"; };
-		21F2AF3433A4DD690EFE9066 /* SavedMeal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMeal.swift; sourceTree = "<group>"; };
-		24C7AB2338D8E1B4675D8767 /* Fueli-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Fueli-Free.entitlements"; sourceTree = "<group>"; };
-		26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScanFlowView.swift; sourceTree = "<group>"; };
-		27F169B11435F3004FCDB51B /* FueliApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FueliApp.swift; sourceTree = "<group>"; };
-		29150FED90D3C029F2605DB7 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		32F0F88A784429709944D836 /* EditMealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMealView.swift; sourceTree = "<group>"; };
-		366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionAnalysisResult.swift; sourceTree = "<group>"; };
-		366AD4A53F4C2EEF474DC8B4 /* LogEntryHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryHubView.swift; sourceTree = "<group>"; };
-		3B74EE0F5F67DA1F25D5F404 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
-		3E41A8A3786B08ED166050BD /* FoodLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodLog.swift; sourceTree = "<group>"; };
-		406A0704776FFD2516ABFC2E /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
-		466CC25E396E30308222BB52 /* AINutritionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AINutritionService.swift; sourceTree = "<group>"; };
-		508535C1EB9D294675592836 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
-		5A31FB6E155EE90307643C7C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterEntry.swift; sourceTree = "<group>"; };
-		6FC3718973051613808BA54C /* DescribeMealFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribeMealFlowView.swift; sourceTree = "<group>"; };
-		70F631071EE8D8F329402B57 /* Fueli.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fueli.entitlements; sourceTree = "<group>"; };
-		87F08AC7F1F27DD95287A71B /* StreaksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksView.swift; sourceTree = "<group>"; };
-		ACE4F96C664C3F7493DACF28 /* WeightEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightEntry.swift; sourceTree = "<group>"; };
-		B73C2B66660B0C8AFA14A937 /* AIProviderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderSettingsView.swift; sourceTree = "<group>"; };
-		B86F96721DCB01DF0F7BA11A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
-		B8988A9E56CE2024300051C8 /* NutritionConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionConfirmView.swift; sourceTree = "<group>"; };
-		B8C262BB682D49776065FFE4 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
-		BDC09CE55217B52933D57210 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		C299BB268C4DB9CCDE233187 /* SavedMealsFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMealsFlowView.swift; sourceTree = "<group>"; };
-		C2C11D89532BB49AA08EEB13 /* WorkoutLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutLog.swift; sourceTree = "<group>"; };
-		C62894909AD6AE6BD055E158 /* PedometerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerService.swift; sourceTree = "<group>"; };
-		CB98D419F5E54FF1BC4763A8 /* BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerView.swift; sourceTree = "<group>"; };
-		D2E2D363077959BE2596FEA2 /* WorkoutLoggingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutLoggingView.swift; sourceTree = "<group>"; };
-		D9CFE8D248D0D6B350396203 /* AIProviderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderConfig.swift; sourceTree = "<group>"; };
-		DF2E5315FC0864D62E3BAC21 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		E6F60ACAF71E8ED6FED4D0DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		EEADF03981AA58270300172C /* MealAnalysisFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAnalysisFlow.swift; sourceTree = "<group>"; };
-		EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
-		F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
-		F3F2F9B4C9B1F43B27F75065 /* PhotoCaptureFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureFlowView.swift; sourceTree = "<group>"; };
-		F8D53B8ABBE92D9722C4B260 /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEntryView.swift; sourceTree = "<group>"; };
-		FA0000000000000000000001 /* ServingNutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServingNutrition.swift; sourceTree = "<group>"; };
-		FA0000000000000000000011 /* RetailBarcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetailBarcode.swift; sourceTree = "<group>"; };
-		FB0000000000000000000001 /* Fueli/Services/LibraryTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fueli/Services/LibraryTransfer.swift; sourceTree = SOURCE_ROOT; };
-		FB0000000000000000000011 /* Fueli/Views/Logging/MealBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fueli/Views/Logging/MealBuilderView.swift; sourceTree = SOURCE_ROOT; };
-		FB0000000000000000000021 /* Fueli/Views/Logging/ReceiptImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fueli/Views/Logging/ReceiptImportView.swift; sourceTree = SOURCE_ROOT; };
-FC0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fueli/Models/FueliSchema.swift; sourceTree = SOURCE_ROOT; };
+		0973EE2FB4C42872E5950BAB /* PersistenceActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceActionTests.swift; sourceTree = "<group>"; };
+		09E65913E85476FEEC5A0176 /* UITestBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestBootstrap.swift; sourceTree = "<group>"; };
+		0D1B7A477A80C416163B8246 /* ReleaseLiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseLiveTests.swift; sourceTree = "<group>"; };
+		1040250FC9ED5A1BA006718F /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
+		119D795F9A0D4EBB5329914A /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
+		124E127369A3A30F2984DB0F /* fdc_ingredient_prompt.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = fdc_ingredient_prompt.md; sourceTree = "<group>"; };
+		132E148C4D1606CDC544DDDC /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		135A26C448AD459873F34ADC /* FueliTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FueliTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		13F2BCEE116B89E5095367D4 /* WorkoutLoggingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutLoggingView.swift; sourceTree = "<group>"; };
+		154E33FBB858862FD0EDF906 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		168712774E5DD453C2AC8B2E /* RigorousDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RigorousDomainTests.swift; sourceTree = "<group>"; };
+		187EFE809B39D31A60E7291B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		19178FEE6E438700046947E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1BE8640C64F9E767D20F469C /* WeightEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightEntry.swift; sourceTree = "<group>"; };
+		1CA12C987C4CFF941DDD7C77 /* AINutritionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AINutritionService.swift; sourceTree = "<group>"; };
+		2425BE75DCD8C6C5FD3FABB6 /* BarcodeLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeLookupService.swift; sourceTree = "<group>"; };
+		266EEF91A2104F54FF219069 /* AIWireContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIWireContractTests.swift; sourceTree = "<group>"; };
+		29D7BDF2673A2C23A7D1110C /* PhotoCaptureFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureFlowView.swift; sourceTree = "<group>"; };
+		324DB6A8ACD18C6B89C3BE1F /* FueliSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FueliSchema.swift; sourceTree = "<group>"; };
+		32BFDA70A145A49592641B64 /* MealBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealBuilderView.swift; sourceTree = "<group>"; };
+		3E9EFF4DC0CB28DF770735D9 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		4209456FB013E213D0A86597 /* BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerView.swift; sourceTree = "<group>"; };
+		46EC1567A231C91B84661BE4 /* WaterEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterEntry.swift; sourceTree = "<group>"; };
+		47718293E92C684515831605 /* HealthEnergyPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthEnergyPlanTests.swift; sourceTree = "<group>"; };
+		49187B099C885251CDB70B9A /* Fueli-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Fueli-Free.entitlements"; sourceTree = "<group>"; };
+		4A2BC7F9A2075DDAD2659668 /* FueliTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FueliTests.swift; sourceTree = "<group>"; };
+		4FE3A7573735B310021A6F4D /* Fueli.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fueli.entitlements; sourceTree = "<group>"; };
+		512A143EB0375020F610E852 /* NutritionCommitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionCommitter.swift; sourceTree = "<group>"; };
+		54D0EC7F37ACBE0AAC89F122 /* annotated-rows.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "annotated-rows.json"; sourceTree = "<group>"; };
+		56F94EE4A59018A36C36BAEC /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		58413F172A634A8CB8C75384 /* WorkoutLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutLog.swift; sourceTree = "<group>"; };
+		58FA1EF067E1CBE959046DEB /* LogEntryHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryHubView.swift; sourceTree = "<group>"; };
+		6114C9779FD999D6D46E32E4 /* AIProviderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderConfig.swift; sourceTree = "<group>"; };
+		68EBB5069B46222DD83085BD /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		6A11D1E77EAD01E797319F66 /* RetailBarcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetailBarcode.swift; sourceTree = "<group>"; };
+		6C6E863C69A28CF8E348834F /* MealReviewRenderingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealReviewRenderingTests.swift; sourceTree = "<group>"; };
+		73F3CD2E60BBAD9BF26B07D4 /* ReceiptImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptImportView.swift; sourceTree = "<group>"; };
+		77981EC8042C8E4D47D13893 /* FueliApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FueliApp.swift; sourceTree = "<group>"; };
+		786206ABFF393E813C6F82C9 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		7CA5BD64DCE0C4E5392F4C4C /* NutritionSafetyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionSafetyTests.swift; sourceTree = "<group>"; };
+		7CFFA39E0678F1083E6CF236 /* bagel-detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "bagel-detail.json"; sourceTree = "<group>"; };
+		838E6D049AC8F74F355D59A9 /* EditMealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMealView.swift; sourceTree = "<group>"; };
+		87434FB3417AD3F4F3D3546E /* SavedMeal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMeal.swift; sourceTree = "<group>"; };
+		8808E22C30A888D1DCFA8ECC /* cream-cheese.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "cream-cheese.json"; sourceTree = "<group>"; };
+		88118A7FC5C4EF4E4B8FB8EE /* PedometerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PedometerService.swift; sourceTree = "<group>"; };
+		8D3B9C391DD28409EA6A0D23 /* ServingNutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServingNutrition.swift; sourceTree = "<group>"; };
+		946EDFE9B076DC99757AD2EF /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		9A3FD36C03C1C021FEF54717 /* BarcodeScanFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScanFlowView.swift; sourceTree = "<group>"; };
+		9B0F9C581C77F2801EB9BA03 /* StreaksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksView.swift; sourceTree = "<group>"; };
+		9D48BFF361F4F7E47CA5B984 /* NutritionAnalysisResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionAnalysisResult.swift; sourceTree = "<group>"; };
+		9EB6010A1CF28A99C11CC0D2 /* cream-cheese-sr-detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "cream-cheese-sr-detail.json"; sourceTree = "<group>"; };
+		A02AA2727AD7CB69A22775B5 /* NutritionConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionConfirmView.swift; sourceTree = "<group>"; };
+		A51AA5B9C613A1AB86AC908A /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		A9C64A5D3BD656606E7415B6 /* HealthConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthConnectionTests.swift; sourceTree = "<group>"; };
+		AA072AF2C212A09F03BD09CD /* SavedMealsFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMealsFlowView.swift; sourceTree = "<group>"; };
+		AAC20E19AF76B1A1C3C4625D /* search.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = search.json; sourceTree = "<group>"; };
+		AB61952594E24E4BA1BEAAFB /* SyntheticReceipt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SyntheticReceipt.png; sourceTree = "<group>"; };
+		AC3FBE210A24D9F4304776D3 /* FoodLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodLog.swift; sourceTree = "<group>"; };
+		AC7E0CC69081A7119F8566CA /* OverhaulExpansionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverhaulExpansionTests.swift; sourceTree = "<group>"; };
+		ADF7ABA9CE5FF866D6C67E02 /* DescribeMealFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribeMealFlowView.swift; sourceTree = "<group>"; };
+		AE8E3974A7E816866AA16AA7 /* cream-cheese-detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "cream-cheese-detail.json"; sourceTree = "<group>"; };
+		AF1608F9CD622AFE823B1ADA /* Fueli.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Fueli.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFF383C431C52FC09A2C5919 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
+		B2F8A5463C7149497E2CFF3B /* MealAnalysisFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAnalysisFlow.swift; sourceTree = "<group>"; };
+		B950C03FF9801C60D81214B5 /* OFF_PROVENANCE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = OFF_PROVENANCE.md; sourceTree = "<group>"; };
+		BA86E8B04DD9996338741391 /* FueliUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FueliUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAFCAE1C58ED7A9C263E7133 /* OpenFoodFactsSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFoodFactsSearchService.swift; sourceTree = "<group>"; };
+		BB2844460E16A02CEB74B6F2 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		C0223CF0BD48FCBB82D0E7DE /* MealFoodDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealFoodDatabase.swift; sourceTree = "<group>"; };
+		C05255C40D0A0CA4088B5624 /* MealLookupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealLookupTests.swift; sourceTree = "<group>"; };
+		C447B6056A83B923B7A45622 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C9391DA94AA7264F513E6910 /* AppJourneyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppJourneyTests.swift; sourceTree = "<group>"; };
+		CA143BA9F906E43D204DF0DE /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
+		CE432EE16ADA420A11B77297 /* ModelCapabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelCapabilityTests.swift; sourceTree = "<group>"; };
+		CE8DB8A9DEA1FE1726052F62 /* ReceiptLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptLayoutTests.swift; sourceTree = "<group>"; };
+		D64C50D50795D0FD9D369480 /* AIProviderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderSettingsView.swift; sourceTree = "<group>"; };
+		D93D279EB26C554D1A3E9EF0 /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEntryView.swift; sourceTree = "<group>"; };
+		DB081C378D0EC6A6423572B9 /* MigrationSafetyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationSafetyTests.swift; sourceTree = "<group>"; };
+		DBBD5D0BD9217B1B584B2A17 /* MealDatabaseChoiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDatabaseChoiceTests.swift; sourceTree = "<group>"; };
+		E60E9314F88D661AC95123A1 /* banana.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = banana.jpg; sourceTree = "<group>"; };
+		E7840CE0BB6B30302C545B50 /* bagel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bagel.json; sourceTree = "<group>"; };
+		EA5B32DFAF921BB2B073D93C /* cream-cheese-product.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "cream-cheese-product.json"; sourceTree = "<group>"; };
+		EDBE09C1CFF1AEB85953A767 /* OpenFoodFactsSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFoodFactsSearchTests.swift; sourceTree = "<group>"; };
+		EE57E75D57E0D92DD44DAAA4 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
+		F5DBBDFC0C32D4185EC2238E /* IMAGE_PROVENANCE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = IMAGE_PROVENANCE.md; sourceTree = "<group>"; };
+		F7EE9C4928523D71FDE88896 /* LibraryTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryTransfer.swift; sourceTree = "<group>"; };
+		FA3AD0B9149E4D214DA58793 /* HealthActivityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthActivityTests.swift; sourceTree = "<group>"; };
+		FC4D03E23DF195E3FDA1EDCD /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		1B9EC4DF301D40450087CD9F /* FueliTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = FueliTests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		1B9EC4DB301D40450087CD9F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
 /* Begin PBXGroup section */
-		05161F1B4E11BDF96D311B0C /* Onboarding */ = {
+		0F493474FE4457F31FDEC985 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				508535C1EB9D294675592836 /* OnboardingFlowView.swift */,
-			);
-			path = Onboarding;
-			sourceTree = "<group>";
-		};
-		192D4FDDC32E269DD00076B4 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				B73C2B66660B0C8AFA14A937 /* AIProviderSettingsView.swift */,
-				1169260177948F799435AFDD /* ProfileSettingsView.swift */,
-				DF2E5315FC0864D62E3BAC21 /* SettingsView.swift */,
-			);
-			path = Settings;
-			sourceTree = "<group>";
-		};
-		2EFEE3C088EB65E73636E790 /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-				26BD47143A986DB3AF745B82 /* BarcodeScanFlowView.swift */,
-				6FC3718973051613808BA54C /* DescribeMealFlowView.swift */,
-				32F0F88A784429709944D836 /* EditMealView.swift */,
-				366AD4A53F4C2EEF474DC8B4 /* LogEntryHubView.swift */,
-				EEADF03981AA58270300172C /* MealAnalysisFlow.swift */,
-				F8D53B8ABBE92D9722C4B260 /* ManualEntryView.swift */,
-				B8988A9E56CE2024300051C8 /* NutritionConfirmView.swift */,
-				F3F2F9B4C9B1F43B27F75065 /* PhotoCaptureFlowView.swift */,
-				C299BB268C4DB9CCDE233187 /* SavedMealsFlowView.swift */,
-				D2E2D363077959BE2596FEA2 /* WorkoutLoggingView.swift */,
-			);
-			path = Logging;
-			sourceTree = "<group>";
-		};
-		30D547696F120CFBF934BBC9 /* History */ = {
-			isa = PBXGroup;
-			children = (
-				29150FED90D3C029F2605DB7 /* HistoryView.swift */,
-			);
-			path = History;
-			sourceTree = "<group>";
-		};
-		56D3A14404DE76C6C219DADB /* Fueli */ = {
-			isa = PBXGroup;
-			children = (
-				1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */,
-				7FE366FD89C3B7E27A716F29 /* App */,
-				6E758AC930C2F427618F002A /* Models */,
-				6D433D46D86D7EDA9C86E1A3 /* Resources */,
-				A2B663DEA8F8BBDB539F735F /* Services */,
-				99EDAF7BFC99721F90F89F1A /* Views */,
-			);
-			path = Fueli;
-			sourceTree = "<group>";
-		};
-		57054D619D948BBBD65FF136 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				CB98D419F5E54FF1BC4763A8 /* BarcodeScannerView.swift */,
-				406A0704776FFD2516ABFC2E /* CameraPicker.swift */,
-				B8C262BB682D49776065FFE4 /* ConfettiView.swift */,
-				B86F96721DCB01DF0F7BA11A /* MainTabView.swift */,
-				19A549B046393372304364C2 /* Theme.swift */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		6D433D46D86D7EDA9C86E1A3 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				5A31FB6E155EE90307643C7C /* Assets.xcassets */,
-				70F631071EE8D8F329402B57 /* Fueli.entitlements */,
-				24C7AB2338D8E1B4675D8767 /* Fueli-Free.entitlements */,
-				E6F60ACAF71E8ED6FED4D0DE /* Info.plist */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		6E758AC930C2F427618F002A /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				3E41A8A3786B08ED166050BD /* FoodLog.swift */,
-				21F2AF3433A4DD690EFE9066 /* SavedMeal.swift */,
-				16EB30415FBAD9D92423D7E8 /* UserProfile.swift */,
-				6B6B7C283A94DEB51755F1F6 /* WaterEntry.swift */,
-				ACE4F96C664C3F7493DACF28 /* WeightEntry.swift */,
-				C2C11D89532BB49AA08EEB13 /* WorkoutLog.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		7FE366FD89C3B7E27A716F29 /* App */ = {
-			isa = PBXGroup;
-			children = (
-				27F169B11435F3004FCDB51B /* FueliApp.swift */,
-				BDC09CE55217B52933D57210 /* RootView.swift */,
-			);
-			path = App;
-			sourceTree = "<group>";
-		};
-		85FBA45C11E5117777EB70FB = {
-			isa = PBXGroup;
-			children = (
-				56D3A14404DE76C6C219DADB /* Fueli */,
-				1B9EC4DF301D40450087CD9F /* FueliTests */,
-				FCACD0F620743B5F9780B88A /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		99EDAF7BFC99721F90F89F1A /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				F048BCC1E704B50C56D27E7F /* Dashboard */,
-				30D547696F120CFBF934BBC9 /* History */,
-				2EFEE3C088EB65E73636E790 /* Logging */,
-				05161F1B4E11BDF96D311B0C /* Onboarding */,
-				192D4FDDC32E269DD00076B4 /* Settings */,
-				57054D619D948BBBD65FF136 /* Shared */,
+				FE1B5298DEE7E1E92262CFFF /* Dashboard */,
+				8AAA50214748D3718596A075 /* History */,
+				552546D4A87B3EB0BA4A57CF /* Logging */,
+				9245BA455C4736471771C459 /* Onboarding */,
+				7ABE5F9FB299AF52DD4DCF65 /* Settings */,
+				6C33D613618AA25430426597 /* Shared */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		A2B663DEA8F8BBDB539F735F /* Services */ = {
+		1D45F1EF30B9DEF4A39FA3F1 /* Fueli */ = {
 			isa = PBXGroup;
 			children = (
-				1BEFEA50301BBDA6004FE014 /* fdc_ingredient_prompt.md */,
-				466CC25E396E30308222BB52 /* AINutritionService.swift */,
-				D9CFE8D248D0D6B350396203 /* AIProviderConfig.swift */,
-				07EC8809E99BD9B4A5F4CED7 /* BarcodeLookupService.swift */,
-				F3B2D62CE06BE4E80BE19F96 /* HealthKitService.swift */,
-				EF5FE80F516B73F7CE4C186D /* KeychainStore.swift */,
-				366098136BAA35C6A8EC211F /* NutritionAnalysisResult.swift */,
-FC0000000000000000000011,
-				FB0000000000000000000021 /* Fueli/Views/Logging/ReceiptImportView.swift */,
-				FB0000000000000000000011 /* Fueli/Views/Logging/MealBuilderView.swift */,
-				FB0000000000000000000001 /* Fueli/Services/LibraryTransfer.swift */,
-				FA0000000000000000000011 /* RetailBarcode.swift */,
-				FA0000000000000000000001 /* ServingNutrition.swift */,
-				C62894909AD6AE6BD055E158 /* PedometerService.swift */,
+				119D795F9A0D4EBB5329914A /* Secrets.example.xcconfig */,
+				FC4D03E23DF195E3FDA1EDCD /* Secrets.xcconfig */,
+				371E74B6614CA72C71B77967 /* App */,
+				A85AD32E9D1CF240A2BF65F8 /* Models */,
+				47D3A67D6539D820A3BBAC81 /* Resources */,
+				58ABCE6A76AB086C7556697F /* Services */,
+				0F493474FE4457F31FDEC985 /* Views */,
+			);
+			path = Fueli;
+			sourceTree = "<group>";
+		};
+		271A9565EB6C0FA51A605A89 /* USDAFixtures */ = {
+			isa = PBXGroup;
+			children = (
+				7CFFA39E0678F1083E6CF236 /* bagel-detail.json */,
+				E7840CE0BB6B30302C545B50 /* bagel.json */,
+				AE8E3974A7E816866AA16AA7 /* cream-cheese-detail.json */,
+				9EB6010A1CF28A99C11CC0D2 /* cream-cheese-sr-detail.json */,
+				8808E22C30A888D1DCFA8ECC /* cream-cheese.json */,
+				187EFE809B39D31A60E7291B /* README.md */,
+			);
+			path = USDAFixtures;
+			sourceTree = "<group>";
+		};
+		315373E5700CECB01457CF01 /* ApplicationFixtures */ = {
+			isa = PBXGroup;
+			children = (
+				E60E9314F88D661AC95123A1 /* banana.jpg */,
+				F5DBBDFC0C32D4185EC2238E /* IMAGE_PROVENANCE.md */,
+			);
+			path = ApplicationFixtures;
+			sourceTree = "<group>";
+		};
+		32DC9F8F14254E86DD12F875 /* ReceiptFixtures */ = {
+			isa = PBXGroup;
+			children = (
+				54D0EC7F37ACBE0AAC89F122 /* annotated-rows.json */,
+			);
+			path = ReceiptFixtures;
+			sourceTree = "<group>";
+		};
+		371E74B6614CA72C71B77967 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				77981EC8042C8E4D47D13893 /* FueliApp.swift */,
+				56F94EE4A59018A36C36BAEC /* RootView.swift */,
+				09E65913E85476FEEC5A0176 /* UITestBootstrap.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		47D3A67D6539D820A3BBAC81 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				154E33FBB858862FD0EDF906 /* Assets.xcassets */,
+				49187B099C885251CDB70B9A /* Fueli-Free.entitlements */,
+				4FE3A7573735B310021A6F4D /* Fueli.entitlements */,
+				19178FEE6E438700046947E8 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		48E2289E0F0EAE42FB1ADD45 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AF1608F9CD622AFE823B1ADA /* Fueli.app */,
+				135A26C448AD459873F34ADC /* FueliTests.xctest */,
+				BA86E8B04DD9996338741391 /* FueliUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		54AF746FB60527A3C3D31E9F /* FueliUITests */ = {
+			isa = PBXGroup;
+			children = (
+				C9391DA94AA7264F513E6910 /* AppJourneyTests.swift */,
+			);
+			path = FueliUITests;
+			sourceTree = "<group>";
+		};
+		552546D4A87B3EB0BA4A57CF /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				9A3FD36C03C1C021FEF54717 /* BarcodeScanFlowView.swift */,
+				ADF7ABA9CE5FF866D6C67E02 /* DescribeMealFlowView.swift */,
+				838E6D049AC8F74F355D59A9 /* EditMealView.swift */,
+				58FA1EF067E1CBE959046DEB /* LogEntryHubView.swift */,
+				D93D279EB26C554D1A3E9EF0 /* ManualEntryView.swift */,
+				B2F8A5463C7149497E2CFF3B /* MealAnalysisFlow.swift */,
+				32BFDA70A145A49592641B64 /* MealBuilderView.swift */,
+				A02AA2727AD7CB69A22775B5 /* NutritionConfirmView.swift */,
+				29D7BDF2673A2C23A7D1110C /* PhotoCaptureFlowView.swift */,
+				73F3CD2E60BBAD9BF26B07D4 /* ReceiptImportView.swift */,
+				AA072AF2C212A09F03BD09CD /* SavedMealsFlowView.swift */,
+				13F2BCEE116B89E5095367D4 /* WorkoutLoggingView.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		58ABCE6A76AB086C7556697F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1CA12C987C4CFF941DDD7C77 /* AINutritionService.swift */,
+				6114C9779FD999D6D46E32E4 /* AIProviderConfig.swift */,
+				2425BE75DCD8C6C5FD3FABB6 /* BarcodeLookupService.swift */,
+				124E127369A3A30F2984DB0F /* fdc_ingredient_prompt.md */,
+				946EDFE9B076DC99757AD2EF /* HealthKitService.swift */,
+				3E9EFF4DC0CB28DF770735D9 /* KeychainStore.swift */,
+				F7EE9C4928523D71FDE88896 /* LibraryTransfer.swift */,
+				C0223CF0BD48FCBB82D0E7DE /* MealFoodDatabase.swift */,
+				9D48BFF361F4F7E47CA5B984 /* NutritionAnalysisResult.swift */,
+				512A143EB0375020F610E852 /* NutritionCommitter.swift */,
+				BAFCAE1C58ED7A9C263E7133 /* OpenFoodFactsSearchService.swift */,
+				88118A7FC5C4EF4E4B8FB8EE /* PedometerService.swift */,
+				6A11D1E77EAD01E797319F66 /* RetailBarcode.swift */,
+				8D3B9C391DD28409EA6A0D23 /* ServingNutrition.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
 		};
-		F048BCC1E704B50C56D27E7F /* Dashboard */ = {
+		6C33D613618AA25430426597 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				3B74EE0F5F67DA1F25D5F404 /* DashboardView.swift */,
-				87F08AC7F1F27DD95287A71B /* StreaksView.swift */,
+				4209456FB013E213D0A86597 /* BarcodeScannerView.swift */,
+				CA143BA9F906E43D204DF0DE /* CameraPicker.swift */,
+				AFF383C431C52FC09A2C5919 /* ConfettiView.swift */,
+				68EBB5069B46222DD83085BD /* MainTabView.swift */,
+				132E148C4D1606CDC544DDDC /* Theme.swift */,
 			);
-			path = Dashboard;
+			path = Shared;
 			sourceTree = "<group>";
 		};
-		FCACD0F620743B5F9780B88A /* Products */ = {
+		7ABE5F9FB299AF52DD4DCF65 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				12A1B6CD5AAECAB6DC60C8E7 /* Fueli.app */,
-				1B9EC4DE301D40450087CD9F /* FueliTests.xctest */,
+				D64C50D50795D0FD9D369480 /* AIProviderSettingsView.swift */,
+				1040250FC9ED5A1BA006718F /* ProfileSettingsView.swift */,
+				C447B6056A83B923B7A45622 /* SettingsView.swift */,
 			);
-			name = Products;
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		8AAA50214748D3718596A075 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				786206ABFF393E813C6F82C9 /* HistoryView.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		9245BA455C4736471771C459 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				EE57E75D57E0D92DD44DAAA4 /* OnboardingFlowView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		9C238C19B236A096CD7F05EF /* OFFFixtures */ = {
+			isa = PBXGroup;
+			children = (
+				EA5B32DFAF921BB2B073D93C /* cream-cheese-product.json */,
+				B950C03FF9801C60D81214B5 /* OFF_PROVENANCE.md */,
+				AAC20E19AF76B1A1C3C4625D /* search.json */,
+			);
+			path = OFFFixtures;
+			sourceTree = "<group>";
+		};
+		A85AD32E9D1CF240A2BF65F8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AC3FBE210A24D9F4304776D3 /* FoodLog.swift */,
+				324DB6A8ACD18C6B89C3BE1F /* FueliSchema.swift */,
+				87434FB3417AD3F4F3D3546E /* SavedMeal.swift */,
+				A51AA5B9C613A1AB86AC908A /* UserProfile.swift */,
+				46EC1567A231C91B84661BE4 /* WaterEntry.swift */,
+				1BE8640C64F9E767D20F469C /* WeightEntry.swift */,
+				58413F172A634A8CB8C75384 /* WorkoutLog.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B28DFE0426F2F1A9AF8A6F82 = {
+			isa = PBXGroup;
+			children = (
+				1D45F1EF30B9DEF4A39FA3F1 /* Fueli */,
+				C4C6DC6240AB54E2D8351EF1 /* FueliTests */,
+				54AF746FB60527A3C3D31E9F /* FueliUITests */,
+				48E2289E0F0EAE42FB1ADD45 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C4C6DC6240AB54E2D8351EF1 /* FueliTests */ = {
+			isa = PBXGroup;
+			children = (
+				266EEF91A2104F54FF219069 /* AIWireContractTests.swift */,
+				4A2BC7F9A2075DDAD2659668 /* FueliTests.swift */,
+				FA3AD0B9149E4D214DA58793 /* HealthActivityTests.swift */,
+				A9C64A5D3BD656606E7415B6 /* HealthConnectionTests.swift */,
+				47718293E92C684515831605 /* HealthEnergyPlanTests.swift */,
+				DBBD5D0BD9217B1B584B2A17 /* MealDatabaseChoiceTests.swift */,
+				C05255C40D0A0CA4088B5624 /* MealLookupTests.swift */,
+				6C6E863C69A28CF8E348834F /* MealReviewRenderingTests.swift */,
+				DB081C378D0EC6A6423572B9 /* MigrationSafetyTests.swift */,
+				CE432EE16ADA420A11B77297 /* ModelCapabilityTests.swift */,
+				7CA5BD64DCE0C4E5392F4C4C /* NutritionSafetyTests.swift */,
+				EDBE09C1CFF1AEB85953A767 /* OpenFoodFactsSearchTests.swift */,
+				AC7E0CC69081A7119F8566CA /* OverhaulExpansionTests.swift */,
+				0973EE2FB4C42872E5950BAB /* PersistenceActionTests.swift */,
+				CE8DB8A9DEA1FE1726052F62 /* ReceiptLayoutTests.swift */,
+				0D1B7A477A80C416163B8246 /* ReleaseLiveTests.swift */,
+				168712774E5DD453C2AC8B2E /* RigorousDomainTests.swift */,
+				AB61952594E24E4BA1BEAAFB /* SyntheticReceipt.png */,
+				315373E5700CECB01457CF01 /* ApplicationFixtures */,
+				9C238C19B236A096CD7F05EF /* OFFFixtures */,
+				32DC9F8F14254E86DD12F875 /* ReceiptFixtures */,
+				271A9565EB6C0FA51A605A89 /* USDAFixtures */,
+			);
+			path = FueliTests;
+			sourceTree = "<group>";
+		};
+		FE1B5298DEE7E1E92262CFFF /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				BB2844460E16A02CEB74B6F2 /* DashboardView.swift */,
+				9B0F9C581C77F2801EB9BA03 /* StreaksView.swift */,
+			);
+			path = Dashboard;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1B9EC4DD301D40450087CD9F /* FueliTests */ = {
+		2A2BD0653711BB9D8970FD0C /* FueliUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1B9EC4E4301D40450087CD9F /* Build configuration list for PBXNativeTarget "FueliTests" */;
+			buildConfigurationList = 3E5F347AB9A06E5040652C48 /* Build configuration list for PBXNativeTarget "FueliUITests" */;
 			buildPhases = (
-				1B9EC4DA301D40450087CD9F /* Sources */,
-				1B9EC4DB301D40450087CD9F /* Frameworks */,
-				1B9EC4DC301D40450087CD9F /* Resources */,
+				1753D1AC98E0E62852003214 /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				1B9EC4E3301D40450087CD9F /* PBXTargetDependency */,
+				4845B26037CB6E49F3DEB933 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				1B9EC4DF301D40450087CD9F /* FueliTests */,
-			);
-			name = FueliTests;
+			name = FueliUITests;
 			packageProductDependencies = (
 			);
-			productName = FueliTests;
-			productReference = 1B9EC4DE301D40450087CD9F /* FueliTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
+			productName = FueliUITests;
+			productReference = BA86E8B04DD9996338741391 /* FueliUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		3233CEDD6AD0BD5A7992E510 /* Fueli */ = {
+		9938B89B9F85934BD69AAA32 /* Fueli */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BBADC42C1D79F46D2FC2D19F /* Build configuration list for PBXNativeTarget "Fueli" */;
+			buildConfigurationList = 4A4EC0B2BEE5A9493A746C40 /* Build configuration list for PBXNativeTarget "Fueli" */;
 			buildPhases = (
-				994866A6160D95868DA1BDE5 /* Sources */,
-				72A7B17F81852116BA30A984 /* Resources */,
+				9B4D4917535BA12C52414F36 /* Sources */,
+				FB8C82FFB7285DE4AE2EAB8A /* Resources */,
 			);
 			buildRules = (
 			);
@@ -340,204 +480,209 @@ FC0000000000000000000011,
 			packageProductDependencies = (
 			);
 			productName = Fueli;
-			productReference = 12A1B6CD5AAECAB6DC60C8E7 /* Fueli.app */;
+			productReference = AF1608F9CD622AFE823B1ADA /* Fueli.app */;
 			productType = "com.apple.product-type.application";
+		};
+		EBDBFD352FFA771A7EEE394E /* FueliTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5706F5C4F4A4D7E3EDEA0BC /* Build configuration list for PBXNativeTarget "FueliTests" */;
+			buildPhases = (
+				3B8CA4520E791E0EF8D865DB /* Sources */,
+				94959520F8652F842C25867D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				73D3C2A6AFA6A8E045EAAB09 /* PBXTargetDependency */,
+			);
+			name = FueliTests;
+			packageProductDependencies = (
+			);
+			productName = FueliTests;
+			productReference = 135A26C448AD459873F34ADC /* FueliTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E2BDA7183732E36C25FAC561 /* Project object */ = {
+		DAF7F11869C7B254DE06588B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					1B9EC4DD301D40450087CD9F = {
-						CreatedOnToolsVersion = 26.6;
-						TestTargetID = 3233CEDD6AD0BD5A7992E510;
+					2A2BD0653711BB9D8970FD0C = {
+						DevelopmentTeam = 8RBLV22YJJ;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 9938B89B9F85934BD69AAA32;
 					};
-					3233CEDD6AD0BD5A7992E510 = {
+					9938B89B9F85934BD69AAA32 = {
+						DevelopmentTeam = 8RBLV22YJJ;
+						ProvisioningStyle = Automatic;
+					};
+					EBDBFD352FFA771A7EEE394E = {
+						DevelopmentTeam = 8RBLV22YJJ;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = 9934216C2C2C4C3BDA773FAC /* Build configuration list for PBXProject "Fueli" */;
+			buildConfigurationList = A188273FA0377389B76106E4 /* Build configuration list for PBXProject "Fueli" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
 				en,
 			);
-			mainGroup = 85FBA45C11E5117777EB70FB;
+			mainGroup = B28DFE0426F2F1A9AF8A6F82;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = FCACD0F620743B5F9780B88A /* Products */;
+			productRefGroup = 48E2289E0F0EAE42FB1ADD45 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3233CEDD6AD0BD5A7992E510 /* Fueli */,
-				1B9EC4DD301D40450087CD9F /* FueliTests */,
+				9938B89B9F85934BD69AAA32 /* Fueli */,
+				EBDBFD352FFA771A7EEE394E /* FueliTests */,
+				2A2BD0653711BB9D8970FD0C /* FueliUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1B9EC4DC301D40450087CD9F /* Resources */ = {
+		94959520F8652F842C25867D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				164417CDB8DDE8D17812B1FB /* IMAGE_PROVENANCE.md in Resources */,
+				367ADC08B0D5B08A9FF05B97 /* OFF_PROVENANCE.md in Resources */,
+				19DB7A53BDCC988D3B12289B /* README.md in Resources */,
+				5B292DC1F5567CC54B3CB771 /* SyntheticReceipt.png in Resources */,
+				69EF49C04EA12F19A6D38B58 /* annotated-rows.json in Resources */,
+				18248BDD28C79D2BABBE5851 /* bagel-detail.json in Resources */,
+				1CDE84CD8B50066DB191CABE /* bagel.json in Resources */,
+				5AC57DD3E939A7870945B6A0 /* banana.jpg in Resources */,
+				C62E48EBC8F0F7F2726B1079 /* cream-cheese-detail.json in Resources */,
+				09D2B908A0575F2599A3735A /* cream-cheese-product.json in Resources */,
+				8CF2D90DE6D6F41F179A353A /* cream-cheese-sr-detail.json in Resources */,
+				6FFC3A72BFFF39460DF2820B /* cream-cheese.json in Resources */,
+				F20A04682E32C2CEA72AE939 /* search.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		72A7B17F81852116BA30A984 /* Resources */ = {
+		FB8C82FFB7285DE4AE2EAB8A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A90AB01143933FBD636507F /* Assets.xcassets in Resources */,
-				1BEFEA51301BBDA6004FE014 /* fdc_ingredient_prompt.md in Resources */,
+				55EDF72E4CCF8690AFD76EBE /* Assets.xcassets in Resources */,
+				A38E6699F61FF5644B7D9DA6 /* fdc_ingredient_prompt.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1B9EC4DA301D40450087CD9F /* Sources */ = {
+		1753D1AC98E0E62852003214 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE5616C00EA9E200AE7A50CC /* AppJourneyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		994866A6160D95868DA1BDE5 /* Sources */ = {
+		3B8CA4520E791E0EF8D865DB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92C35504A8D1E6522DA81FA8 /* AINutritionService.swift in Sources */,
-				E6384D6884A3D3C89A9E7C35 /* AIProviderConfig.swift in Sources */,
-				5A0BD72BE10EF32E47D04B2C /* AIProviderSettingsView.swift in Sources */,
-				F57919F470DC03CFCDF14A3E /* BarcodeLookupService.swift in Sources */,
-				800C804C19F850D13B5DAA17 /* BarcodeScanFlowView.swift in Sources */,
-				F02D866BDF25D217D6DBB68B /* BarcodeScannerView.swift in Sources */,
-				9D59D347DD924D225DEB9E85 /* FueliApp.swift in Sources */,
-				8565975DD9052CE2CD3CC4AA /* CameraPicker.swift in Sources */,
-				CD33B0362A92FA59E75028C5 /* ConfettiView.swift in Sources */,
-				4FD3061E64C2888158C4A470 /* DashboardView.swift in Sources */,
-				7C5A398C025A42740BFB45A4 /* DescribeMealFlowView.swift in Sources */,
-				939174EB99AA1E2A07BF7833 /* MealAnalysisFlow.swift in Sources */,
-				58B09BCF6B64B8EC62C1F8C5 /* EditMealView.swift in Sources */,
-				726615D068D1A35BEDE25B97 /* FoodLog.swift in Sources */,
-				36379C3D27A4ACDC95D6321E /* HistoryView.swift in Sources */,
-				27F784FE9F965A5456CC3728 /* HealthKitService.swift in Sources */,
-				97EACDC77BC025823BBE0F7B /* KeychainStore.swift in Sources */,
-				7A16E03E11BB93F9F21EADCA /* LogEntryHubView.swift in Sources */,
-				B1B117456C59FFD2564E50CD /* MainTabView.swift in Sources */,
-				F2772DB30C44A90257D3C305 /* ManualEntryView.swift in Sources */,
-				5D0AAE0D81CB5BB491909A8A /* NutritionAnalysisResult.swift in Sources */,
-FC0000000000000000000012,
-				FB0000000000000000000022 /* Fueli/Views/Logging/ReceiptImportView.swift in Sources */,
-				FB0000000000000000000012 /* Fueli/Views/Logging/MealBuilderView.swift in Sources */,
-				FB0000000000000000000002 /* Fueli/Services/LibraryTransfer.swift in Sources */,
-				FA0000000000000000000012 /* RetailBarcode.swift in Sources */,
-				FA0000000000000000000002 /* ServingNutrition.swift in Sources */,
-				476809C78A725AA761A5A573 /* NutritionConfirmView.swift in Sources */,
-				C7ABBC9010E600D658246AC5 /* OnboardingFlowView.swift in Sources */,
-				ED6E8864DE6D435E8EF3E177 /* PedometerService.swift in Sources */,
-				9486ED200D17DA4D1ADDD896 /* PhotoCaptureFlowView.swift in Sources */,
-				F3BB892A8AD1AB9FEFC72F6C /* ProfileSettingsView.swift in Sources */,
-				98D57F8B7436E5A51D67AC37 /* RootView.swift in Sources */,
-				BA5FD6C6E252D8A94CF36DB5 /* SavedMeal.swift in Sources */,
-				8F4DB85FA35FE60DF8909A5B /* SavedMealsFlowView.swift in Sources */,
-				49ADA83CE10B9F83D377825B /* SettingsView.swift in Sources */,
-				3CF2D59857CD9551D89A6D5E /* StreaksView.swift in Sources */,
-				05252CF8C0071D1261B0301C /* Theme.swift in Sources */,
-				A78268AD53A5171C0B8B81B6 /* UserProfile.swift in Sources */,
-				87AE6596F52D397E7E21A273 /* WaterEntry.swift in Sources */,
-				CEEF691948C3A039709B8DF2 /* WeightEntry.swift in Sources */,
-				14FB60B31DE1816FBFC0535D /* WorkoutLog.swift in Sources */,
-				DE7B1C8145CEC0BE3773BD07 /* WorkoutLoggingView.swift in Sources */,
+				0531E3B49F1F9977570EFFC0 /* AIWireContractTests.swift in Sources */,
+				93DA8C65B6AD9D3CA8B33E17 /* FueliTests.swift in Sources */,
+				DFC224FF3C1719C0BAE833B0 /* HealthActivityTests.swift in Sources */,
+				ACA80B8A8906896C9CCEB744 /* HealthConnectionTests.swift in Sources */,
+				8C7EE96E1E724049958972C3 /* HealthEnergyPlanTests.swift in Sources */,
+				68B6DAADDF4B929F26F2244E /* MealDatabaseChoiceTests.swift in Sources */,
+				D8BBD835847797D5A1E6FF03 /* MealLookupTests.swift in Sources */,
+				7BA2DEC85B877DD465E36978 /* MealReviewRenderingTests.swift in Sources */,
+				58D0A57E86B51B644A78C3CC /* MigrationSafetyTests.swift in Sources */,
+				2F4C26D0D1CDC78F3285BBEF /* ModelCapabilityTests.swift in Sources */,
+				A0A9BF53249C69173D9DF5FF /* NutritionSafetyTests.swift in Sources */,
+				A70144A7DB02756D437F2F00 /* OpenFoodFactsSearchTests.swift in Sources */,
+				FF5601982C3E9104D70B96F7 /* OverhaulExpansionTests.swift in Sources */,
+				BA515E0432A08ABB968332A4 /* PersistenceActionTests.swift in Sources */,
+				44B41154FCA2186B06849D5B /* ReceiptLayoutTests.swift in Sources */,
+				E47D2BF364C7F17663960C43 /* ReleaseLiveTests.swift in Sources */,
+				8FE32E59E171CBE51138974B /* RigorousDomainTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B4D4917535BA12C52414F36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F8366E793B0A5AA11709757 /* AINutritionService.swift in Sources */,
+				1F5310C47201CFC5EDDDC6C3 /* AIProviderConfig.swift in Sources */,
+				E7E9AADEDFEC596D80948F0F /* AIProviderSettingsView.swift in Sources */,
+				1E90ABCE2FE6F93F9FA58626 /* BarcodeLookupService.swift in Sources */,
+				DF282DE610294FB309361C82 /* BarcodeScanFlowView.swift in Sources */,
+				707571198C57C0E98EB84E40 /* BarcodeScannerView.swift in Sources */,
+				417B85D57997E3AAE79ECD62 /* CameraPicker.swift in Sources */,
+				16C97473D16054502E559CA8 /* ConfettiView.swift in Sources */,
+				0B34775CC651443765CE71F7 /* DashboardView.swift in Sources */,
+				842785D3EC5AF09FE8D81F59 /* DescribeMealFlowView.swift in Sources */,
+				C883D973802943D59AE1AD57 /* EditMealView.swift in Sources */,
+				8CCCE0C79338DB9FA56F7C84 /* FoodLog.swift in Sources */,
+				46D7C9D5BFBA26EAE7E99A15 /* FueliApp.swift in Sources */,
+				CA4074A2228582C1FB1B7C61 /* FueliSchema.swift in Sources */,
+				9EB5226BE9FC45EDC1466863 /* HealthKitService.swift in Sources */,
+				A36B6BC33ECD1C1CC1E09C21 /* HistoryView.swift in Sources */,
+				9BCC020E118DFD6F0AF5996E /* KeychainStore.swift in Sources */,
+				13C48436DED34C55D0686BFD /* LibraryTransfer.swift in Sources */,
+				55410FD8A22239184EBAEE14 /* LogEntryHubView.swift in Sources */,
+				6295F0B086871B3A3722A509 /* MainTabView.swift in Sources */,
+				1B1F8FAB2DE40BE8A5584C79 /* ManualEntryView.swift in Sources */,
+				75AB763948FC4F9AE55BA4BE /* MealAnalysisFlow.swift in Sources */,
+				F61DADFE98BB6BB7DCCA3A80 /* MealBuilderView.swift in Sources */,
+				C84F75F38C4378FC7BCAAC76 /* MealFoodDatabase.swift in Sources */,
+				3D69E123AACD4DF85ED5F173 /* NutritionAnalysisResult.swift in Sources */,
+				C72309F424A30F9036A4496D /* NutritionCommitter.swift in Sources */,
+				AB68665264F58096016AFB71 /* NutritionConfirmView.swift in Sources */,
+				DFCFB2C0F8344F1B917B40A5 /* OnboardingFlowView.swift in Sources */,
+				190AE6E6B403C74AD560CAC4 /* OpenFoodFactsSearchService.swift in Sources */,
+				4F9B409C8BEF68A0A5118D09 /* PedometerService.swift in Sources */,
+				20C6AFA00C438CF4EF9D76F3 /* PhotoCaptureFlowView.swift in Sources */,
+				9350689AC35932D058A1701F /* ProfileSettingsView.swift in Sources */,
+				A21990216526E91B66EE4F81 /* ReceiptImportView.swift in Sources */,
+				1008A7DACFFA665D944237A7 /* RetailBarcode.swift in Sources */,
+				FD40A097D1C6D67DEDACEBDA /* RootView.swift in Sources */,
+				71F3B641249C7827922DC122 /* SavedMeal.swift in Sources */,
+				706BEF8DE8DB2F6094B87A91 /* SavedMealsFlowView.swift in Sources */,
+				B1DEB9A6EC6560185366CD3B /* ServingNutrition.swift in Sources */,
+				B5176E15F0499B796AFB6D50 /* SettingsView.swift in Sources */,
+				71EA57E3AEEB437E8DC07475 /* StreaksView.swift in Sources */,
+				84D94240A7C12722241B86FD /* Theme.swift in Sources */,
+				FE6D0B4619F6F3D77F06F2B8 /* UITestBootstrap.swift in Sources */,
+				FAF883B929A04D455F11DC78 /* UserProfile.swift in Sources */,
+				9EB5B04CCEB7415A81498E5A /* WaterEntry.swift in Sources */,
+				287FB8998B03D4167D6EFA42 /* WeightEntry.swift in Sources */,
+				03569AA6DE7D3D4E497B5A77 /* WorkoutLog.swift in Sources */,
+				0D3666EA67D1F006771858D5 /* WorkoutLoggingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1B9EC4E3301D40450087CD9F /* PBXTargetDependency */ = {
+		4845B26037CB6E49F3DEB933 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3233CEDD6AD0BD5A7992E510 /* Fueli */;
-			targetProxy = 1B9EC4E2301D40450087CD9F /* PBXContainerItemProxy */;
+			target = 9938B89B9F85934BD69AAA32 /* Fueli */;
+			targetProxy = 021923580D64490BB88C8BA8 /* PBXContainerItemProxy */;
+		};
+		73D3C2A6AFA6A8E045EAAB09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9938B89B9F85934BD69AAA32 /* Fueli */;
+			targetProxy = 2BDBEF68DFACE3B52216F9BF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1B9EC4E5301D40450087CD9F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8RBLV22YJJ;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fueli.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Fueli";
-			};
-			name = Debug;
-		};
-		1B9EC4E6301D40450087CD9F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8RBLV22YJJ;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fueli.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Fueli";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		1BB4E8D93094FC09002FF792 /* Free */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = FueliTests;
-			};
-			name = Free;
-		};
-		1CB8705B02CEA9AF35679E63 /* Debug */ = {
+		1765813376DBD4C81768ACCD /* Free */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -574,7 +719,7 @@ FC0000000000000000000012,
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 8RBLV22YJJ;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -593,7 +738,92 @@ FC0000000000000000000012,
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.0.13;
+				MARKETING_VERSION = 1.0.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Free;
+		};
+		1FDC7F445E89F050F9F1EBBD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fueli.app/Fueli";
+			};
+			name = Debug;
+		};
+		3DE09B091FC32324343DEB82 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 8RBLV22YJJ;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -605,32 +835,24 @@ FC0000000000000000000012,
 			};
 			name = Debug;
 		};
-		23393CDB95958843FC4213CA /* Debug */ = {
+		449AA268A845F18F061E79F9 /* Free */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Fueli/Resources/Fueli.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 8RBLV22YJJ;
-				INFOPLIST_FILE = Fueli/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.uitests;
 				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Fueli;
 			};
-			name = Debug;
+			name = Free;
 		};
-		46E909D1456C781FB778DE50 /* Release */ = {
+		4DB5A7B8AF861888E4CA18F3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -667,7 +889,7 @@ FC0000000000000000000012,
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 8RBLV22YJJ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -680,7 +902,7 @@ FC0000000000000000000012,
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.0.13;
+				MARKETING_VERSION = 1.0.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -691,24 +913,58 @@ FC0000000000000000000012,
 			};
 			name = Release;
 		};
-		704648AD6EB3D0F64FA50DC2 /* Release */ = {
+		534EE2FE17612DB4CC2E7A5A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
+			baseConfigurationReference = FC4D03E23DF195E3FDA1EDCD /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Fueli/Resources/Fueli.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 8RBLV22YJJ;
 				INFOPLIST_FILE = Fueli/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.13;
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		5FF311F8B8241B3512C1D845 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fueli.app/Fueli";
+			};
+			name = Release;
+		};
+		7AC2D7E4A3B92E3F409A8DC2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FC4D03E23DF195E3FDA1EDCD /* Secrets.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Fueli/Resources/Fueli.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Fueli/Resources/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -717,93 +973,54 @@ FC0000000000000000000012,
 			};
 			name = Release;
 		};
-		B7B7F706EA674BDCE8787E99 /* Free */ = {
+		AB3C723F95FA42A0FE5C3571 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_PREVIEWS = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"DEBUG=1",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
 				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.0.13;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.uitests;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Fueli;
+			};
+			name = Debug;
+		};
+		BC5F162AB0B7C552A3118711 /* Free */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fueli.app/Fueli";
 			};
 			name = Free;
 		};
-		D909C2BF19312B71EE93A92E /* Free */ = {
+		CE7E97FF80DDB75EE1ADDE2A /* Free */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1BEFEA4E301B9B0D004FE014 /* Secrets.xcconfig */;
+			baseConfigurationReference = FC4D03E23DF195E3FDA1EDCD /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Fueli/Resources/Fueli-Free.entitlements";
+				CODE_SIGN_ENTITLEMENTS = Fueli/Resources/Fueli.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Fueli/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Fueli;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) HEALTHKIT_DISABLED";
@@ -813,40 +1030,67 @@ FC0000000000000000000012,
 			};
 			name = Free;
 		};
+		D4A936621168528735A41594 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.welford.fueli.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Fueli;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1B9EC4E4301D40450087CD9F /* Build configuration list for PBXNativeTarget "FueliTests" */ = {
+		3E5F347AB9A06E5040652C48 /* Build configuration list for PBXNativeTarget "FueliUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1B9EC4E5301D40450087CD9F /* Debug */,
-				1B9EC4E6301D40450087CD9F /* Release */,
-				1BB4E8D93094FC09002FF792 /* Free */,
+				AB3C723F95FA42A0FE5C3571 /* Debug */,
+				449AA268A845F18F061E79F9 /* Free */,
+				D4A936621168528735A41594 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9934216C2C2C4C3BDA773FAC /* Build configuration list for PBXProject "Fueli" */ = {
+		4A4EC0B2BEE5A9493A746C40 /* Build configuration list for PBXNativeTarget "Fueli" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1CB8705B02CEA9AF35679E63 /* Debug */,
-				46E909D1456C781FB778DE50 /* Release */,
-				B7B7F706EA674BDCE8787E99 /* Free */,
+				534EE2FE17612DB4CC2E7A5A /* Debug */,
+				CE7E97FF80DDB75EE1ADDE2A /* Free */,
+				7AC2D7E4A3B92E3F409A8DC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		BBADC42C1D79F46D2FC2D19F /* Build configuration list for PBXNativeTarget "Fueli" */ = {
+		A188273FA0377389B76106E4 /* Build configuration list for PBXProject "Fueli" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				23393CDB95958843FC4213CA /* Debug */,
-				704648AD6EB3D0F64FA50DC2 /* Release */,
-				D909C2BF19312B71EE93A92E /* Free */,
+				3DE09B091FC32324343DEB82 /* Debug */,
+				1765813376DBD4C81768ACCD /* Free */,
+				4DB5A7B8AF861888E4CA18F3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A5706F5C4F4A4D7E3EDEA0BC /* Build configuration list for PBXNativeTarget "FueliTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1FDC7F445E89F050F9F1EBBD /* Debug */,
+				BC5F162AB0B7C552A3118711 /* Free */,
+				5FF311F8B8241B3512C1D845 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = E2BDA7183732E36C25FAC561 /* Project object */;
+	rootObject = DAF7F11869C7B254DE06588B /* Project object */;
 }

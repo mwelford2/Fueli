@@ -14,11 +14,17 @@ enum BarcodeLookupError: LocalizedError {
 actor BarcodeLookupService {
     static let shared = BarcodeLookupService()
     private var cache: [String: (Date, NutritionFacts)] = [:]
+    private var offCache: [String: (Date, NutritionFacts)] = [:]
     private var nextRequest = Date.distantPast
+    private var nextProductSlot = Date.distantPast
     private let session: URLSession
-    init(session: URLSession = .shared) { self.session = session }
+    private let minimumProductInterval: TimeInterval
+    init(session: URLSession = .shared, minimumProductInterval: TimeInterval = 4.1) {
+        self.session = session
+        self.minimumProductInterval = max(0, minimumProductInterval)
+    }
 
-    func clearCache() { cache.removeAll() }
+    func clearCache() { cache.removeAll(); offCache.removeAll() }
 
     struct OFFResponse: Decodable {
         struct Product: Decodable {
@@ -89,14 +95,29 @@ actor BarcodeLookupService {
     }
 
     func lookup(barcode: String) async throws -> NutritionFacts {
+        try await lookup(barcode: barcode, allowUSDAFallback: true)
+    }
+
+    /// A selected database must not silently switch providers or reuse a USDA cache entry.
+    func lookupOpenFoodFactsOnly(barcode: String) async throws -> NutritionFacts {
+        try await lookup(barcode: barcode, allowUSDAFallback: false)
+    }
+
+    private func lookup(barcode: String, allowUSDAFallback: Bool) async throws -> NutritionFacts {
         let barcode = try RetailBarcode(barcode).canonical
-        if let (date, facts) = cache[barcode], Date().timeIntervalSince(date) < 86400 { return facts }
+        let selectedCache = allowUSDAFallback ? cache : offCache
+        if let (date, facts) = selectedCache[barcode], Date().timeIntervalSince(date) < 86400 { return facts }
         guard Date() >= nextRequest else { throw BarcodeLookupError.requestFailed("Product service is rate limited. Wait before retrying.") }
         let url = URL(string: "https://world.openfoodfacts.org/api/v3/product/\(barcode)?fields=code,product_name,brands,nutriments,product_quantity_unit,serving_quantity_unit")!
         var request = URLRequest(url: url)
         request.timeoutInterval = 20
         request.setValue("Fueli/1.0 (https://github.com/mwelford2/Fueli)", forHTTPHeaderField: "User-Agent")
         for attempt in 0..<3 {
+            let slot = max(Date(), nextProductSlot)
+            nextProductSlot = slot.addingTimeInterval(minimumProductInterval)
+            if slot > Date() { try await Task.sleep(for: .seconds(slot.timeIntervalSinceNow)) }
+            try Task.checkCancellation()
+            guard Date() >= nextRequest else { throw BarcodeLookupError.requestFailed("Product service is rate limited. Wait before retrying.") }
             let (data, response) = try await session.data(for: request)
             guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
             if http.statusCode == 429 {
@@ -108,22 +129,32 @@ actor BarcodeLookupService {
                 try await Task.sleep(for: .seconds(pow(2, Double(attempt)) + Double.random(in: 0...0.3)))
                 continue
             }
-            if http.statusCode == 404 { return try await usdaFallback(barcode) }
+            if http.statusCode == 404 {
+                guard allowUSDAFallback else { throw BarcodeLookupError.notFound }
+                return try await usdaFallback(barcode)
+            }
             guard http.statusCode == 200 else { throw BarcodeLookupError.requestFailed("Product service returned HTTP \(http.statusCode). Retry later.") }
             let decoded = try JSONDecoder().decode(OFFResponse.self, from: data)
-            guard decoded.product != nil else { return try await usdaFallback(barcode) }
+            guard decoded.product != nil else {
+                guard allowUSDAFallback else { throw BarcodeLookupError.notFound }
+                return try await usdaFallback(barcode)
+            }
             let facts: NutritionFacts
             do { facts = try Self.normalize(decoded, barcode: barcode) }
             catch {
-                if let fallback = try? await usdaFallback(barcode) { return fallback }
+                if allowUSDAFallback, let fallback = try? await usdaFallback(barcode) { return fallback }
                 throw error
             }
-            if !USDAapiCaller.shared.APIKey.isEmpty, let alternative = try? await usdaFallback(barcode),
+            if allowUSDAFallback, !USDAapiCaller.shared.APIKey.isEmpty, let alternative = try? await usdaFallback(barcode),
                Self.materiallyDisagree(facts, alternative) {
                 cache[barcode] = nil
                 throw BarcodeLookupError.requestFailed("Open Food Facts and USDA disagree for this exact barcode (\(facts.calories) vs \(alternative.calories) kcal per reference portion), or use different mass/volume bases. Review the package and use manual entry.")
             }
-            cache[barcode] = (Date(), facts)
+            if offCache.count >= 200 { offCache.removeAll() }
+            offCache[barcode] = (Date(), facts)
+            // Source-only reads have not performed the barcode flow's USDA
+            // conflict comparison; they must not populate that flow's cache.
+            if allowUSDAFallback { cache[barcode] = (Date(), facts) }
             return facts
         }
         throw URLError(.badServerResponse)

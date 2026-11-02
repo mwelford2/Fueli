@@ -4,9 +4,15 @@ Fueli is a native SwiftUI nutrition tracker for iOS 18 and later. Food history a
 
 ## Logging and My Foods
 
-- Photo analysis shows an editable description before a separate AI call plans USDA searches. Database matches and user-corrected quantities determine nutrition.
+- Photo analysis shows an editable AI description. USDA can use a separate AI query-planning call; matched database records and user-corrected quantities determine nutrition.
+- Photo and Describe Meal share a **USDA / Open Food Facts** database choice after reviewing the AI description, ingredient names, preparation, brands and weights. Open Food Facts is a free, keyless packaged-food alternative; each product must be explicitly selected and confirmed. It does not receive photos or use another AI query-planning call.
+- Describe Meal also supports **Enter ingredients without AI**. Separate foods with new lines, semicolons or “with”, review the split, and supply weights. Counts/household portions are not guessed; compound names such as “mac and cheese” remain intact.
 - Barcode lookup checks My Foods, Open Food Facts API v3, and exact-GTIN USDA branded matches. Invalid checksums, missing nutrition, ambiguous matches, and source conflicts require review.
 - Describe Meal and manual entry use the shared confirmation flow.
+- Ingredient review labels estimated weights in grams. USDA lookup checks 50 candidates, handles bagel/bagels, and can use another defensible record when a preferred record lacks required nutrients. Broader ingredient/preparation matches require your explicit choice; connection and key errors remain distinct from no suitable match.
+
+See [ingredient lookup investigation and tests](Fueli/MEAL_LOOKUP_FIX.md) for the bagel/cream-cheese regression and live-test limitation.
+See [database-choice research and verification](Fueli/DATABASE_LOOKUP_RESEARCH.md) for the FatSecret free-tier/authentication/storage findings, alternative selection, query cleaning, tests and setup.
 - **Log Food** logs the selected fractional quantity. **Save to My Foods** saves exactly one defined standard serving and creates no consumption log.
 - My Foods supports search, favorites, recent/frequent foods, editing, confirmed deletion, and quantity selection before logging.
 - Create Meal combines saved-food ingredient snapshots deterministically. Recipes retain editable quantities and can be logged with a multiplier.
@@ -45,7 +51,7 @@ Nutrition JSON backups include diet history, dates and notes; store them private
 
 Use Xcode 26 or newer for the current source, deploying to iOS 18+. Structured document recognition is gated to iOS 26; iOS 18 uses accurate Vision text recognition. Only an iOS 26.5 runtime was available for execution testing.
 
-Open the checked-in Fueli.xcodeproj. Preserve/select your signing team. For USDA lookup in published releases, add your own free key in Settings → Food Database; it is stored in Keychain on your device. Public Release/Free builds exclude the developer’s bundled key. For local Debug builds, the ignored Fueli/Secrets.xcconfig remains an optional fallback; copy Fueli/Secrets.example.xcconfig and enter your own key. Do not commit credentials. An embedded client key is extractable; distributed production builds need an appropriately protected proxy/key-management strategy.
+Open the checked-in Fueli.xcodeproj. Preserve/select your signing team. For USDA lookup in published releases, add your own free key in Settings → Food Database; it is stored in Keychain on your device. Public Release/Free builds exclude the developer’s bundled key. Copy Fueli/Secrets.example.xcconfig to Fueli/Secrets.xcconfig before building; the base configuration file must exist. Its key may remain blank when configuring USDA in-app. A local Debug key is an optional fallback. Do not commit credentials. An embedded client key is extractable; distributed production builds need an appropriately protected proxy/key-management strategy.
 
 Optional project regeneration (requires XcodeGen):
 
@@ -82,3 +88,11 @@ Release v1.0.12 includes the nutrition/Health/manual-burn changes. Physical iPho
 ## AI Usage
 
 Claude (Anthropic) was used during development to automate menial coding tasks and research — things like writing boilerplate Swift views, looking up API behaviour, and debugging build errors. It was also used to set up this GitHub repository, create the release pipeline (`release.sh`), and generate the SideStore/AltStore source file (`apps.json`). All product decisions, architecture, and code review were done by the developer.
+
+## Rigorous verification and conditional releases
+
+See [the testing/release plan](Fueli/TESTING_RELEASE_PLAN.md) for primary comparable-app test sources, all-feature test layers, private live configuration, commands, device limitations and fail-closed publication requirements. Run `scripts/test_all.sh` with an installed simulator destination and the ignored local JSON configuration. This enables real AI text/photo/planning and USDA/Open Food Facts checks as well as deterministic tests and isolated UI journeys. UI test stores never open or erase the normal app store. Test photographs/OCR fixtures and HTTP mocks are excluded from Release.
+
+`release.sh` requires passing evidence for the exact IPA and source; skipped or blocked checks do not count as passes. It verifies `com.welford.fueli` and rejects a bundled USDA credential. Camera and Apple Health acceptance was confirmed by the user; this does not establish universal device or clinical accuracy.
+
+See the [1.0.14 verification report](Fueli/RIGOROUS_TEST_REPORT.md) for executed commands, measured results, corrected failures, builds and known limits.

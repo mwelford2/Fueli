@@ -4,14 +4,14 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Fueli</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleDisplayName</key>
-	<string>Fueli</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
@@ -22,23 +22,23 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>NSMotionUsageDescription</key>
-	<string>Fueli counts your steps and tracks workout distance using the motion sensor.</string>
-	<key>NSHealthShareUsageDescription</key>
-	<string>Fueli reads your steps, active and resting energy, workouts, and body weight from Health to personalize your calorie and macro targets.</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>Fueli can save workouts and weight entries you log back to Health.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Fueli uses your camera to identify food and estimate its nutrition.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Fueli reads active and resting calories from Apple Health to estimate total daily energy needs.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Fueli can save workouts and weight entries you log back to Health.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Fueli tracks workout steps and distance using the motion sensor.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Fueli lets you pick photos of meals to log their nutrition.</string>
-	<key>USDA_API_KEY</key>
-	<string>$(USDA_API_KEY)</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>USDA_API_KEY</key>
+	<string>$(USDA_API_KEY)</string>
 </dict>
 </plist>

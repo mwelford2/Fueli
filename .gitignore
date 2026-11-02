@@ -10,6 +10,7 @@ DerivedData/
 *.mode2v3
 *.perspectivev3
 *.xcconfig
+!Fueli/Secrets.example.xcconfig
 Fueli/Secrets.xcconfig
 build/
 
@@ -18,3 +19,7 @@ build/
 
 # Local simulator review images may include personal profile-derived values
 ReviewArtifacts/
+.fueli-test-secrets.json
+
+.fueli-release-evidence.json
+__pycache__/

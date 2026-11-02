@@ -6,6 +6,12 @@ struct FueliApp: App {
     let modelContainer: ModelContainer?
 
     init() {
+        #if DEBUG
+        if UITestBootstrap.isActive {
+            modelContainer = try? UITestBootstrap.container()
+            return
+        }
+        #endif
         let schema = Schema(versionedSchema: CurrentFueliSchema.self)
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {

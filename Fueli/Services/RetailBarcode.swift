@@ -6,6 +6,10 @@ struct RetailBarcode: Equatable {
 
     init(_ payload: String, format: Format? = nil) throws {
         guard payload.allSatisfy({ $0.isASCII && $0.isNumber }) else { throw BarcodeLookupError.requestFailed("Barcode must contain digits only.") }
+        if let format {
+            let expected = format == .upca ? 12 : format == .ean13 ? 13 : 8
+            guard payload.count == expected else { throw BarcodeLookupError.requestFailed("Barcode length does not match its detected format.") }
+        }
         var code = payload
         if format == .upce {
             guard code.count == 8 else { throw BarcodeLookupError.requestFailed("UPC-E requires eight digits.") }
@@ -25,6 +29,7 @@ struct RetailBarcode: Equatable {
     }
 
     static func validChecksum(_ value: String) -> Bool {
+        guard [8, 12, 13, 14].contains(value.count), value.allSatisfy({ $0.isASCII && $0.isNumber }) else { return false }
         let digits = value.compactMap(\.wholeNumberValue)
         guard digits.count == value.count, let check = digits.last else { return false }
         let sum = digits.dropLast().reversed().enumerated().reduce(0) { $0 + $1.element * ($1.offset.isMultiple(of: 2) ? 3 : 1) }

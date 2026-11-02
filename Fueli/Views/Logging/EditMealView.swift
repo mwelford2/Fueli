@@ -60,16 +60,10 @@ struct EditMealView: View {
                 }
 
                 Section("Meal") {
-                    TextField("Name", text: $name)
+                    TextField("Name", text: $name).accessibilityIdentifier("editLog.name")
                     TextField("Serving size", text: $servingDescription)
-                    Stepper(value: $servings, in: 0.5...20, step: 0.5) {
-                        HStack {
-                            Text("Servings")
-                            Spacer()
-                            Text(servings == servings.rounded() ? "\(Int(servings))" : String(format: "%.1f", servings))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
+                    ServingSelector(servings: $servings)
+                    Text("Nutrition below is the logged total. Editing the serving count does not replace your edited totals.").font(.caption)
                     Picker("Meal", selection: $mealType) {
                         ForEach(MealType.allCases) { type in
                             Label(type.label, systemImage: type.icon).tag(type)

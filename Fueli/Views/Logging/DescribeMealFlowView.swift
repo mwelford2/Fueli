@@ -21,57 +21,70 @@ struct DescribeMealFlowView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                Text("Describe what you ate, including portion size for the best estimate.")
-                    .font(.themeSubheadline)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal)
+            ScrollView {
+                VStack(spacing: 16) {
+                    Text("Describe what you ate, including portion size for the best estimate.")
+                        .font(.themeSubheadline)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal)
 
-                TextEditor(text: $description)
-                    .focused($isFocused)
-                    .frame(height: 140)
-                    .padding(8)
-                    .background(Color.themeCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal)
-                    .overlay(alignment: .topLeading) {
-                        if description.isEmpty {
-                            Text("e.g. Grilled chicken breast with a cup of rice and steamed broccoli")
-                                .foregroundStyle(.tertiary)
-                                .padding(.horizontal, 30)
-                                .padding(.top, 16)
-                                .allowsHitTesting(false)
+                    if coordinator.phase == .idle { MealDatabasePicker(coordinator: coordinator).padding(.horizontal) }
+
+                    TextEditor(text: $description)
+                        .focused($isFocused)
+                        .frame(height: 140)
+                        .padding(8)
+                        .background(Color.themeCard)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal)
+                        .overlay(alignment: .topLeading) {
+                            if description.isEmpty {
+                                Text("e.g. Grilled chicken breast with a cup of rice and steamed broccoli")
+                                    .foregroundStyle(.tertiary)
+                                    .padding(.horizontal, 30)
+                                    .padding(.top, 16)
+                                    .allowsHitTesting(false)
+                            }
                         }
+
+                    if coordinator.phase != .idle {
+                        MealAnalysisProgressView(coordinator: coordinator)
+                    }
+                    if needsSetup {
+                        AISetupPromptCard { showProviderSettings = true }
                     }
 
-                if coordinator.phase != .idle {
-                    MealAnalysisProgressView(coordinator: coordinator)
-                }
-                if needsSetup {
-                    AISetupPromptCard { showProviderSettings = true }
-                }
+                    Spacer()
 
-                Spacer()
-
-                if !isAnalyzing {
-                    Button {
-                        isFocused = false
-                        analyze()
-                    } label: {
-                        Label("Analyze", systemImage: "sparkles").frame(maxWidth: .infinity)
+                    if !isAnalyzing {
+                        Button {
+                            isFocused = false
+                            analyze()
+                        } label: {
+                            Label("Review Ingredients with AI", systemImage: "sparkles").frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(description.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .padding()
+                        Button("Enter ingredients without AI") {
+                            isFocused = false
+                            coordinator.startWithoutAI(getDescription())
+                        }
+                        .disabled(getDescription().isEmpty)
+                        .padding(.horizontal)
+                        Text("Without AI, separate foods with new lines, semicolons or ‘with’. Review the split and supply weights; unspecified portions are not guessed.")
+                            .font(.caption).foregroundStyle(.secondary).padding(.horizontal)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(description.trimmingCharacters(in: .whitespaces).isEmpty)
-                    .padding()
                 }
+                .padding(.top)
             }
-            .padding(.top)
+            .scrollDismissesKeyboard(.interactively)
             .themedScreenBackground()
             .navigationTitle("Describe Meal")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { onFinished() }
+                    Button("Cancel") { coordinator.cancelPendingWork(); onFinished() }
                 }
             }
             .fullScreenCover(item: $nutritionFacts) { facts in
@@ -97,6 +110,7 @@ struct DescribeMealFlowView: View {
                     withAnimation { needsSetup = false }
                 }
             }
+            .onDisappear { coordinator.cancelPendingWork() }
         }
     }
 

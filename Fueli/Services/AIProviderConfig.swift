@@ -134,7 +134,12 @@ struct AIProviderConfig: Codable, Equatable {
         assumptionLevel = try c.decodeIfPresent(AssumptionLevel.self, forKey: .assumptionLevel) ?? .balanced
     }
 
-    static let userDefaultsKey = "ai_provider_config"
+    static var userDefaultsKey: String {
+        #if DEBUG
+        if let id = UITestBootstrap.storeID { return "ui_test_provider_config_" + id.uuidString }
+        #endif
+        return "ai_provider_config"
+    }
     static let keychainAPIKeyAccount = "ai_provider_api_key"
     static let keychainBaseURLAccount = "ai_provider_base_url"
 
@@ -143,6 +148,11 @@ struct AIProviderConfig: Codable, Equatable {
     }
 
     static func load() -> AIProviderConfig {
+        #if DEBUG
+        if UITestBootstrap.fixtureNetwork {
+            return AIProviderConfig(preset: .custom, baseURL: "https://fixture.fueli.invalid", model: "fixture-vision", assumptionLevel: .assume)
+        }
+        #endif
         guard
             let data = UserDefaults.standard.data(forKey: userDefaultsKey),
             let decoded = try? JSONDecoder().decode(AIProviderConfig.self, from: data)
@@ -174,7 +184,12 @@ struct AIProviderConfig: Codable, Equatable {
     }
 
     var apiKey: String {
-        get { KeychainStore.read(account: Self.keychainAPIKeyAccount) ?? "" }
+        get {
+            #if DEBUG
+            if UITestBootstrap.fixtureNetwork { return "ui-fixture-key" }
+            #endif
+            return KeychainStore.read(account: Self.keychainAPIKeyAccount) ?? ""
+        }
         nonmutating set {
             if newValue.isEmpty {
                 KeychainStore.delete(account: Self.keychainAPIKeyAccount)

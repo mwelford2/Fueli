@@ -3,21 +3,17 @@ import Security
 
 /// Minimal Keychain wrapper for storing the user's AI provider API key on-device.
 enum KeychainStore {
-    private static let service = "com.welford.fueli.apikey"
+    private static var service: String {
+        #if DEBUG
+        if let id = UITestBootstrap.storeID { return "com.welford.fueli.ui-test." + id.uuidString }
+        #endif
+        return "com.welford.fueli.apikey"
+    }
 
     static func save(_ value: String, account: String) {
-        let data = Data(value.utf8)
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account
-        ]
-        SecItemDelete(query as CFDictionary)
-
-        var attributes = query
-        attributes[kSecValueData as String] = data
-        attributes[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
-        SecItemAdd(attributes as CFDictionary, nil)
+        // Preserve an existing key if the replacement cannot be written.
+        // Callers requiring actionable errors use saveChecked directly.
+        try? saveChecked(value, account: account)
     }
 
     static func read(account: String) -> String? {

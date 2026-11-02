@@ -1,0 +1,95 @@
+{
+  "hits": [
+    {
+      "code": "5760466738095",
+      "brands": [
+        "\u0627\u0644\u0633\u0639\u0631 11 \u0631\u064a\u0627\u0644"
+      ],
+      "nutriments": {
+        "carbohydrates_100g": 1.5,
+        "energy-kcal_100g": 317,
+        "fat_100g": 30,
+        "fiber_100g": 19,
+        "proteins_100g": 9,
+        "saturated-fat_100g": 1.5,
+        "sugars_100g": 1.5
+      },
+      "product_name": "Puck Jars White"
+    },
+    {
+      "code": "5900820011512",
+      "brands": [
+        "\u0141aciaty",
+        "Mlekpol"
+      ],
+      "nutriments": {
+        "carbohydrates_100g": 4.9,
+        "energy-kcal_100g": 250,
+        "energy-kj_100g": 1033,
+        "fat_100g": 23,
+        "proteins_100g": 5.8,
+        "salt_100g": 0.7,
+        "saturated-fat_100g": 16,
+        "sodium_100g": 0.28,
+        "sugars_100g": 3.8
+      },
+      "product_name": "Serek \u015bmietankowy z cebul\u0105 i szczypiorkiem"
+    },
+    {
+      "code": "9311000999555",
+      "brands": [
+        "Bega"
+      ],
+      "nutriments": {
+        "carbohydrates_100g": 2.7,
+        "energy-kcal_100g": 330,
+        "fat_100g": 31.8,
+        "fiber_100g": 0.1,
+        "proteins_100g": 8.3,
+        "salt_100g": 0.815,
+        "saturated-fat_100g": 21.7,
+        "sodium_100g": 0.326,
+        "sugars_100g": 2.4
+      },
+      "product_name": "Australian Cream Cheese"
+    },
+    {
+      "code": "5760466740999",
+      "brands": [
+        "Arla",
+        "Buko"
+      ],
+      "nutriments": {
+        "carbohydrates_100g": 3,
+        "energy-kcal_100g": 252,
+        "fat_100g": 25,
+        "proteins_100g": 4.5,
+        "salt_100g": 0.7875,
+        "saturated-fat_100g": 16,
+        "sodium_100g": 0.315,
+        "sugars_100g": 3
+      },
+      "product_name": "Buko Natural Classic Cream Cheese"
+    },
+    {
+      "code": "8690565025604",
+      "brands": [
+        "Pinar"
+      ],
+      "nutriments": {
+        "carbohydrates_100g": 3,
+        "energy-kcal_100g": 190,
+        "energy-kj_100g": 790,
+        "fat_100g": 14,
+        "proteins_100g": 13,
+        "salt_100g": 1.2,
+        "saturated-fat_100g": 9.1,
+        "sodium_100g": 0.48,
+        "sugars_100g": 3
+      },
+      "product_name": "P\u0131nar Krem Peynir 100"
+    }
+  ],
+  "count": 10000,
+  "timed_out": false
+}

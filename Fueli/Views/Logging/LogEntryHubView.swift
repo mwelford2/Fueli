@@ -96,5 +96,6 @@ private struct HubOption: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("hub." + title)
     }
 }

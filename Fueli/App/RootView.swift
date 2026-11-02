@@ -32,7 +32,7 @@ struct RootView: View {
 @MainActor
 enum PreviewData {
     static let fullSchema: [any PersistentModel.Type] = [
-        UserProfile.self, FoodLog.self, WeightEntry.self, WaterEntry.self, SavedMeal.self
+        UserProfile.self, FoodLog.self, WeightEntry.self, WaterEntry.self, SavedMeal.self, WorkoutLog.self
     ]
 
     /// Empty container — RootView creates a fresh profile and starts onboarding.

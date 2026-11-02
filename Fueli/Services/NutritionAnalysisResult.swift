@@ -9,7 +9,10 @@ class USDAapiCaller {
 
     /// Read at request time so changing a personal key does not require restarting.
     var APIKey: String {
-        injectedAPIKey ?? Self.resolveAPIKey(userKey: KeychainStore.read(account: Self.personalKeyAccount),
+        #if DEBUG
+        if UITestBootstrap.fixtureNetwork { return "ui-fixture-usda-key" }
+        #endif
+        return injectedAPIKey ?? Self.resolveAPIKey(userKey: KeychainStore.read(account: Self.personalKeyAccount),
             bundledKey: Bundle.main.object(forInfoDictionaryKey: "USDA_API_KEY") as? String)
     }
 
@@ -60,20 +63,16 @@ class USDAapiCaller {
         try await withThrowingTaskGroup(of: (Int, NutritionFacts).self) { group in
             for (index, component) in components.enumerated() {
                 group.addTask {
-                    let candidates: FDCSearchResponse
+                    let food: FDCFood
+                    let detail: FoodDetail
                     if let selection = selections[Self.identity(for: component)] {
-                        candidates = FDCSearchResponse(foods: [selection])
+                        // An explicit review choice may intentionally be a broader record.
+                        food = selection
+                        detail = try await self.foodDetail(id: selection.fdcId)
                     } else {
-                        var found = FDCSearchResponse(foods: [])
-                        for query in ([component.fdcQuery] + component.fallbackQueries).prefix(4) {
-                            let batch = try await self.search(query: query, dataTypes: component.preferredDataTypes.isEmpty ? nil : component.preferredDataTypes)
-                            let defensible = Self.rankedMatches(foods: batch.foods, query: Self.resolutionQuery(for: component))
-                            if !defensible.isEmpty { found = FDCSearchResponse(foods: defensible); break }
-                        }
-                        candidates = found
+                        (food, detail) = try await self.resolvedFood(for: component)
                     }
-                    let facts = try await self.getNutritionFacts(decodedResponse: candidates,
-                        query: Self.resolutionQuery(for: component), component: component)
+                    let facts = try self.nutritionFacts(food: food, detail: detail, component: component)
                     return (index, facts)
                 }
             }
@@ -121,9 +120,11 @@ class USDAapiCaller {
         let gtinUpc: String?
         let dataType: String?
         let nutrients: [FDCNutrient]?
+        var brandName: String? = nil
+        var brandOwner: String? = nil
 
         enum CodingKeys: String, CodingKey {
-            case fdcId, description, gtinUpc, dataType
+            case fdcId, description, gtinUpc, dataType, brandName, brandOwner
             case nutrients = "foodNutrients"
         }
     }
@@ -155,11 +156,10 @@ class USDAapiCaller {
     /// Minimum number of results required before we trust the batch enough to hand it to
     /// the classifier — below this, a fallback query is tried instead.
     private static let minAcceptableResults = 3
-    private static let searchPageSize = 5
+    private static let searchPageSize = 50
 
-    /// The USDA FDC `/foods/search` endpoint intermittently returns HTTP 400/429/5xx for
-    /// requests that are otherwise valid (the same request often succeeds on the next
-    /// attempt). Retry a few times with backoff before giving up.
+    /// Retry transient connection/408/5xx errors with bounded backoff. Invalid
+    /// requests and rate limits are surfaced without blind retries.
     private static let maxSearchAttempts = 4
 
     func search(query: String, dataTypes: [String]? = nil) async throws -> FDCSearchResponse {
@@ -168,27 +168,21 @@ class USDAapiCaller {
               (dataTypes ?? Self.defaultDataTypes).allSatisfy({ Self.defaultDataTypes.contains($0) }) else {
             throw AIServiceError.requestFailed("Enter a valid food query and supported USDA data types.")
         }
-        let API_KEY = self.APIKey
-        let BASE_URL = "https://api.nal.usda.gov/fdc/v1/foods/search"
-
-        guard var components = URLComponents(string: BASE_URL) else { throw URLError(.badURL) }
-        var queryItems = [
-            URLQueryItem(name: "api_key", value: API_KEY),
-            URLQueryItem(name: "query", value: query),
-            URLQueryItem(name: "pageSize", value: String(Self.searchPageSize))
-        ]
-        for dataType in dataTypes ?? Self.defaultDataTypes {
-            queryItems.append(URLQueryItem(name: "dataType", value: dataType))
-        }
-        components.queryItems = queryItems
-
-        guard let URL = components.url else { throw URLError(.badURL) }
+        // USDA documents dataType as an array. POST avoids ambiguous repeated GET
+        // parameters and keeps the food description out of the URL.
+        var components = URLComponents(string: "https://api.nal.usda.gov/fdc/v1/foods/search")!
+        components.queryItems = [URLQueryItem(name: "api_key", value: APIKey)]
+        struct SearchRequest: Encodable { let query: String; let dataType: [String]; let pageSize: Int }
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(SearchRequest(query: query,
+            dataType: dataTypes ?? Self.defaultDataTypes, pageSize: Self.searchPageSize))
+        request.timeoutInterval = 20
 
         var lastNetworkError: Swift.Error?
         for attempt in 1...Self.maxSearchAttempts {
             do {
-                var request = URLRequest(url: URL)
-                request.timeoutInterval = 20
                 let (data, response) = try await session.data(for: request)
 
                 guard let httpResponse = response as? HTTPURLResponse else {
@@ -221,6 +215,62 @@ class USDAapiCaller {
         throw AIServiceError.usdaUnreachable
     }
 
+    /// Never silently substitutes a generic record for a more specific ingredient.
+    /// Broader identity/preparation candidates require an explicit user choice.
+    func resolveFood(for component: Component) async throws -> FDCFood {
+        try await resolvedFood(for: component).0
+    }
+
+    private func resolvedFood(for component: Component) async throws -> (FDCFood, FoodDetail) {
+        var all: [FDCFood] = []
+        var incompleteIDs: Set<Int> = []
+        var queries: [String] = []
+        for query in [component.fdcQuery] + component.fallbackQueries + [component.label] {
+            let cleaned = query.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !cleaned.isEmpty, !queries.contains(cleaned) { queries.append(cleaned) }
+        }
+        for query in queries.prefix(5) {
+            let batch = try await search(query: query,
+                dataTypes: component.preferredDataTypes.isEmpty ? nil : component.preferredDataTypes)
+            for food in batch.foods where !all.contains(where: { $0.fdcId == food.fdcId }) { all.append(food) }
+            while incompleteIDs.count < 3 {
+                let matches = Self.rankedMatches(foods: all.filter { !incompleteIDs.contains($0.fdcId) },
+                    query: Self.resolutionQuery(for: component))
+                guard let match = matches.first else { break }
+                if matches.count > 1 || match.dataType == "Branded" {
+                    throw AIServiceError.ambiguousFood(component, matches)
+                }
+                let detail = try await foodDetail(id: match.fdcId)
+                let values = try detail.coreValues()
+                if Self.hasRequiredNutrition(values) { return (match, detail) }
+                // A source preference must not trap a basic ingredient on an
+                // incomplete record. Try the next defensible identity, bounded.
+                incompleteIDs.insert(match.fdcId)
+            }
+        }
+        let alternatives = Self.reviewAlternatives(foods: all.filter { !incompleteIDs.contains($0.fdcId) }, component: component)
+        if !alternatives.isEmpty { throw AIServiceError.ambiguousFood(component, alternatives) }
+        if !incompleteIDs.isEmpty {
+            throw AIServiceError.requestFailed("USDA records for ‘\(component.label)’ are missing required nutrition. Edit this ingredient or use manual entry; missing values have not been treated as zero.")
+        }
+        throw AIServiceError.requestFailed("No suitable USDA record matched ‘\(component.label)’. The search completed, but no record matched its identity and preparation. Edit this ingredient or use manual entry.")
+    }
+
+    static func reviewAlternatives(foods: [FDCFood], component: Component) -> [FDCFood] {
+        // Preparation is deliberately relaxed ONLY for review, never auto-selection.
+        let identityMatches = rankedMatches(foods: foods, query: component.label)
+        if !identityMatches.isEmpty { return identityMatches }
+        // Generic USDA bagel records do not necessarily identify the everything
+        // topping. Offer the unqualified base record as a disclosed approximation,
+        // never chips, seasoning, sandwiches or an arbitrary branded product.
+        let words = component.label.lowercased().split(whereSeparator: { !$0.isLetter }).map(String.init)
+        guard Set(words).isSubset(of: ["everything", "bagel", "bagels", "toasted"]),
+              words.contains("everything"), words.contains(where: { $0 == "bagel" || $0 == "bagels" }) else { return [] }
+        return foods.filter {
+            ["Bagel", "Bagels", "Bagel, plain", "Bagels, plain"].contains($0.description) && $0.dataType != "Branded"
+        }.sorted { $0.fdcId < $1.fdcId }
+    }
+
     /// Searches the primary query, then each fallback in order, stopping at the first
     /// batch with enough results to be worth ranking. Falls back to whatever the primary
     /// query returned (even if sparse) if every fallback also comes up short.
@@ -246,7 +296,7 @@ class USDAapiCaller {
         let preparation = (component.preparation ?? "").lowercased().split(whereSeparator: { !$0.isLetter }).map(String.init)
         let identityTerms: Set<String> = ["grilled", "fried", "roasted", "baked", "boiled", "steamed", "smoked", "skinless", "boneless", "salted", "unsalted"]
         let requiredPreparation = preparation.filter { identityTerms.contains($0) }.joined(separator: " ")
-        return [component.label + basis, requiredPreparation].filter { !$0.isEmpty }.joined(separator: " ")
+        return [component.brand ?? "", component.label + basis, requiredPreparation].filter { !$0.isEmpty }.joined(separator: " ")
     }
 
     static func identity(for component: Component) -> String {
@@ -256,13 +306,13 @@ class USDAapiCaller {
     static func rankedMatches(foods: [FDCFood], query: String) -> [FDCFood] {
         func tokens(_ text: String) -> Set<String> {
             let ignored: Set<String> = ["and", "with", "food", "the", "a", "of"]
-            let aliases = ["bananas": "banana", "apples": "apple", "carrots": "carrot", "onions": "onion", "potatoes": "potato", "tomatoes": "tomato", "breasts": "breast", "eggs": "egg", "avocados": "avocado"]
+            let aliases = ["bagels": "bagel", "bananas": "banana", "apples": "apple", "carrots": "carrot", "onions": "onion", "potatoes": "potato", "tomatoes": "tomato", "breasts": "breast", "eggs": "egg", "avocados": "avocado"]
             return Set(text.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber })
                 .map(String.init).map { aliases[$0] ?? $0 }.filter { !ignored.contains($0) })
         }
         let required = tokens(query)
         guard !required.isEmpty else { return [] }
-        let matches = foods.filter { required.isSubset(of: tokens($0.description)) }
+        let matches = foods.filter { required.isSubset(of: tokens([$0.description, $0.brandName ?? "", $0.brandOwner ?? ""].joined(separator: " "))) }
         let order = ["Foundation", "SR Legacy", "Survey (FNDDS)", "Branded"]
         func score(_ food: FDCFood) -> Int {
             (order.firstIndex(of: food.dataType ?? "") ?? 4) * 100 + tokens(food.description).subtracting(required).count
@@ -327,7 +377,9 @@ class USDAapiCaller {
             if http.statusCode >= 500 && attempt < 2 {
                 try await Task.sleep(for: .seconds(pow(2, Double(attempt)) + Double.random(in: 0...0.2))); continue
             }
-            guard http.statusCode == 200 else { throw AIServiceError.usdaUnreachable }
+            guard http.statusCode == 200 else {
+                throw AIServiceError.requestFailed("USDA food details failed (HTTP \(http.statusCode)). Check your USDA key in Settings → Food Database for 401/403, or retry later for a server error.")
+            }
             return try JSONDecoder().decode(FoodDetail.self, from: data)
         }
         throw AIServiceError.usdaUnreachable
@@ -340,14 +392,23 @@ class USDAapiCaller {
         if candidates.count > 1 { throw AIServiceError.ambiguousFood(component, candidates) }
         let topFood = try Self.matchingFood(foods: candidates, query: component.label)
 
-        let nutrientValues = try await foodDetail(id: topFood.fdcId).coreValues()
+        let detail = try await foodDetail(id: topFood.fdcId)
+        return try nutritionFacts(food: topFood, detail: detail, component: component)
+    }
+
+    private static func hasRequiredNutrition(_ values: [Int: Double]) -> Bool {
+        [1008, 1003, 1005, 1004, 1079].allSatisfy { id in
+            values[id].map { $0.isFinite && $0 >= 0 } ?? false
+        }
+    }
+
+    private func nutritionFacts(food: FDCFood, detail: FoodDetail, component: Component) throws -> NutritionFacts {
+        let nutrientValues = try detail.coreValues()
 
         // The FDC *search* endpoint normalizes every foodNutrient value to per-100g,
         // including Branded items ("Calculated from value per serving size measure").
         // Scale to the portion the user actually ate.
-        guard [1008, 1003, 1005, 1004, 1079].allSatisfy({ id in
-            nutrientValues[id].map { $0.isFinite && $0 >= 0 } ?? false
-        }) else { throw NutritionValidationError.incomplete }
+        guard Self.hasRequiredNutrition(nutrientValues) else { throw NutritionValidationError.incomplete }
         guard component.estimatedGrams.isFinite, component.estimatedGrams > 0 else {
             throw NutritionValidationError.invalidQuantity
         }
@@ -373,13 +434,13 @@ class USDAapiCaller {
         }()
 
         return NutritionFacts(
-            name: topFood.description,
+            name: food.description,
             calories: Int((per100.calories * scale).rounded()),
             proteinG: per100.protein * scale,
             carbsG: per100.carbs * scale,
             fatG: per100.fat * scale,
             fiberG: per100.fiber * scale,
-            servingDescription: quantityText, sourceRecordID: "USDA:\(topFood.fdcId)", gramsPerServing: grams, caloriesExact: per100.calories * scale
+            servingDescription: quantityText, sourceRecordID: "USDA:\(food.fdcId)", gramsPerServing: grams, caloriesExact: per100.calories * scale
         )
     }
 }
@@ -560,7 +621,7 @@ enum AIServiceError: LocalizedError {
         case .unparsableResponse(let raw):
             return "Couldn't parse a nutrition estimate from the response: \(raw.prefix(200))"
         case .ambiguousFood:
-            return "Several USDA records could match. Choose a food or return to ingredient review."
+            return "Review the available USDA records. Choose a suitable food or return to ingredient review."
         case .usdaUnreachable:
             return "Couldn't reach the USDA nutrition database. Check your internet connection — if you're on a VPN or proxy, try turning it off and retrying."
         }

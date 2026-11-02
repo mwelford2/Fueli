@@ -30,6 +30,7 @@ final class PedometerService {
     /// days and returns the per-day average. Returns nil when the pedometer is
     /// unavailable or the query fails.
     func queryAverageSteps(overPastDays days: Int) async -> Double? {
+        guard (1...365).contains(days) else { return nil }
         guard CMPedometer.isStepCountingAvailable() else { return nil }
         let calendar = Calendar.current
         let end = calendar.startOfDay(for: Date())
@@ -71,6 +72,10 @@ final class PedometerService {
 
     /// MET-based calorie estimate: MET × weight_kg × duration_hours.
     static func workoutCalories(met: Double, weightKg: Double, durationSeconds: Int) -> Int {
-        max(0, Int((met * weightKg * Double(durationSeconds) / 3600.0).rounded()))
+        guard met.isFinite, (0...30).contains(met), weightKg.isFinite, (0...1000).contains(weightKg),
+              (0...604800).contains(durationSeconds) else { return 0 }
+        let calories = met * weightKg * Double(durationSeconds) / 3600
+        guard calories.isFinite, calories <= 1_000_000 else { return 0 }
+        return Int(calories.rounded())
     }
 }

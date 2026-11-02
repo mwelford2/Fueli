@@ -1,0 +1,202 @@
+[
+  {
+    "text": "CHK BRST BNLS 1.5 LB 8.99",
+    "skip": false,
+    "name": "chicken breast boneless",
+    "quantity": 1.5,
+    "unit": "lb",
+    "confidence": 0.95
+  },
+  {
+    "text": "YGRT 1.99",
+    "skip": false,
+    "name": "yogurt",
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "YGRT 1.99",
+    "skip": false,
+    "name": "yogurt",
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "ORG APPLES 2.99",
+    "skip": false,
+    "name": "organic apples",
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "123456 YGRT 1.99",
+    "skip": false,
+    "name": "yogurt",
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "CASHEWS 4.99",
+    "skip": false,
+    "name": "cashews",
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "TOTAL GRAIN CEREAL 3.99",
+    "skip": false,
+    "name": "total grain cereal",
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "CANNED TOMATOES 14 OZ 1.29",
+    "skip": false,
+    "name": "canned tomatoes",
+    "quantity": 14,
+    "unit": "oz",
+    "confidence": 0.95
+  },
+  {
+    "text": "OLIVE OIL 750 ML 12.99",
+    "skip": false,
+    "name": "olive oil",
+    "quantity": 750,
+    "unit": "ml",
+    "confidence": 0.95
+  },
+  {
+    "text": "CHICKEN 2 LBS 9.99",
+    "skip": false,
+    "name": "chicken",
+    "quantity": 2,
+    "unit": "lb",
+    "confidence": 0.95
+  },
+  {
+    "text": "SUBTOTAL 19.97",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "SUB-TOTAL 19.97",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "SUB TOTAL 19.97",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "TAX: 0.39",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "TAX 0.39",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "TOTAL: 20.36",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "TOTAL DUE 20.36",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "VISA ****1234",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "CASH 25.00",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "CHANGE 4.64",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "COUPON -1.00",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "DISCOUNT 0.50",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "THANK YOU",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "REGISTER 02",
+    "skip": true,
+    "name": null,
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.95
+  },
+  {
+    "text": "YGR? 1.99",
+    "skip": false,
+    "name": "ygr?",
+    "quantity": null,
+    "unit": null,
+    "confidence": 0.35
+  }
+]

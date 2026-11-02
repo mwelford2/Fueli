@@ -7,6 +7,7 @@ struct SavedMealsFlowView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \SavedMeal.timesLogged, order: .reverse) private var savedMeals: [SavedMeal]
     @State private var search = ""
+    @State private var searchPresented = false
     @State private var filter = "All"
     private var visibleFoods: [SavedMeal] {
         let matching = savedMeals.filter { (search.isEmpty || $0.name.localizedCaseInsensitiveContains(search)) && (filter != "Favorites" || $0.isFavorite) }
@@ -29,7 +30,7 @@ struct SavedMealsFlowView: View {
             List {
                 Button("Create Meal") { building = true }
                 Button("Create Food Manually") { creating = true }
-                Picker("Browse", selection: $filter) { ForEach(["All", "Favorites", "Recent", "Frequent"], id: \.self) { Text($0).tag($0) } }
+                Picker("Browse", selection: $filter) { ForEach(["All", "Favorites", "Recent", "Frequent"], id: \.self) { Text($0).tag($0) } }.accessibilityIdentifier("library.filter")
                 ForEach(visibleFoods) { meal in
                     Button { selected = meal } label: {
                         VStack(alignment: .leading) {
@@ -39,6 +40,7 @@ struct SavedMealsFlowView: View {
                             Text("\(meal.calories) kcal · \(meal.servingDescription)").font(.caption).foregroundStyle(.secondary)
                         }
                     }
+                    .accessibilityIdentifier("library." + meal.name)
                     .contextMenu {
                         Button(meal.isFavorite ? "Remove Favorite" : "Favorite") { meal.isFavorite.toggle(); try? modelContext.save() }
                         if meal.nutritionSourceID?.hasPrefix("USDA:") == true && meal.ingredientData == nil {
@@ -52,7 +54,8 @@ struct SavedMealsFlowView: View {
                 if let errorMessage { Text(errorMessage).foregroundStyle(.red) }
             }
             .themedScreenBackground()
-            .searchable(text: $search)
+            .searchable(text: $search, isPresented: $searchPresented)
+            .onSubmit(of: .search) { searchPresented = false }
             .navigationTitle("My Foods")
             .toolbar { Button("Close", action: onFinished) }
             .sheet(item: $selected) { meal in

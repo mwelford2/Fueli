@@ -85,7 +85,7 @@ struct HistoryView: View {
                             Button { editingLog = log } label: {
                                 FoodLogRow(log: log)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.plain).accessibilityIdentifier("history.log." + log.id.uuidString)
                             Divider()
                         }
                     }
@@ -105,11 +105,13 @@ struct HistoryView: View {
                 Button("Save") {
                     if let value = Double(newWeightText) {
                         let kg = profile.weightKg(fromDisplay: value)
-                        modelContext.insert(WeightEntry(weightKg: kg))
-                        try? modelContext.save()
+                        if EntryValidation.weightKg(kg) {
+                            modelContext.insert(WeightEntry(weightKg: kg))
+                            try? modelContext.save()
+                        }
                     }
                     newWeightText = ""
-                }
+                }.disabled(Double(newWeightText).map { EntryValidation.weightKg(profile.weightKg(fromDisplay: $0)) } != true)
                 Button("Cancel", role: .cancel) { newWeightText = "" }
             }
         }

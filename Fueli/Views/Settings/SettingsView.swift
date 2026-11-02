@@ -253,7 +253,7 @@ struct FoodDatabaseSettingsView: View {
     var body: some View {
         Form {
             Section("USDA FoodData Central") {
-                Text("Photo, described-meal and receipt ingredient lookups use USDA records. Public Fueli releases do not include a shared personal API key.").font(.caption)
+                Text("USDA is a choice for photo and described-meal ingredients, and is used for receipt matching. Public Fueli releases do not include a shared personal API key.").font(.caption)
                 Text(hasPersonalKey ? "Personal USDA key configured on this device" : "Add your own USDA API key for lookups")
                 SecureField("USDA API Key", text: $keyText)
                     .textInputAutocapitalization(.never).autocorrectionDisabled()
@@ -273,6 +273,10 @@ struct FoodDatabaseSettingsView: View {
                 Link("Get a free USDA API key", destination: URL(string: "https://fdc.nal.usda.gov/api-key-signup/")!)
                 Text("Your key is stored in Keychain and sent only with your USDA lookup requests. It is not included in nutrition exports. A locally configured development-build key is a fallback; client-embedded keys are extractable.").font(.caption).foregroundStyle(.secondary)
                 if let message { Text(message).font(.caption) }
+            }
+            Section("Open Food Facts") {
+                Text("A free, keyless alternative for packaged products in photo and described-meal review. Select the actual product and check its package. Generic ingredient coverage differs from USDA. Food photos are sent only to your configured AI provider for description, never to the database.").font(.caption)
+                Link("Open Food Facts", destination: URL(string: "https://world.openfoodfacts.org")!)
             }
             Section("Data sources") {
                 Text("USDA FoodData Central: public-domain reference data. Open Food Facts: ODbL database; individual contents use the Database Contents License and images CC BY-SA. Review matches and portions before logging.").font(.caption)

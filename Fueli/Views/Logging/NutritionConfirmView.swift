@@ -28,6 +28,7 @@ struct NutritionConfirmView: View {
     @State private var mealType: MealType = .suggested()
     @State private var errorMessage: String?
     @State private var savedMessage: String?
+    @State private var committer = NutritionCommitter()
     private let savedMeal: SavedMeal?
 
     init(result: NutritionFacts, image: UIImage? = nil, source: LogSource, savedMeal: SavedMeal? = nil, onFinished: @escaping () -> Void) {
@@ -67,8 +68,14 @@ struct NutritionConfirmView: View {
                         Text("Nutrition is calculated from matched food records and your reviewed quantities. Photo and description portions are estimates; confirm weights, preparation, oils and sauces before logging.").font(.caption)
                     }
                 }
+                if result.sourceRecordID?.hasPrefix("OFF:") == true || result.ingredients?.contains(where: { $0.sourceRecordID?.hasPrefix("OFF:") == true }) == true {
+                    Section("Open Food Facts") {
+                        Text("Community-supplied package nutrition, calculated using your reviewed quantities. Confirm the product, preparation and label before logging. Database: ODbL; individual contents: Database Contents License.").font(.caption)
+                        Link("Open Food Facts data and licenses", destination: URL(string: "https://world.openfoodfacts.org/data")!)
+                    }
+                }
                 Section("Food") {
-                    TextField("Name", text: $name)
+                    TextField("Name", text: $name).accessibilityIdentifier("confirm.name")
                     TextField("Serving size", text: $servingDescription)
                     if quantityUnit == "servings" { ServingSelector(servings: $servings) }
                     DisclosureGroup("Standard serving weight / volume (optional)") {
@@ -126,12 +133,13 @@ struct NutritionConfirmView: View {
 
                 Section {
                     Button("Log Food") { save(toLibrary: false) }
-                        .disabled(!isValid)
+                        .disabled(!isValid || committer.loggedID != nil)
                     Button(savedMeal == nil ? "Save to My Foods" : "Update Saved Food") { save(toLibrary: true) }
                         .disabled(!isValid)
                     if let errorMessage { Text(errorMessage).foregroundStyle(.red) }
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .themedScreenBackground()
             .onChange(of: gramsText) { _, _ in updateQuantity() }
             .onChange(of: millilitersText) { _, _ in updateQuantity() }
@@ -189,50 +197,10 @@ struct NutritionConfirmView: View {
     private func save(toLibrary: Bool) {
         guard let standard, isValid else { return }
         do {
-            let photoData = image?.jpegData(compressionQuality: 0.6)
-            if toLibrary {
-                if let savedMeal {
-                    savedMeal.name = name
-                    savedMeal.calories = Int(standard.calories.rounded())
-                    savedMeal.caloriesExact = standard.calories
-                    savedMeal.proteinG = standard.protein
-                    savedMeal.carbsG = standard.carbohydrates
-                    savedMeal.fatG = standard.fat
-                    savedMeal.fiberG = standard.fiber
-                    savedMeal.servingDescription = servingDescription
-                    savedMeal.gramsPerServing = referenceGrams
-                    savedMeal.millilitersPerServing = referenceMilliliters
-                } else {
-                    let item = SavedMeal(name: name, calories: Int(standard.calories.rounded()),
-                        proteinG: standard.protein, carbsG: standard.carbohydrates, fatG: standard.fat,
-                        fiberG: standard.fiber, servingDescription: servingDescription, photoData: photoData)
-                    item.caloriesExact = standard.calories
-                    item.ingredientData = try result.ingredients.map { try JSONEncoder().encode($0) }
-                    item.canonicalBarcode = result.barcode
-                    item.nutritionSourceID = result.sourceRecordID
-                    item.gramsPerServing = referenceGrams
-                    item.millilitersPerServing = referenceMilliliters
-                    if let barcode = item.canonicalBarcode,
-                       let existing = try modelContext.fetch(FetchDescriptor<SavedMeal>()).first(where: { $0.canonicalBarcode.map { BarcodeLookupService.sameGTIN($0, barcode) } == true }) {
-                        errorMessage = "This barcode is already saved as \(existing.name). Edit it in My Foods to update its values."
-                        return
-                    }
-                    modelContext.insert(item)
-                }
-            } else {
-                let total = try standard.scaled(by: servings)
-                savedMeal?.timesLogged += 1
-                savedMeal?.lastLoggedAt = Date()
-                let entry = FoodLog(name: name, calories: Int(total.calories.rounded()),
-                    proteinG: total.protein, carbsG: total.carbohydrates, fatG: total.fat, fiberG: total.fiber,
-                    servingDescription: servingDescription, servings: servings, mealType: mealType,
-                    source: source, photoData: photoData)
-                entry.caloriesExact = total.calories
-                entry.savedFoodID = savedMeal?.id
-                entry.recipeIngredientsData = try result.ingredients.map { try JSONEncoder().encode($0) } ?? savedMeal?.ingredientData
-                modelContext.insert(entry)
-            }
-            try modelContext.save()
+            _ = try committer.commit(context: modelContext, toLibrary: toLibrary, result: result, standard: standard,
+                name: name, serving: servingDescription, grams: referenceGrams, milliliters: referenceMilliliters,
+                servings: servings, meal: mealType, source: source, savedMeal: savedMeal,
+                photo: image?.jpegData(compressionQuality: 0.6))
             if toLibrary {
                 savedMessage = "Saved one standard serving of \(name): \(Int(standard.calories.rounded())) kcal. No food was added to your daily log."
             } else { onFinished() }
@@ -245,17 +213,38 @@ struct NutritionConfirmView: View {
 
 struct ServingSelector: View {
     @Binding var servings: Double
+    @FocusState private var isEditing: Bool
+    @State private var amountText = ""
     var body: some View {
         HStack {
-            Button { servings = max(0.01, servings - 0.25) } label: { Image(systemName: "minus.circle") }
+            Button { servings = max(0.01, (servings.isFinite ? servings : 1) - 0.25); syncText() } label: { Image(systemName: "minus.circle") }
                 .accessibilityLabel("Decrease servings")
-            TextField("Servings", value: $servings, format: .number)
+            TextField("Servings", text: $amountText).accessibilityIdentifier("serving.amount")
                 .keyboardType(.decimalPad).multilineTextAlignment(.center)
+                .focused($isEditing)
+                .contentShape(Rectangle())
+                .onTapGesture { isEditing = true }
                 .accessibilityLabel("Number of standard servings")
-            Button { servings = min(10_000, servings + 0.25) } label: { Image(systemName: "plus.circle") }
+            Button { servings = min(10_000, (servings.isFinite ? servings : 1) + 0.25); syncText() } label: { Image(systemName: "plus.circle") }
                 .accessibilityLabel("Increase servings")
             Text("servings")
         }.buttonStyle(.borderless)
+            .onAppear { syncText() }
+            .onChange(of: amountText) { _, text in
+                let normalized = text.replacingOccurrences(of: Locale.current.decimalSeparator ?? ".", with: ".")
+                let next = Double(normalized) ?? .nan
+                if next != servings { servings = next }
+            }
+            .onChange(of: servings) { _, _ in if !isEditing { syncText() } }
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    if isEditing { Spacer(); Button("Done Editing") { isEditing = false } }
+                }
+            }
+    }
+    private func syncText() {
+        let next = servings.isFinite ? String(servings).replacingOccurrences(of: ".", with: Locale.current.decimalSeparator ?? ".") : ""
+        if amountText != next { amountText = next }
     }
 }
 
@@ -263,13 +252,24 @@ private struct NumericRow: View {
     let label: String
     @Binding var text: String
     let unit: String
+    @FocusState private var isEditing: Bool
+    @State private var selection: TextSelection?
     var body: some View {
         HStack {
             Text(label)
             Spacer()
-            TextField("Required", text: $text).keyboardType(.decimalPad)
+            TextField("Required", text: $text, selection: $selection).accessibilityIdentifier("confirm." + label).keyboardType(.decimalPad)
                 .multilineTextAlignment(.trailing).frame(width: 100)
+                .focused($isEditing)
+                .onChange(of: isEditing) { _, focused in
+                    if focused { selection = TextSelection(range: text.startIndex..<text.endIndex) }
+                }
             Text(unit).foregroundStyle(.secondary)
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                if isEditing { Spacer(); Button("Done Editing") { isEditing = false } }
+            }
         }
     }
 }

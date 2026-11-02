@@ -7,6 +7,7 @@ struct LibraryIngredient: Codable, Identifiable, Equatable {
     var id: UUID
     var foodID: UUID? = nil
     var sourceRecordID: String? = nil
+    var canonicalBarcode: String? = nil
     var gramsPerServing: Double? = nil
     var millilitersPerServing: Double? = nil
     var servingDescription: String? = nil
@@ -68,24 +69,36 @@ struct LibraryBackup: Codable {
         var recipeIngredientsData: Data? = nil
     }
     func validate() throws {
+        func validateIngredients(_ data: Data) throws {
+            let ingredients = try JSONDecoder().decode([LibraryIngredient].self, from: data)
+            guard !ingredients.isEmpty, ingredients.count <= 1000 else { throw CocoaError(.fileReadCorruptFile) }
+            for ingredient in ingredients {
+                guard !ingredient.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw CocoaError(.fileReadCorruptFile) }
+                _ = try ingredient.nutrition()
+            }
+        }
+        func validDate(_ date: Date) -> Bool {
+            date.timeIntervalSince1970.isFinite && (-62135596800...253402300799).contains(date.timeIntervalSince1970)
+        }
         guard version == 1, foods.count <= 100000, logs.count <= 100000,
               Set(foods.map(\.id)).count == foods.count, Set(logs.map(\.id)).count == logs.count else {
             throw CocoaError(.fileReadCorruptFile)
         }
         for food in foods {
-            guard !food.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, food.timesLogged >= 0 else { throw CocoaError(.fileReadCorruptFile) }
+            guard !food.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, food.timesLogged >= 0, validDate(food.created) else { throw CocoaError(.fileReadCorruptFile) }
             if let grams = food.gramsPerServing, !grams.isFinite || grams <= 0 { throw NutritionValidationError.invalidQuantity }
             if let ml = food.millilitersPerServing, !ml.isFinite || ml <= 0 { throw NutritionValidationError.invalidQuantity }
             if let barcode = food.barcode, BarcodeLookupService.databaseBarcode(barcode) == nil { throw CocoaError(.fileReadCorruptFile) }
             _ = try ServingNutrition(calories: food.caloriesExact ?? Double(food.calories), protein: food.protein, carbohydrates: food.carbs, fat: food.fat, fiber: food.fiber)
             if let data = food.ingredients {
-                let ingredients = try JSONDecoder().decode([LibraryIngredient].self, from: data)
-                for ingredient in ingredients { _ = try ingredient.nutrition() }
+                try validateIngredients(data)
             }
         }
         for log in logs {
             _ = try ServingNutrition(calories: log.caloriesExact ?? Double(log.calories), protein: log.protein, carbohydrates: log.carbs, fat: log.fat, fiber: log.fiber)
-            guard log.servings.isFinite, log.servings > 0, !log.name.isEmpty else { throw CocoaError(.fileReadCorruptFile) }
+            guard log.servings.isFinite, log.servings > 0, log.servings <= 10000,
+                  !log.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, validDate(log.date) else { throw CocoaError(.fileReadCorruptFile) }
+            if let data = log.recipeIngredientsData { try validateIngredients(data) }
         }
     }
     @MainActor static func capture(_ context: ModelContext, images: Bool) throws -> Self {

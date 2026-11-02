@@ -44,7 +44,7 @@ struct OverhaulExpansionTests {
         let bundle = Bundle(for: ReceiptFixtureBundle.self)
         let url = try #require(bundle.url(forResource: "SyntheticReceipt", withExtension: "png"))
         let image = try #require(UIImage(contentsOfFile: url.path))
-        let rows = try await ReceiptParser.recognize(image)
+        let rows = try await ReceiptParser.recognize(image, preferStructured: true)
         let fallbackRows = try await ReceiptParser.recognize(image, preferStructured: false)
         #expect(fallbackRows.contains { $0.name.contains("chicken breast") })
         #expect(fallbackRows.filter { $0.name.contains("yogurt") }.count == 2)

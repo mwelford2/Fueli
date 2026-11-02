@@ -10,6 +10,17 @@ enum Error {
 /// a structured nutrition estimate.
 final class AINutritionService {
     static let shared = AINutritionService()
+    private let session: URLSession
+    private let configuration: () -> AIProviderConfig
+    private let apiKeyProvider: () -> String
+
+    init(session: URLSession = .shared,
+         configuration: @escaping () -> AIProviderConfig = { AIProviderConfig.load() },
+         apiKeyProvider: (() -> String)? = nil) {
+        self.session = session
+        self.configuration = configuration
+        self.apiKeyProvider = apiKeyProvider ?? { configuration().apiKey }
+    }
 
     private let systemPrompt = loadPrompt(named: "fdc_ingredient_prompt")
     
@@ -28,7 +39,7 @@ final class AINutritionService {
         }
     }
             
-    private var config: AIProviderConfig { AIProviderConfig.load() }
+    private var config: AIProviderConfig { configuration() }
 
     // MARK: - Public API
 
@@ -222,8 +233,16 @@ final class AINutritionService {
             throw AIServiceError.requestFailed(error.localizedDescription)
         }
         if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-            let body = String(data: data, encoding: .utf8) ?? "<no body>"
-            throw AIServiceError.httpError(http.statusCode, body)
+            // Gateways can echo credentials, photographs or prompts in error bodies.
+            // Keep diagnostics actionable without displaying private response content.
+            let message: String
+            switch http.statusCode {
+            case 401, 403: message = "Check the API key and model permissions in Settings → AI Provider."
+            case 429: message = "The provider is rate limited. Wait and retry."
+            case 500...599: message = "The provider is temporarily unavailable. Retry later."
+            default: message = "Check the endpoint, model and provider settings, then retry."
+            }
+            throw AIServiceError.httpError(http.statusCode, message)
         }
         return data
     }
@@ -479,6 +498,11 @@ final class AINutritionService {
 
     /// Turns a finalized decomposition into concrete numbers via the USDA API.
     func resolveNutrition(from result: NutritionAnalysisResult, imageBase64: String?, selections: [String: USDAapiCaller.FDCFood] = [:]) async throws -> NutritionFacts {
+        let plan = try await planNutritionLookup(from: result)
+        return try await USDAapiCaller.shared.analyzeFood(result: plan, imageBase64: nil, selections: selections)
+    }
+
+    func planNutritionLookup(from result: NutritionAnalysisResult) async throws -> NutritionAnalysisResult {
         // Stage two receives ONLY the user's corrected description, never the image.
         let description = try JSONEncoder().encode(result)
         let instructions = systemPrompt.replacingOccurrences(of: "{{ASSUMPTION_POLICY}}", with: AssumptionLevel.assume.promptDirective)
@@ -501,9 +525,11 @@ final class AINutritionService {
             plan.components[index].quantity = result.components[index].quantity
             plan.components[index].preparation = result.components[index].preparation
             plan.components[index].measureBasis = result.components[index].measureBasis
+            plan.components[index].negligible = result.components[index].negligible
+            plan.components[index].brand = result.components[index].brand
         }
         plan.dishName = result.dishName
-        return try await USDAapiCaller.shared.analyzeFood(result: plan, imageBase64: nil, selections: selections)
+        return plan
     }
 
     /// A fixed seed so gateways that honour it (OpenAI, vLLM, most LiteLLM backends)
@@ -516,8 +542,9 @@ final class AINutritionService {
     /// `temperature` defaults to 0 for maximum run-to-run consistency.
     func runRawText(userText: String, imageBase64: String?, prompt: String? = nil, temperature: Double = 0, outputContract: MealOutputContract? = nil) async throws -> String {
         let config = self.config
-        guard config.isConfigured else { throw AIServiceError.notConfigured }
-        guard URL(string: config.normalizedBaseURL) != nil else { throw AIServiceError.invalidBaseURL }
+        guard !config.baseURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, !apiKeyProvider().isEmpty else { throw AIServiceError.notConfigured }
+        guard let base = URL(string: config.normalizedBaseURL), ["https", "http"].contains(base.scheme?.lowercased() ?? ""),
+              base.host != nil, base.user == nil, base.password == nil, base.query == nil, base.fragment == nil else { throw AIServiceError.invalidBaseURL }
         if config.preset.isOpenAICompatible {
             return try await callOpenAICompatible(config: config, userText: userText, imageBase64: imageBase64, systemPrompt: prompt, temperature: temperature, outputContract: outputContract)
         } else {
@@ -564,7 +591,7 @@ final class AINutritionService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(config.apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(apiKeyProvider())", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, response) = try await sendWithStructuredOutput(request, contract: outputContract, anthropic: false)
@@ -618,7 +645,7 @@ final class AINutritionService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(config.apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue(apiKeyProvider(), forHTTPHeaderField: "x-api-key")
         request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
@@ -673,7 +700,7 @@ final class AINutritionService {
         do {
             var timed = request
             timed.timeoutInterval = 90
-            return try await URLSession.shared.data(for: timed)
+            return try await session.data(for: timed)
         } catch is CancellationError {
             throw CancellationError()
         } catch let error as URLError where error.code == .cancelled {
@@ -686,8 +713,16 @@ final class AINutritionService {
     private static func validate(_ response: URLResponse, data: Data) throws {
         guard let http = response as? HTTPURLResponse else { return }
         guard (200...299).contains(http.statusCode) else {
-            let body = String(data: data, encoding: .utf8) ?? "<no body>"
-            throw AIServiceError.httpError(http.statusCode, body)
+            // Gateways can echo credentials, photographs or prompts in error bodies.
+            // Keep diagnostics actionable without displaying private response content.
+            let message: String
+            switch http.statusCode {
+            case 401, 403: message = "Check the API key and model permissions in Settings → AI Provider."
+            case 429: message = "The provider is rate limited. Wait and retry."
+            case 500...599: message = "The provider is temporarily unavailable. Retry later."
+            default: message = "Check the endpoint, model and provider settings, then retry."
+            }
+            throw AIServiceError.httpError(http.statusCode, message)
         }
     }
 

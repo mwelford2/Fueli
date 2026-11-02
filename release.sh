@@ -24,13 +24,19 @@ if ! command -v jq &>/dev/null; then
   echo "error: jq not found. Install with: brew install jq" && exit 1
 fi
 
-# ── Build IPA ─────────────────────────────────────────────────────────────────
-echo "==> Packaging IPA from most recent Xcode archive..."
-~/bin/make-ipa.sh
+# The user requires every release check to pass, including device acceptance.
+# This local manifest is created only after testing the exact candidate IPA.
+EVIDENCE="$(dirname "$0")/.fueli-release-evidence.json"
+if [[ ! -f "$EVIDENCE" ]]; then
+  echo "error: release held; missing .fueli-release-evidence.json. See Fueli/TESTING_RELEASE_PLAN.md."
+  exit 1
+fi
 
-IPA_PATH="$(ls -t "$(dirname "$0")"/*.ipa 2>/dev/null | head -1)"
-if [[ -z "$IPA_PATH" ]]; then
-  echo "error: no .ipa found in project directory after make-ipa.sh" && exit 1
+# ── Build IPA ─────────────────────────────────────────────────────────────────
+echo "==> Using the exact tested candidate IPA (no repackaging)..."
+IPA_PATH="$(dirname "$0")/Fueli.ipa"
+if [[ ! -f "$IPA_PATH" ]]; then
+  echo "error: package Fueli.ipa and test that candidate before publication" && exit 1
 fi
 IPA_NAME="$(basename "$IPA_PATH")"
 IPA_SIZE=$(wc -c < "$IPA_PATH" | tr -d ' ')
@@ -40,6 +46,12 @@ UNZIP_DIR=$(mktemp -d)
 unzip -q "$IPA_PATH" -d "$UNZIP_DIR"
 APP_PATH=$(find "$UNZIP_DIR/Payload" -maxdepth 1 -name "*.app" | head -1)
 VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP_PATH/Info.plist")
+BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist")
+if [[ "$BUNDLE_ID" != "com.welford.fueli" ]]; then
+  rm -rf "$UNZIP_DIR"
+  echo "error: refusing to publish an IPA with bundle ID $BUNDLE_ID"
+  exit 1
+fi
 BUNDLED_USDA_KEY=$(/usr/libexec/PlistBuddy -c "Print :USDA_API_KEY" "$APP_PATH/Info.plist" 2>/dev/null || true)
 if [[ -n "$BUNDLED_USDA_KEY" ]]; then
   rm -rf "$UNZIP_DIR"
@@ -48,6 +60,7 @@ if [[ -n "$BUNDLED_USDA_KEY" ]]; then
 fi
 unset BUNDLED_USDA_KEY
 rm -rf "$UNZIP_DIR"
+python3 "$(dirname "$0")/scripts/verify_release.py" --evidence "$EVIDENCE" --ipa "$IPA_PATH"
 SOURCE_COMMIT=$(git -C "$(dirname "$0")" rev-parse HEAD)
 
 if [[ -z "$VERSION" ]]; then
@@ -60,20 +73,20 @@ DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${TAG}/${IPA_NAME}"
 echo "==> IPA: $IPA_PATH ($IPA_SIZE bytes, version $VERSION)"
 
 if gh release view "$TAG" --repo "$REPO" &>/dev/null 2>&1; then
-  read -r -p "Release $TAG already exists. Replace it? [y/N] " confirm
-  [[ "$confirm" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 1; }
-  gh release delete "$TAG" --repo "$REPO" --yes
-  git -C "$(dirname "$0")" push --delete origin "$TAG" 2>/dev/null || true
-  git tag -d "$TAG" 2>/dev/null || true
+  echo "error: release $TAG already exists; choose a new version. Existing releases are never deleted automatically."
+  exit 1
 fi
 
 # ── GitHub release ────────────────────────────────────────────────────────────
 echo "==> Creating GitHub release $TAG..."
+NOTES_FILE=$(mktemp)
+trap 'rm -f "$NOTES_FILE"' EXIT
+printf '%s\n' "$NOTES" > "$NOTES_FILE"
 gh release create "$TAG" "$IPA_PATH" \
   --repo "$REPO" \
   --title "Fueli $TAG" \
   --target "$SOURCE_COMMIT" \
-  --notes "$NOTES"
+  --notes-file "$NOTES_FILE"
 
 # ── Update apps.json ──────────────────────────────────────────────────────────
 echo "==> Updating apps.json..."

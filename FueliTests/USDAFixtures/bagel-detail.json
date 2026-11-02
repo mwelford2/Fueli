@@ -1,0 +1,461 @@
+{
+  "fdcId": 2707684,
+  "description": "Bagel",
+  "foodNutrients": [
+    {
+      "nutrient": {
+        "id": 1003,
+        "unitName": "g"
+      },
+      "amount": 10.6
+    },
+    {
+      "nutrient": {
+        "id": 1004,
+        "unitName": "g"
+      },
+      "amount": 1.32
+    },
+    {
+      "nutrient": {
+        "id": 1005,
+        "unitName": "g"
+      },
+      "amount": 52.4
+    },
+    {
+      "nutrient": {
+        "id": 1008,
+        "unitName": "kcal"
+      },
+      "amount": 264
+    },
+    {
+      "nutrient": {
+        "id": 1018,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1051,
+        "unitName": "g"
+      },
+      "amount": 33.8
+    },
+    {
+      "nutrient": {
+        "id": 1057,
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1058,
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 2000,
+        "unitName": "g"
+      },
+      "amount": 8.43
+    },
+    {
+      "nutrient": {
+        "id": 1079,
+        "unitName": "g"
+      },
+      "amount": 1.6
+    },
+    {
+      "nutrient": {
+        "id": 1087,
+        "unitName": "mg"
+      },
+      "amount": 70.0
+    },
+    {
+      "nutrient": {
+        "id": 1089,
+        "unitName": "mg"
+      },
+      "amount": 3.57
+    },
+    {
+      "nutrient": {
+        "id": 1090,
+        "unitName": "mg"
+      },
+      "amount": 29.0
+    },
+    {
+      "nutrient": {
+        "id": 1091,
+        "unitName": "mg"
+      },
+      "amount": 99.0
+    },
+    {
+      "nutrient": {
+        "id": 1092,
+        "unitName": "mg"
+      },
+      "amount": 107
+    },
+    {
+      "nutrient": {
+        "id": 1093,
+        "unitName": "mg"
+      },
+      "amount": 422
+    },
+    {
+      "nutrient": {
+        "id": 1095,
+        "unitName": "mg"
+      },
+      "amount": 0.83
+    },
+    {
+      "nutrient": {
+        "id": 1098,
+        "unitName": "mg"
+      },
+      "amount": 0.128
+    },
+    {
+      "nutrient": {
+        "id": 1103,
+        "unitName": "\u00b5g"
+      },
+      "amount": 21.5
+    },
+    {
+      "nutrient": {
+        "id": 1105,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1106,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1107,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1108,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1109,
+        "unitName": "mg"
+      },
+      "amount": 0.32
+    },
+    {
+      "nutrient": {
+        "id": 1114,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1120,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1122,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1123,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1162,
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1165,
+        "unitName": "mg"
+      },
+      "amount": 0.568
+    },
+    {
+      "nutrient": {
+        "id": 1166,
+        "unitName": "mg"
+      },
+      "amount": 0.344
+    },
+    {
+      "nutrient": {
+        "id": 1167,
+        "unitName": "mg"
+      },
+      "amount": 4.52
+    },
+    {
+      "nutrient": {
+        "id": 1175,
+        "unitName": "mg"
+      },
+      "amount": 0.07
+    },
+    {
+      "nutrient": {
+        "id": 1177,
+        "unitName": "\u00b5g"
+      },
+      "amount": 106
+    },
+    {
+      "nutrient": {
+        "id": 1178,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1180,
+        "unitName": "mg"
+      },
+      "amount": 14.6
+    },
+    {
+      "nutrient": {
+        "id": 1185,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.2
+    },
+    {
+      "nutrient": {
+        "id": 1186,
+        "unitName": "\u00b5g"
+      },
+      "amount": 82.0
+    },
+    {
+      "nutrient": {
+        "id": 1187,
+        "unitName": "\u00b5g"
+      },
+      "amount": 24.0
+    },
+    {
+      "nutrient": {
+        "id": 1190,
+        "unitName": "\u00b5g"
+      },
+      "amount": 163
+    },
+    {
+      "nutrient": {
+        "id": 1242,
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1246,
+        "unitName": "\u00b5g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1253,
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1258,
+        "unitName": "g"
+      },
+      "amount": 0.36
+    },
+    {
+      "nutrient": {
+        "id": 1259,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1260,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1261,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1262,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1263,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1264,
+        "unitName": "g"
+      },
+      "amount": 0.004
+    },
+    {
+      "nutrient": {
+        "id": 1265,
+        "unitName": "g"
+      },
+      "amount": 0.227
+    },
+    {
+      "nutrient": {
+        "id": 1266,
+        "unitName": "g"
+      },
+      "amount": 0.115
+    },
+    {
+      "nutrient": {
+        "id": 1268,
+        "unitName": "g"
+      },
+      "amount": 0.186
+    },
+    {
+      "nutrient": {
+        "id": 1269,
+        "unitName": "g"
+      },
+      "amount": 0.503
+    },
+    {
+      "nutrient": {
+        "id": 1270,
+        "unitName": "g"
+      },
+      "amount": 0.024
+    },
+    {
+      "nutrient": {
+        "id": 1271,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1272,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1275,
+        "unitName": "g"
+      },
+      "amount": 0.007
+    },
+    {
+      "nutrient": {
+        "id": 1276,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1277,
+        "unitName": "g"
+      },
+      "amount": 0.005
+    },
+    {
+      "nutrient": {
+        "id": 1278,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1279,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1280,
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "id": 1292,
+        "unitName": "g"
+      },
+      "amount": 0.39
+    },
+    {
+      "nutrient": {
+        "id": 1293,
+        "unitName": "g"
+      },
+      "amount": 0.526
+    }
+  ]
+}

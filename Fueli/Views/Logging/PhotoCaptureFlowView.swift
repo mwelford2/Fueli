@@ -30,61 +30,64 @@ struct PhotoCaptureFlowView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                if let capturedImage {
-                    Image(uiImage: capturedImage)
-                        .resizable().scaledToFit()
-                        .frame(maxHeight: 320)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .padding()
-                } else {
-                    ContentUnavailableView(
-                        "Capture your meal",
-                        systemImage: "camera.fill",
-                        description: Text("Take a photo or choose one from your library.")
-                    )
-                }
-
-                if coordinator.phase != .idle {
-                    MealAnalysisProgressView(coordinator: coordinator).padding(.vertical)
-                }
-
-                Spacer()
-
-                VStack(spacing: 12) {
-                    Button {
-                        showCamera = true
-                    } label: {
-                        Label(capturedImage == nil ? "Open Camera" : "Retake Photo", systemImage: "camera.fill")
-                            .frame(maxWidth: .infinity)
+            ScrollView {
+                VStack(spacing: 20) {
+                    if let capturedImage {
+                        Image(uiImage: capturedImage)
+                            .resizable().scaledToFit()
+                            .frame(maxHeight: 320)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .padding()
+                    } else {
+                        ContentUnavailableView(
+                            "Capture your meal",
+                            systemImage: "camera.fill",
+                            description: Text("Take a photo or choose one from your library.")
+                        )
                     }
-                    .buttonStyle(.borderedProminent)
 
-                    PhotosPicker(selection: $photoPickerItem, matching: .images) {
-                        Label("Choose from Library", systemImage: "photo.on.rectangle")
-                            .frame(maxWidth: .infinity)
+                    if coordinator.phase != .idle {
+                        MealAnalysisProgressView(coordinator: coordinator).padding(.vertical)
                     }
-                    .buttonStyle(.bordered)
 
-                    if capturedImage != nil && !isAnalyzing {
+                    Spacer()
+
+                    VStack(spacing: 12) {
                         Button {
-                            analyze()
+                            showCamera = true
                         } label: {
-                            Label("Analyze", systemImage: "sparkles")
+                            Label(capturedImage == nil ? "Open Camera" : "Retake Photo", systemImage: "camera.fill")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.themeOlive)
+
+                        PhotosPicker(selection: $photoPickerItem, matching: .images) {
+                            Label("Choose from Library", systemImage: "photo.on.rectangle")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+
+                        if capturedImage != nil && !isAnalyzing {
+                            Button {
+                                analyze()
+                            } label: {
+                                Label("Describe Photo with AI", systemImage: "sparkles")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.themeOlive)
+                        }
                     }
+                    .padding()
                 }
-                .padding()
             }
+            .scrollDismissesKeyboard(.interactively)
             .themedScreenBackground()
             .navigationTitle("Photo")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { onFinished() }
+                    Button("Cancel") { coordinator.cancelPendingWork(); onFinished() }
                 }
             }
             .sheet(isPresented: $showCamera) {
@@ -106,6 +109,13 @@ struct PhotoCaptureFlowView: View {
                     nutritionFacts = facts
                 }
             }
+            .onChange(of: capturedImage) { _, _ in coordinator.resetReview() }
+            .onDisappear { coordinator.cancelPendingWork() }
+            #if DEBUG
+            .onAppear {
+                if capturedImage == nil, let photo = UITestBootstrap.image("FUELI_UI_PHOTO_PATH") { capturedImage = photo }
+            }
+            #endif
         }
     }
 
