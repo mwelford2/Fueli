@@ -8,14 +8,14 @@
       "bundleIdentifier": "com.welford.fueli",
       "developerName": "Matteo Welford",
       "subtitle": "AI-powered calorie tracking",
-      "version": "1.0.13",
+      "version": "1.0.14",
       "versionDate": "2026-11-01",
-      "versionDescription": "First Fueli release using com.welford.fueli. The Release build includes HealthKit support. This IPA is unsigned; users must sign it with an explicit HealthKit-enabled App ID and a compatible provisioning profile. Changing the bundle ID makes this a separate app from the prior com.matteowelford.calclone releases.",
-      "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.13/Fueli-1.0.13-unsigned.ipa",
+      "versionDescription": "Nutrition review and reliability update\n\n- Review editable meal/photo descriptions and labeled ingredient weights before choosing USDA or Open Food Facts, the free alternative compatible with the on-device architecture.\n- Improve USDA bagel/cream-cheese resolution, exact barcode validation, fractional serving entry, independent Save/Log actions, and immutable historical nutrition/source snapshots.\n- Improve native receipt review, deterministic abbreviation/unit cleanup, library search navigation, corrupt-backup validation, and invalid profile/workout handling.\n- Add reproducible isolated UI journeys, mocked provider/network contracts, live AI/photo/USDA/Open Food Facts checks, receipt fixtures, migration/backup tests, and a fail-closed release gate.\n\nValidation: 134 unit/rendering/live-API tests, 18 UI tests, and 4 release-gate tests passed. Zero failures or skips in the accepted app test runs. The numeric edit/history workflow also passed three consecutive iterations. Signed Release archive, Free build, and public-source-only build passed. Camera scanning and Apple Health were confirmed by the user on their device.\n\nBundle identifier: com.welford.fueli. Minimum iOS: 18. Personal API keys are not bundled; new installations configure them in Settings.\n\nCommands, evidence, migration details, configuration and verification limits: https://github.com/mwelford2/Fueli/blob/main/Fueli/RIGOROUS_TEST_REPORT.md",
+      "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.14/Fueli.ipa",
       "localizedDescription": "Fueli uses AI to identify food from photos and estimate nutrition, making calorie tracking effortless.",
       "iconURL": "https://raw.githubusercontent.com/mwelford2/Fueli/main/Fueli/Resources/Assets.xcassets/AppIcon.appiconset/Gemini_Generated_Image_a4y40ga4y40ga4y4(1).png",
       "tintColor": "F97316",
-      "size": 3027840,
+      "size": 2568806,
       "permissions": [
         {
           "type": "camera",
@@ -27,6 +27,13 @@
         }
       ],
       "versions": [
+        {
+          "version": "1.0.14",
+          "date": "2026-11-01",
+          "localizedDescription": "Nutrition review and reliability update\n\n- Review editable meal/photo descriptions and labeled ingredient weights before choosing USDA or Open Food Facts, the free alternative compatible with the on-device architecture.\n- Improve USDA bagel/cream-cheese resolution, exact barcode validation, fractional serving entry, independent Save/Log actions, and immutable historical nutrition/source snapshots.\n- Improve native receipt review, deterministic abbreviation/unit cleanup, library search navigation, corrupt-backup validation, and invalid profile/workout handling.\n- Add reproducible isolated UI journeys, mocked provider/network contracts, live AI/photo/USDA/Open Food Facts checks, receipt fixtures, migration/backup tests, and a fail-closed release gate.\n\nValidation: 134 unit/rendering/live-API tests, 18 UI tests, and 4 release-gate tests passed. Zero failures or skips in the accepted app test runs. The numeric edit/history workflow also passed three consecutive iterations. Signed Release archive, Free build, and public-source-only build passed. Camera scanning and Apple Health were confirmed by the user on their device.\n\nBundle identifier: com.welford.fueli. Minimum iOS: 18. Personal API keys are not bundled; new installations configure them in Settings.\n\nCommands, evidence, migration details, configuration and verification limits: https://github.com/mwelford2/Fueli/blob/main/Fueli/RIGOROUS_TEST_REPORT.md",
+          "downloadURL": "https://github.com/mwelford2/Fueli/releases/download/v1.0.14/Fueli.ipa",
+          "size": 2568806
+        },
         {
           "version": "1.0.13",
           "date": "2026-11-01",
